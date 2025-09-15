@@ -1,4 +1,4 @@
-# Stage 1: Build
+# Stage 1: Build Vue app
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json ./
@@ -6,9 +6,12 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve
+# Stage 2: Nginx
 FROM nginx:stable-alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+WORKDIR /usr/share/nginx/html
+COPY --from=build /app/dist . 
+COPY nginx.conf.template /etc/nginx/conf.d/default.conf.template
+
+# Podmiana zmiennych środowiskowych i uruchomienie Nginx
+CMD envsubst '$API_URL' < /etc/nginx/conf.d/default.conf.template \
+    > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
