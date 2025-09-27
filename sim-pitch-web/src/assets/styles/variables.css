@@ -1,0 +1,15 @@
+:root {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #1e40af;
+  --color-secondary: #f59e0b;
+
+  --color-bg: #ffffff;
+  --color-text: #111827;
+
+  --font-base: 'Inter', sans-serif;
+  --font-heading: 'Poppins', sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+}
