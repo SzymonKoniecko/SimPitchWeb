@@ -6,7 +6,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('../components/HelloWorld.vue') // lazy load
+    component: () => import('../components/Home.vue') // lazy load
   },
   {
     path: '/about',
