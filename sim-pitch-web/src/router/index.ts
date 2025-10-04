@@ -13,13 +13,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'About',
     component: () => import('../components/About.vue')
   },
-  // przykład dynamic route
-  //{
-// path: '/team/:id',
-  //  name: 'Team',
-  //  component: () => import('../components/Team.vue'),
-  //  props: true
-  //},
+  {
+    path: '/team/:id',
+    name: 'Team',
+    component: () => import('../components/Team.vue'),
+    props: true
+  },
   // catch-all 404
   {
     path: '/:pathMatch(.*)*',
