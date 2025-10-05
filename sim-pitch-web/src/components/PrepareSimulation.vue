@@ -1,5 +1,4 @@
 <template>
-<div class="formBox">
   <form class="form" @submit.prevent="onSubmit">
     <div class="field">
       <label for="seasons">Season years</label>
@@ -39,15 +38,20 @@
       <button type="submit">Run</button>
       <button type="button" @click="reset">Reset</button>
     </div>
+
+    <div v-if="statusMessage" class="status">
+      {{ statusMessage }}
+    </div>
   </form>
-</div>
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { SeasonYear as SeasonYearConst } from '../models/seasonYear'
 import type { SeasonYear as SeasonYearType } from '../models/seasonYear'
 import type { formSimulationProps } from '../models/formSimulationProps'
+//import { submitSimulation } from '../api/SimulationService/simulationsService.ts'
 
 defineOptions({ name: 'PrepareSimulation' })
 
@@ -63,13 +67,15 @@ const emit = defineEmits<{
 
 type LocalForm = Omit<formSimulationProps, 'iterations'> & { iterations: number[] }
 
-// Provide safe defaults if no modelValue is passed
 const local = reactive<LocalForm>({
   season_Years: [...(props.modelValue?.season_Years ?? [SeasonYearConst.S2023_2024])],
   league_id: props.modelValue?.league_id ?? '',
   iterations: Array.from(props.modelValue?.iterations ?? [100]),
   league_round_id: props.modelValue?.league_round_id ?? ''
 })
+const router = useRouter()
+
+const statusMessage = ref('')
 
 const seasonOptions = computed<SeasonYearType[]>(() =>
   props.seasonOptions?.slice() ?? (Object.values(SeasonYearConst) as SeasonYearType[])
@@ -102,15 +108,30 @@ watch(
   { deep: true, immediate: true }
 )
 
-function onSubmit() {
+async function onSubmit() {
   const out: formSimulationProps = {
     season_Years: [...local.season_Years],
     league_id: local.league_id,
     iterations: new Int32Array(local.iterations),
     league_round_id: local.league_round_id
   }
+
   emit('update:modelValue', out)
   emit('submit', out)
+
+    try {
+        statusMessage.value = 'Sending...'
+        //const simulation_Id_response = await submitSimulation(out)
+        const simulation_Id_response = "3d6f0a04-6f5b-4b6f-8a4f-9d5b8b9d6c01"
+        statusMessage.value = 'Simulation submitted successfully.'
+        await router.push({ 
+        name: 'SimulationItemView', 
+        params: { id: simulation_Id_response } 
+        })   
+    } catch (err) {
+        console.error(err)
+        statusMessage.value = 'Failed to submit simulation.'
+    }
 }
 
 function reset() {
@@ -130,10 +151,10 @@ function reset() {
 </script>
 
 <style scoped>
-.formBox{ margin: 0 auto; }
 .form { display: grid; gap: 1rem; max-width: 28rem; }
 .field { display: grid; gap: 0.375rem; }
 .actions { display: flex; gap: 0.5rem; }
 select[multiple] { min-height: 7rem; }
 small { color: #666; }
+.status { margin-top: 0.5rem; font-size: 0.875rem; color: #333; }
 </style>

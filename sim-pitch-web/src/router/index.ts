@@ -18,6 +18,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../components/PrepareSimulation.vue')
   },
   {
+    path: '/simulation/:id',
+    name: 'SimulationItemView',
+    component: () => import('../components/SimulationItemView.vue'),
+    props: true
+  },
+  {
     path: '/team/:id',
     name: 'Team',
     component: () => import('../components/Team.vue'),
