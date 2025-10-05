@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 
-// Typowanie tras
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -12,6 +11,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/about',
     name: 'About',
     component: () => import('../components/About.vue')
+  },
+  {
+    path: '/prepareSimulation',
+    name: 'PrepareSimulation',
+    component: () => import('../components/PrepareSimulation.vue')
   },
   {
     path: '/team/:id',

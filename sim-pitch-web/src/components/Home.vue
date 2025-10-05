@@ -3,22 +3,23 @@
     <section class="hero">
       <h1>⚽ SimPitch</h1>
       <p class="subtitle">
-        Symulacja meczów i rund ligowych oparta na modelach <b>Poissona</b> i <b>Gamma</b>.
+        Match and league round simulation based on <b>Poisson</b> and <b>Gamma</b> models.
       </p>
-      <router-link to="/simulation" class="btn-primary">
-        Rozpocznij symulację
+      <router-link to="/prepareSimulation" class="btn-primary">
+        Prepare a simulation
       </router-link>
     </section>
 
     <section class="goal">
-      <h2>🎯 Cel systemu</h2>
+      <h2>🎯 System Goal</h2>
       <ul>
-        <li>Analiza historii drużyn (mecze, bramki zdobyte i stracone)</li>
-        <li>Ocena siły ofensywnej i defensywnej</li>
-        <li>Uwzględnienie losowego charakteru wyników</li>
-        <li>Symulacja rozkładu bramek przy pomocy modeli probabilistycznych</li>
+        <li>Analysis of team history (matches, goals scored and conceded)</li>
+        <li>Assessment of offensive and defensive strength</li>
+        <li>Consideration of the random nature of results</li>
+        <li>Simulation of goal distribution using probabilistic models</li>
       </ul>
     </section>
+
   </main>
 </template>
 

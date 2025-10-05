@@ -1,9 +1,6 @@
 import { defineStore } from "pinia";
-
-type League = {id: string; name: string; countryId: string; max_round: Int16Array; strength: Float32Array;}
-type Country = {id: string; name: string; code: string;}
-type Stadium = {id: string; name: string; capacity: Int32Array}
-type Team = { id: string; name: string; logo_url: string; short_name: string; country: Country; stadium: Stadium; league: League };
+import type {Team} from "../models/team.ts"
+import type {League} from "../models/league.ts"
 type State = { teams: Team[]; leagues: League[]; loading: boolean; error: string|null };
 
 state: (): State => ({

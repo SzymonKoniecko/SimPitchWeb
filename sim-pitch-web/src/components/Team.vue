@@ -13,13 +13,14 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ name: "Team" });
+
 import { onMounted, watch, computed } from "vue";
 import { useSportsDataStore } from "../stores/SportsDataStore";
 import TeamCard from "./TeamCard.vue";
 type Props = {
   id: string; // from /team/:id via props: true
 };
-
 const props = defineProps<Props>();
 
 const store = useSportsDataStore();
