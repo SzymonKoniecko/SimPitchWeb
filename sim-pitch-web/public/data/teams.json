@@ -1,0 +1,487 @@
+{
+	"teams": [
+		{
+			"id": "e1b9c3d7-6f0a-4d2e-9b5c-3a7f8e1d0b6c",
+			"name": "Arka Gdynia",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "9fccd1b3-4505-4a8f-bdc5-6112ff2db483",
+				"name": "Stadion Miejski w Gdyni",
+				"capacity": 15139
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "http://example.com/arka.png",
+			"short_name": "ARK"
+		},
+		{
+			"id": "c0d7f8a1-4b2e-4c9f-8a5d-1e3b6f0c7d9a",
+			"name": "Bruk-Bet Termalica Nieciecza",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "8bad01c0-ce07-40cd-98f0-bc669b1444e3",
+				"name": "Stadion Sportowy BRUK-BET Termalica Nieciecza",
+				"capacity": 2262
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/8/84/KS_Nieciecza_herb.jpg/250px-KS_Nieciecza_herb.jpg",
+			"short_name": "BBT"
+		},
+		{
+			"id": "a2f8c5d9-7b1e-4c3d-8a9f-2e0d7c1b5a6f",
+			"name": "Cracovia",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "ea7b5153-46d5-4f83-bd94-b4f93943c878",
+				"name": "Stadion Cracovii im. Józefa Pilsudskiego (Cracovia Stadium)",
+				"capacity": 15000
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "arka.png",
+			"short_name": "CRA"
+		},
+		{
+			"id": "b0f6c1d9-3e7a-4b2d-8f5c-9a1e0d3b7c4f",
+			"name": "GKS Katowice",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "759cff7e-a2b4-42f6-bb15-8edb4db71651",
+				"name": "Stadion Miejski w Katowicach",
+				"capacity": 15048
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "http://example.com/gks.png",
+			"short_name": "GKS"
+		},
+		{
+			"id": "b7e4d1a3-9c6f-4e0a-8b2d-3f1c5e7a9d8b",
+			"name": "Górnik Zabrze",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "876eda5f-de6f-46b2-ad00-b2fa9e4a03ed",
+				"name": "Arena Zabrze",
+				"capacity": 29444
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/d/d9/Gornik_Zabrze.png/250px-Gornik_Zabrze.png",
+			"short_name": "GOR"
+		},
+		{
+			"id": "e4b7d5c8-9f6a-4d2e-8a3c-1b0f8c0f4d2a",
+			"name": "Jagiellonia Bialystok",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "ef53b848-2858-4a99-bed6-95c1cae73bc8",
+				"name": "Municipal Stadium in Bialystok",
+				"capacity": 22372
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/e/e8/Jagiellonia_Bialystok_Logo_1.png/250px-Jagiellonia_Bialystok_Logo_1.png",
+			"short_name": "JAG"
+		},
+		{
+			"id": "f4c1b7a9-8d0e-4a3f-9c5b-2e7d1f6a0c3b",
+			"name": "Korona Kielce",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "25dfec84-c2f6-40c7-b12d-eea180223684",
+				"name": "Korona Kielce Municipal Stadium",
+				"capacity": 15000
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/2/2b/Stadion_Kielce_przed_meczem_Polska_-_Armenia.jpg/250px-Stadion_Kielce_przed_meczem_Polska_-_Armenia.jpg",
+			"short_name": "KOR"
+		},
+		{
+			"id": "b9f8d3a7-1e6c-4a2b-9f4d-3e0a1c8f7d2b",
+			"name": "Lech Poznan",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "713f1a80-8247-4884-a696-73e89d15ec18",
+				"name": "Stadion Miejski Poznan (Municipal Stadium in Poznan)",
+				"capacity": 42717
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/f/ff/Lech_Poznan_logo.png/250px-Lech_Poznan_logo.png",
+			"short_name": "LEC"
+		},
+		{
+			"id": "f0c3e9a7-8d4b-4f6c-1a2e-7b5d9f0c3a8e",
+			"name": "Lechia Gdansk",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "ae921e45-74dc-405d-9ef9-b52ecc2bffb2",
+				"name": "Stadion Energa Gdansk (Energa Stadium)",
+				"capacity": 41715
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/2/2b/LechiaGdanskBadge2001.jpg/250px-LechiaGdanskBadge2001.jpg",
+			"short_name": "LEH"
+		},
+		{
+			"id": "a6c9f7d1-2b34-4e9c-8f13-0d7a2e5b1c9f",
+			"name": "Legia Warsaw",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "a3e61166-c1ba-48aa-bba9-977093cb0b64",
+				"name": "Marshal Józef Pilsudski Municipal Stadium of Legia Warsaw",
+				"capacity": 31103
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/f/fa/Legia_Warszawa.png/250px-Legia_Warszawa.png",
+			"short_name": "LEG"
+		},
+		{
+			"id": "c5a9e3b1-7f8d-4a0c-9e2b-3d1f6c7a8e0b",
+			"name": "Motor Lublin",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "511b3f49-c153-4b6b-abb5-8b16666da878",
+				"name": "Motor Lublin Arena",
+				"capacity": 15247
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/3/3d/Motor_Lublin_S.A._Oficjalny_Herb.png/250px-Motor_Lublin_S.A._Oficjalny_Herb.png",
+			"short_name": "MOT"
+		},
+		{
+			"id": "a9e2d5f7-1b3c-4e0a-8f6d-7c0b9a1e3d5f",
+			"name": "Piast Gliwice",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "d302fe00-4dfa-400a-a8c1-342fdf3147bd",
+				"name": "Stadion Miejski im. Piotra Wieczorka w Gliwicach",
+				"capacity": 9736
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/f/f5/Stadion_Piasta_Gliwice_05.JPG/250px-Stadion_Piasta_Gliwice_05.JPG",
+			"short_name": "PIA"
+		},
+		{
+			"id": "c3d9f6a2-8b4e-4a7f-9c2e-1d0a5f3b7e8c",
+			"name": "Pogon Szczecin",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "b07ca252-496d-4987-92f2-ca44c2274e72",
+				"name": "Stadion Miejski im. Floriana Krygiera (Municipal Stadium in Szczecin)",
+				"capacity": 20915
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "http://example.com/pogon.png",
+			"short_name": "POG"
+		},
+		{
+			"id": "0bc33659-7471-4fae-945f-f24f60a38ae0",
+			"name": "Puszcza Niepolomice",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "1dddd04d-66c8-4bfd-83ac-19d3a2fd6742",
+				"name": "Stadion Miejski w Niepolomicach",
+				"capacity": 2118
+			},
+			"league": {
+				"id": "db8bb56a-5a6e-4669-b1d2-304384725f66",
+				"name": "Betclic 1 Liga",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 0.75
+			},
+			"logo_url": "http://example.com/puszcza.png",
+			"short_name": "PUN"
+		},
+		{
+			"id": "e8b2d7f3-1a4c-4e9f-8b5d-0c7f1a6e3d9b",
+			"name": "Radomiak Radom",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "09c99225-5454-441c-b260-c283ef71987c",
+				"name": "Radom City Stadium",
+				"capacity": 15000
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/2/2b/Herb_radomiaka_300dpi.png/250px-Herb_radomiaka_300dpi.png",
+			"short_name": "RAD"
+		},
+		{
+			"id": "f1a3c5d7-6e8b-4f1c-8b0d-5e2f3a7c9b1d",
+			"name": "Raków Czestochowa",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "7b54cf6e-0a1d-4f46-a60d-6c0029f2695c",
+				"name": "Raków Stadium in Czestochowa",
+				"capacity": 5000
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/a/af/Rks_rakow_crest_ai.svg/250px-Rks_rakow_crest_ai.svg.png",
+			"short_name": "RAK"
+		},
+		{
+			"id": "4138333e-69dd-41fb-ad30-47bf2b0e4c31",
+			"name": "Slask Wroclaw",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "9b92f4ae-1839-49d4-a588-82a1cd5812d6",
+				"name": "Tarczynski Arena",
+				"capacity": 42771
+			},
+			"league": {
+				"id": "db8bb56a-5a6e-4669-b1d2-304384725f66",
+				"name": "Betclic 1 Liga",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 0.75
+			},
+			"logo_url": "http://example.com/sla.png",
+			"short_name": "SLA"
+		},
+		{
+			"id": "8a46089c-f7aa-4270-9742-21a84ec92460",
+			"name": "Stal Mielec",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "0af2c30c-0bce-4f31-a0e0-598b2fc1d4ad",
+				"name": "Stadion Miejski im. Grzegorza Lato",
+				"capacity": 6864
+			},
+			"league": {
+				"id": "db8bb56a-5a6e-4669-b1d2-304384725f66",
+				"name": "Betclic 1 Liga",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 0.75
+			},
+			"logo_url": "http://example.com/stalmielec.png",
+			"short_name": "STM"
+		},
+		{
+			"id": "d0e7f9b8-3a1c-4f6d-9b5a-7c2e8f0a1d3b",
+			"name": "Widzew Lódz",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "ee7576f4-3f25-4255-8d08-2787d69891b5",
+				"name": "Serce Lodzi - Stadion Widzewa Lódz",
+				"capacity": 18018
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/f/fd/Herb_Widzew_Lódz.png/250px-Herb_Widzew_Lódz.png",
+			"short_name": "WID"
+		},
+		{
+			"id": "d9a7f8b3-2e0c-4d1f-9a5b-6c3e8f7d0a1b",
+			"name": "Wisla Plock",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "d361ffbc-cbd9-42e6-8f91-338b460ed237",
+				"name": "Stadion Wisly Plock im. Kazimierza Górskiego",
+				"capacity": 15004
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/0/0e/Wisla_P%C5%82ock.png",
+			"short_name": "WPL"
+		},
+		{
+			"id": "d7a3e9f0-5c1b-4f8d-9a2e-6b0c7f4d1e8a",
+			"name": "Zaglebie Lubin",
+			"country": {
+				"id": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"name": "Poland",
+				"code": "PL"
+			},
+			"stadium": {
+				"id": "395499db-9bed-4886-9902-4e7d85c82302",
+				"name": "Lubin City Stadium",
+				"capacity": 16500
+			},
+			"league": {
+				"id": "0ea89faa-8211-4b39-ad77-d000cf1d8121",
+				"name": "PKO BP Ekstraklasa",
+				"countryId": "e04fdead-b2c2-4d97-930b-e186fc53a066",
+				"max_round": 34,
+				"strength": 1
+			},
+			"logo_url": "/wikipedia/commons/thumb/e/e5/Staion_Zaglebie_Lubin.jpg/250px-Staion_Zaglebie_Lubin.jpg",
+			"short_name": "ZAG"
+		}
+	]
+}

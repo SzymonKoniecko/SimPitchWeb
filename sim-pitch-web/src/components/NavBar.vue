@@ -1,3 +1,27 @@
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+
+// Reaktywne dane
+const isDark = ref(false);
+
+// Przełączanie motywu i zapis w localStorage
+function toggleTheme() {
+  isDark.value = !isDark.value;
+  const root = document.documentElement;
+  root.classList.toggle("dark", isDark.value);
+  localStorage.setItem("theme", isDark.value ? "dark" : "light");
+}
+
+// Wczytaj preferencję przy starcie
+onMounted(() => {
+  const saved = localStorage.getItem("theme");
+  if (saved === "dark") {
+    document.documentElement.classList.add("dark");
+    isDark.value = true;
+  }
+});
+</script>
+
 <template>
   <header class="navbar">
     <div class="logo">⚽ SimPitch</div>
@@ -11,77 +35,69 @@
 
     <button
       class="theme-toggle"
-      @click="emitToggle"
+      @click="toggleTheme"
       :aria-pressed="isDark"
-      :title="isDark ? 'Dark mode' : 'Light mode'">
+      :title="isDark ? 'Dark mode' : 'Light mode'"
+    >
       <span v-if="isDark">🌙</span>
       <span v-else>🌞</span>
     </button>
   </header>
 </template>
 
-<script setup lang="ts">
-import { defineProps, defineEmits } from "vue";
-
-const props = defineProps<{ isDark: boolean }>();
-const emit = defineEmits<{
-  (e: "toggle-theme"): void
-}>();
-
-const isDark = props.isDark;
-
-const emitToggle = () => {
-  emit("toggle-theme");
-};
-</script>
-
 <style scoped>
 .navbar {
-  width: 100%;
-  height: 70px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
-  background: var(--card);
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-grid);
+  padding: 1rem 2rem;
+  max-width: 80%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
-.logo{
-  font-weight:700;
-  font-size:1.15rem;
-  color: var(--accent);
+.logo {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--color-text-primary);
 }
 
 .nav-links {
   display: flex;
-  gap: 2rem;
   flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
 }
 
-.nav-links a{
-  text-decoration:none;
-  color: var(--text);
-  font-weight:500;
-  padding-bottom:2px;
-  border-bottom:2px solid transparent;
+.nav-links a {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
-.nav-links a:hover{ color: var(--accent); }
-.nav-links a.active{
-  color: var(--accent);
-  border-bottom:2px solid var(--accent);
+.nav-links a.active {
+  color: var(--color-accent-green);
 }
 
-/* przycisk przełącznika */
-.theme-toggle{
+.nav-links a:hover {
+  color: var(--color-hover);
+}
+
+.theme-toggle {
   background: transparent;
-  border: 1px solid var(--border);
-  padding: 0.35rem 0.6rem;
-  border-radius:999px;
-  cursor:pointer;
-  font-size:1.1rem;
-  line-height:1;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.theme-toggle:hover {
+  background-color: var(--color-pastel-green);
 }
 </style>
