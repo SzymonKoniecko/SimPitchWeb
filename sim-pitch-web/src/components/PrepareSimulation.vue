@@ -1,49 +1,3 @@
-<template>
-  <form class="form" @submit.prevent="onSubmit">
-    <div class="field">
-      <label for="seasons">Season years</label>
-      <select id="seasons" multiple v-model="local.season_Years" size="4">
-        <option
-          v-for="opt in seasonOptions"
-          :key="opt"
-          :value="opt"
-        >
-          {{ opt }}
-        </option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label for="league">League ID</label>
-      <input id="league" type="text" v-model="local.league_id" />
-    </div>
-
-    <div class="field">
-      <label for="iterations">Iterations</label>
-      <input
-        id="iterations"
-        type="text"
-        placeholder="e.g. 100, 250, 500"
-        v-model="iterationsCsv"
-      />
-      <small>Comma-separated integers; parsed as Int32Array on submit</small>
-    </div>
-
-    <div class="field">
-      <label for="round">League round ID</label>
-      <input id="round" type="text" v-model="local.league_round_id" />
-    </div>
-
-    <div class="actions">
-      <button type="submit">Run</button>
-      <button type="button" @click="reset">Reset</button>
-    </div>
-
-    <div v-if="statusMessage" class="status">
-      {{ statusMessage }}
-    </div>
-  </form>
-</template>
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
@@ -150,11 +104,80 @@ function reset() {
 }
 </script>
 
+<template>
+  <form class="form" @submit.prevent="onSubmit">
+    <div class="field">
+      <label for="seasons">Season years</label>
+      <select id="seasons" multiple v-model="local.season_Years" size="4">
+        <option v-for="opt in seasonOptions" :key="opt" :value="opt">
+          {{ opt }}
+        </option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="league">League ID</label>
+      <input id="league" type="text" v-model="local.league_id" />
+    </div>
+
+    <div class="field">
+      <label for="iterations">Iterations</label>
+      <input
+        id="iterations"
+        type="text"
+        placeholder="e.g. 100, 250, 500"
+        v-model="iterationsCsv"
+      />
+      <small>Comma-separated integers; parsed as Int32Array on submit</small>
+    </div>
+
+    <div class="field">
+      <label for="round">League round ID</label>
+      <input id="round" type="text" v-model="local.league_round_id" />
+    </div>
+
+    <div class="actions">
+      <button type="submit">Run</button>
+      <button type="button" @click="reset">Reset</button>
+    </div>
+
+    <div v-if="statusMessage" class="status">
+      {{ statusMessage }}
+    </div>
+  </form>
+</template>
+
 <style scoped>
-.form { display: grid; gap: 1rem; max-width: 28rem; }
-.field { display: grid; gap: 0.375rem; }
-.actions { display: flex; gap: 0.5rem; }
-select[multiple] { min-height: 7rem; }
-small { color: #666; }
-.status { margin-top: 0.5rem; font-size: 0.875rem; color: #333; }
+main, section {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 480px;
+  margin: 2rem auto;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-grid);
+  border-radius: 10px;
+  padding: 2rem;
+}
+
+.field label {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.status {
+  margin-top: 1rem;
+  font-weight: 500;
+  color: var(--color-accent-green);
+}
 </style>
