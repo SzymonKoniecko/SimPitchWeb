@@ -4,14 +4,14 @@
       <RouterLink class="team-card__name" :to="{ name: 'Team', params: { id } }">
       </RouterLink>
       <section v-if="variant === 'mini'" class="team-card__mini">
-        <p><strong>{{ team?.short_name }}</strong></p>
+        <p><strong>{{ team?.shortName }}</strong></p>
         <p><strong>Country:</strong> {{ team?.country?.code ?? 'N/A' }}</p>
       </section>
     </header>
 
     <section v-if="variant === 'large'" class="team-card__body">
       <p><strong>Team:</strong> {{ team?.name }}</p>
-      <p><strong></strong> ({{ team?.short_name }})</p>
+      <p><strong></strong> ({{ team?.shortName }})</p>
       <p><strong>League:</strong> {{ team?.league?.name ?? 'N/A' }}</p>
       <!-- Slot for extra details when using the large variant -->
       <slot />

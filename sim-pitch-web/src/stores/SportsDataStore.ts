@@ -1,63 +1,41 @@
 import { defineStore } from "pinia";
-import type {Team} from "../models/team.ts"
-import type {League} from "../models/league.ts"
-type State = { teams: Team[]; leagues: League[]; loading: boolean; error: string|null };
+import { ref } from "vue";
+import type { League } from "../models/league";
+import type { Team } from "../models/team";
+import { fetchData } from "../api/fetchData";
+import { sportsDataAPI } from "../api/sportsdata.api";
 
-state: (): State => ({
-  leagues: [],
-  teams: [],
-  loading: false,
-  error: null
-})
+export const useSportsDataStore = defineStore("SportsData", () => {
+  const loading = ref(false);
+  const error = ref<string | null>(null);
+  const leagues = ref<League[]>([]);
+  const teams = ref<Team[]>([]);
 
-export const useSportsDataStore = defineStore("SportsData", {
-  state: (): State => ({
-    leagues: [],
-    teams: [],
-    loading: false,
-    error: null,
-  }),
-  actions: {
-    async loadLeagues(): Promise<void> {
-      this.loading = true;
-      this.error = null;
-      try {
-        const res = await fetch("/data/leagues.json");
-        if (!res.ok) {
-          throw new Error(`Failed to fetch leagues: ${res.status} ${res.statusText}`);
-        }
-        const data = (await res.json()) as League[];
-        this.leagues = data;
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Unknown error while loading leagues";
-        this.error = message;
-      } finally {
-        this.loading = false;
-      }
-    },
-    async loadTeams(): Promise<void> {
-      this.loading = true;
-      this.error = null;
-      try {
-        const res = await fetch("/data/teams.json");
-        if (!res.ok) {
-          throw new Error(`Failed to fetch teams: ${res.status} ${res.statusText}`);
-        }
-        function isTeamArray(v: unknown): v is Team[] {
-            return Array.isArray(v) && v.every(x => x && typeof x.id === "string");
-        }
+  async function loadLeagues() {
+    loading.value = true;
+    error.value = null;
+    const result = await fetchData<League[]>(() => sportsDataAPI.getLeagues());
+    leagues.value = result.data ?? [];
+    error.value = result.error;
+    loading.value = result.loading;
+  }
 
-        const json = await res.json();
-        this.teams = isTeamArray(json) ? json : isTeamArray(json?.teams) ? json.teams : [];
+  async function loadTeams() {
+    loading.value = true;
+    error.value = null;
+    const result = await fetchData<Team[]>(() => sportsDataAPI.getTeams());
+    teams.value = result.data ?? [];
+    console.log(teams.value)
+    error.value = result.error;
+    loading.value = result.loading;
+  }
 
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Unknown error while loading teams";
-        this.error = message;
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
+  return {
+    loading,
+    error,
+    leagues,
+    teams,
+    loadLeagues,
+    loadTeams,
+  };
 });
