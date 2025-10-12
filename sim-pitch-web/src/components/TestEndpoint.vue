@@ -1,22 +1,22 @@
 <template>
   <div class="test-container">
-    <h2>🔧 Test połączenia</h2>
+    <h2>🔧 Test connection</h2>
     
     <div class="status-box" :class="statusClass">
       <span>{{ statusText }}</span>
     </div>
 
     <button @click="testConnection" :disabled="loading">
-      {{ loading ? 'Testowanie...' : 'Testuj połączenie' }}
+      {{ loading ? 'Testing...' : 'Test the connection' }}
     </button>
 
     <div v-if="response" class="response">
-      <h3>Odpowiedź:</h3>
+      <h3>Response:</h3>
       <pre>{{ JSON.stringify(response, null, 2) }}</pre>
     </div>
 
     <div v-if="error" class="error">
-      <h3>Błąd:</h3>
+      <h3>Error:</h3>
       <p>{{ error }}</p>
     </div>
   </div>
@@ -24,7 +24,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { engineAPI } from '../api/EngineService/engine.api';
+import { fetchData } from '../api/fetchData';
+import { sportsDataAPI } from '../api/sportsdata.api';
+import type { Team } from '../models/team';
 
 const loading = ref(false);
 const response = ref<any>(null);
@@ -39,9 +41,9 @@ const statusClass = computed(() => ({
 
 const statusText = computed(() => {
   switch (status.value) {
-    case 'success': return '✅ Połączenie działa';
-    case 'error': return '❌ Błąd połączenia';
-    default: return '⏸️ Oczekiwanie na test';
+    case 'success': return '✅ Connection works';
+    case 'error': return '❌ Error with connection';
+    default: return '⏸️ Waiting for a test';
   }
 });
 
@@ -51,19 +53,15 @@ const testConnection = async () => {
   error.value = null;
   status.value = 'idle';
 
-  try {
-    const data = await engineAPI.getSimulation("8a4429c2-e5db-4f5c-b97a-fd2becd8aafe");
-    
-    response.value = data;
-    status.value = 'success';
-    console.log('Otrzymano dane:', data);
-  } catch (err: any) {
-    error.value = err.response?.data?.message || err.message || 'Nieznany błąd';
-    status.value = 'error';
-    console.error('Engine connection error:', err);
-  } finally {
-    loading.value = false;
-  }
+  const result = await fetchData<Team[]>(() =>
+      //sportsDataAPI.getLeagueRounds({ seasonYear: "2025_2026", leagueId: "027C6CEB-F38E-4383-8807-B4BD9DF1C42F"})
+      sportsDataAPI.getSeasonYears()
+
+  );
+
+  response.value = result.data;
+  error.value = result.error;
+  loading.value = result.loading;
 };
 </script>
 

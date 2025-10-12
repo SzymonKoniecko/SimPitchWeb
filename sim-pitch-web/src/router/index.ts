@@ -14,8 +14,8 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/test',
-    name: 'TestEngine',
-    component: () => import('../components/TestEngine.vue')
+    name: 'TestEndpoint',
+    component: () => import('../components/TestEndpoint.vue')
   },
   {
     path: '/prepareSimulation',

@@ -65,7 +65,6 @@ main, section {
 
 
 <script lang="ts">
-import TestEngine from './TestEngine.vue';
 
 export default {
   name: "Home"

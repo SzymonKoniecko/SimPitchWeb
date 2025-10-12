@@ -24,7 +24,10 @@ onMounted(() => {
 
 <template>
   <header class="navbar">
-    <div class="logo">⚽ SimPitch</div>
+    <router-link to="/" exact-active-class="active">
+      <div class="logo">⚽ SimPitch</div>
+    </router-link>
+    
 
     <nav class="nav-links">
       <router-link to="/" exact-active-class="active">Home</router-link>

@@ -1,11 +1,14 @@
 <template>
   <section class="team">
     <h1>Team {{ id }}</h1>
-    <p v-if="loading">Loading team...</p>
-    <p v-else-if="error" class="error">{{ error }}</p>
-    <div v-else>
+    <div v-if="loading">⏳ Loading...</div>
+    <div v-else-if="error">❌ {{ error }}</div>
+    <div v-else-if="team">
       <p><strong>Name:</strong> {{ team?.name ?? 'Unknown' }}</p>
       <p><strong>League:</strong> {{ team?.league?.name ?? 'N/A' }}</p>
+    </div>
+    <div v-else>
+      ⚠️ Team not found.
     </div>
     <TeamCard :id="props.id" variant="mini"/>
     <TeamCard :id="props.id" variant="large"/>
@@ -18,21 +21,25 @@ defineOptions({ name: "Team" });
 import { onMounted, watch, computed } from "vue";
 import { useSportsDataStore } from "../stores/SportsDataStore";
 import TeamCard from "./TeamCard.vue";
+
 type Props = {
-  id: string; // from /team/:id via props: true
+  id: string; // /team/:id (via props: true)
 };
 const props = defineProps<Props>();
 
 const store = useSportsDataStore();
+
 const loading = computed(() => store.loading);
 const error = computed(() => store.error);
-const team = computed(() => store.teams.find((t: { id: string; }) => t.id === props.id));
+const leagues = computed(() => store.leagues);
+const teams = computed(() => store.teams);
+const team = computed(() => teams.value?.find(t => t.id === props.id));
 
 const ensureData = async () => {
-  if (store.leagues.length === 0) {
+  if (!leagues.value || leagues.value.length === 0) {
     await store.loadLeagues();
   }
-  if (store.teams.length === 0) {
+  if (!teams.value || teams.value.length === 0) {
     await store.loadTeams();
   }
 };
@@ -45,7 +52,8 @@ watch(
   () => props.id,
   async () => {
     await ensureData();
-  }
+  },
+  { immediate: false }
 );
 </script>
 
