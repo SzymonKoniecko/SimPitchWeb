@@ -13,6 +13,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../components/About.vue')
   },
   {
+    path: '/test',
+    name: 'TestEngine',
+    component: () => import('../components/TestEngine.vue')
+  },
+  {
     path: '/prepareSimulation',
     name: 'PrepareSimulation',
     component: () => import('../components/PrepareSimulation.vue')
