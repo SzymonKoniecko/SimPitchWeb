@@ -6,3 +6,5 @@ export const SeasonYear = {
 } as const;
 
 export type SeasonYear = typeof SeasonYear[keyof typeof SeasonYear];
+
+export const seasonYearsOptions: SeasonYear[] = Object.values(SeasonYear);

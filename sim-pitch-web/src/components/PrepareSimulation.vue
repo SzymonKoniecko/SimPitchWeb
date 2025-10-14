@@ -1,151 +1,143 @@
+<template>
+  <main>
+    <section>
+    <div v-if="simulationId">🧩 Simulation ID: {{ simulationId }}</div>
+    <div v-if="loading">⏳ Loading...</div>
+    <div v-else-if="error">❌ {{ error }}</div>
+    <div v-if="loadingSimulation">⏳ Working simulation, wait..</div>
+    <div v-else-if="errorSimulation">❌ Error in simulation: {{ error }}</div>
+      <form class="form" @submit.prevent="submitForm">
+        <div class="field">
+          <label for="seasonYears">Choose seasons</label>
+          <select id="seasonYears" v-model="form.seasonYears" multiple>
+            <option 
+              v-for="season in seasonYearsOptions"
+              :key="season"
+              :value="season"
+            >
+              {{ season }}
+            </option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="leagueId">Choose seasons</label>
+          <select id="leagueId" v-model="form.league_id">
+            <option 
+              v-for="league in leagues"
+              :key="league.name"
+              :value="league.id"
+            >
+              {{ league.name }}
+            </option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="iterations">Number of iterations</label>
+          <input
+            id="iterations"
+            v-model.number="form.iterations"
+            type="number"
+            min="1"
+            required
+          />
+        </div>
+        <div class="field">
+          <label for="leagueRoundId">Optional: With specified round of league</label>
+          <select id="leagueRoundId" v-model="form.league_round_id">
+            <option 
+              v-for="leagueRounds in leagueRounds"
+              :key="leagueRounds.round"
+              :value="leagueRounds.id"
+            >
+              {{ leagueRounds.round }}
+            </option>
+          </select>
+        </div>
+        <div class="actions">
+          <button type="submit">Simulate</button>
+          <button type="button" @click="resetForm">Reset</button>
+        </div>
+        <div v-if="status" class="status">
+          {{ status }}
+        </div>
+      </form>
+    </section>
+  </main>
+</template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { SeasonYear as SeasonYearConst } from '../models/seasonYear'
-import type { SeasonYear as SeasonYearType } from '../models/seasonYear'
-import type { formSimulationProps } from '../models/formSimulationProps'
-//import { submitSimulation } from '../api/SimulationService/simulationsService.ts'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { SeasonYear, seasonYearsOptions } from '../models/seasonYear'
+import { useSportsDataStore } from '../stores/SportsDataStore'
+import { fetchData } from '../api/fetchData';
+import { engineAPI } from '../api/engine.api';
+defineOptions({ name: "PrepareSimulation"})
 
-defineOptions({ name: 'PrepareSimulation' })
+const sportsDataStore = useSportsDataStore();
+const loadingSimulation = ref(false);
+const errorSimulation = ref<string | null>(null);
+const loading = computed(() => sportsDataStore.loading);
+const error = computed(() => sportsDataStore.error);
+const leagues = computed(() => sportsDataStore.leagues);
+const leagueRounds = computed(() => sportsDataStore.leagueRounds);
+const simulationId = ref('')
 
-const props = defineProps<{
-  modelValue?: formSimulationProps
-  seasonOptions?: SeasonYearType[]
-}>()
-
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: formSimulationProps): void
-  (e: 'submit', value: formSimulationProps): void
-}>()
-
-type LocalForm = Omit<formSimulationProps, 'iterations'> & { iterations: number[] }
-
-const local = reactive<LocalForm>({
-  season_Years: [...(props.modelValue?.season_Years ?? [SeasonYearConst.S2023_2024])],
-  league_id: props.modelValue?.league_id ?? '',
-  iterations: Array.from(props.modelValue?.iterations ?? [100]),
-  league_round_id: props.modelValue?.league_round_id ?? ''
-})
-const router = useRouter()
-
-const statusMessage = ref('')
-
-const seasonOptions = computed<SeasonYearType[]>(() =>
-  props.seasonOptions?.slice() ?? (Object.values(SeasonYearConst) as SeasonYearType[])
-)
-
-const iterationsCsv = computed<string>({
-  get() {
-    return local.iterations.join(', ')
-  },
-  set(csv: string) {
-    const nums = csv
-      .split(',')
-      .map(s => s.trim())
-      .filter(Boolean)
-      .map(n => Number.parseInt(n, 10))
-      .filter(Number.isFinite)
-    local.iterations = nums
-  }
+const form = reactive({
+  seasonYears: [] as SeasonYear | [],
+  league_id: '',
+  iterations: 1,
+  league_round_id: ''
 })
 
-watch(
-  () => props.modelValue,
-  (nv) => {
-    if (!nv) return
-    local.season_Years = [...(nv.season_Years ?? [])]
-    local.league_id = nv.league_id ?? ''
-    local.iterations = Array.from(nv.iterations ?? [])
-    local.league_round_id = nv.league_round_id ?? ''
-  },
-  { deep: true, immediate: true }
-)
 
-async function onSubmit() {
-  const out: formSimulationProps = {
-    season_Years: [...local.season_Years],
-    league_id: local.league_id,
-    iterations: new Int32Array(local.iterations),
-    league_round_id: local.league_round_id
+const ensureData = async () => {
+  if (!leagues.value || leagues.value.length === 0) {
+    await sportsDataStore.loadLeagues();
   }
+  if (
+    (!leagueRounds.value || leagueRounds.value.length === 0) && 
+    (form.league_id != '' && form.seasonYears.length === 0)
+  ) {
+    await sportsDataStore.loadLeagueRounds([], form.league_id);
+  }
+};
 
-  emit('update:modelValue', out)
-  emit('submit', out)
+onMounted(async () => {
+  await ensureData();
+});
 
-    try {
-        statusMessage.value = 'Sending...'
-        //const simulation_Id_response = await submitSimulation(out)
-        const simulation_Id_response = "3d6f0a04-6f5b-4b6f-8a4f-9d5b8b9d6c01"
-        statusMessage.value = 'Simulation submitted successfully.'
-        await router.push({ 
-        name: 'SimulationItemView', 
-        params: { id: simulation_Id_response } 
-        })   
-    } catch (err) {
-        console.error(err)
-        statusMessage.value = 'Failed to submit simulation.'
+const status = ref('')
+
+async function submitForm() {
+  loadingSimulation.value = true;
+  errorSimulation.value = null;
+  status.value = '';
+  simulationId.value = '';
+
+  try {
+    const result = await fetchData<any>(() => engineAPI.createSimulation(form));
+
+    if (result.error) {
+      errorSimulation.value = result.error;
+    } else {
+      simulationId.value = result.data ?? '';
+      status.value = 'Simulation has been sent!';
     }
+  } catch (err: any) {
+    errorSimulation.value = err.message || 'Unexpected error';
+  } finally {
+    loadingSimulation.value = false;
+  }
 }
 
-function reset() {
-  const src = props.modelValue
-  if (src) {
-    local.season_Years = [...(src.season_Years ?? [])]
-    local.league_id = src.league_id ?? ''
-    local.iterations = Array.from(src.iterations ?? [])
-    local.league_round_id = src.league_round_id ?? ''
-  } else {
-    local.season_Years = [SeasonYearConst.S2023_2024]
-    local.league_id = ''
-    local.iterations = [100]
-    local.league_round_id = ''
-  }
+function resetForm() {
+  form.seasonYears = []
+  form.league_id = ''
+  form.iterations = 1
+  form.league_round_id = ''
+  status.value = ''
 }
 </script>
-
-<template>
-  <form class="form" @submit.prevent="onSubmit">
-    <div class="field">
-      <label for="seasons">Season years</label>
-      <select id="seasons" multiple v-model="local.season_Years" size="4">
-        <option v-for="opt in seasonOptions" :key="opt" :value="opt">
-          {{ opt }}
-        </option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label for="league">League ID</label>
-      <input id="league" type="text" v-model="local.league_id" />
-    </div>
-
-    <div class="field">
-      <label for="iterations">Iterations</label>
-      <input
-        id="iterations"
-        type="text"
-        placeholder="e.g. 100, 250, 500"
-        v-model="iterationsCsv"
-      />
-      <small>Comma-separated integers; parsed as Int32Array on submit</small>
-    </div>
-
-    <div class="field">
-      <label for="round">League round ID</label>
-      <input id="round" type="text" v-model="local.league_round_id" />
-    </div>
-
-    <div class="actions">
-      <button type="submit">Run</button>
-      <button type="button" @click="reset">Reset</button>
-    </div>
-
-    <div v-if="statusMessage" class="status">
-      {{ statusMessage }}
-    </div>
-  </form>
-</template>
 
 <style scoped>
 main, section {
@@ -163,18 +155,15 @@ main, section {
   border-radius: 10px;
   padding: 2rem;
 }
-
 .field label {
   font-weight: 600;
   color: var(--color-text-primary);
 }
-
 .actions {
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
 }
-
 .status {
   margin-top: 1rem;
   font-weight: 500;

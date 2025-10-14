@@ -46,12 +46,12 @@ class SportsDataAPI {
   }
 
   async getLeagueRounds(params: {
-    seasonYear: string;
+    seasonYears: string[];
     leagueId: string;
     leagueRoundId?: string;
   }){
-    const { seasonYear, leagueId, leagueRoundId } = params;
-    const url = `${BASE}/LeagueRound/seasons/${encodeURIComponent(seasonYear.replace('/', '_'))}/leagues/${encodeURIComponent(leagueId)}/rounds`;
+    const { seasonYears, leagueId, leagueRoundId } = params;
+    const url = `${BASE}/LeagueRound/seasons/${encodeURIComponent(seasonYears.forEach(x => x.replace('/', '_')))}/leagues/${encodeURIComponent(leagueId)}/rounds`;
 
     const { data } = await apiClient.get(url, {
       params: leagueRoundId ? { leagueRoundId } : undefined,
