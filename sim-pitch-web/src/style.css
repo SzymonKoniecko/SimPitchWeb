@@ -83,3 +83,30 @@ button {
 button:hover {
   background-color: var(--color-hover);
 }
+
+.endpoint-error {
+  --_bg: #fee;           /* light red background */ 
+  --_border: #f5a3a3;    /* soft red border */
+  --_text: #7a0000;      /* dark red text for contrast */
+  background-color: var(--_bg);
+  border: 1px solid var(--_border);
+  color: var(--_text);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-block: 0.75rem;
+}
+
+[role="alert"] {
+  background-color: #fff4f4;
+  border: 1px solid #f3b1b1;
+  color: #7a0000;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-block: 0.75rem;
+}
+
+.endpoint-error::before,
+[role="alert"]::before {
+  content: "⚠️";
+  margin-right: 0.5rem;
+}

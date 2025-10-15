@@ -26,7 +26,7 @@
 import { ref, computed } from 'vue';
 import { fetchData } from '../api/fetchData';
 import { sportsDataAPI } from '../api/sportsdata.api';
-import type { Team } from '../models/team';
+import type { leagueRound } from '../models/leagueRound';
 
 const loading = ref(false);
 const response = ref<any>(null);
@@ -53,12 +53,12 @@ const testConnection = async () => {
   error.value = null;
   status.value = 'idle';
 
-  const result = await fetchData<Team[]>(() =>
-      //sportsDataAPI.getLeagueRounds({ seasonYear: "2025_2026", leagueId: "027C6CEB-F38E-4383-8807-B4BD9DF1C42F"})
-      sportsDataAPI.getSeasonYears()
+  const result = await fetchData<leagueRound[]>(() =>
+      sportsDataAPI.getLeagueRounds({ seasonYear: "2025_2026", leagueId: "027C6CEB-F38E-4383-8807-B4BD9DF1C42F"})
+      //sportsDataAPI.getSeasonYears()
 
   );
-
+  console.log(result.data)
   response.value = result.data;
   error.value = result.error;
   loading.value = result.loading;

@@ -31,10 +31,10 @@ export const useSportsDataStore = defineStore("SportsData", () => {
     loading.value = result.loading;
   }
 
-  async function loadLeagueRounds(seasonYears: string[], leagueId: string, leagueRoundId?: string) {
+  async function loadLeagueRounds(seasonYear: string, leagueId: string, leagueRoundId?: string) {
     loading.value = true;
     error.value = null;
-    const result = await fetchData<leagueRound[]>(() => sportsDataAPI.getLeagueRounds({seasonYears, leagueId, leagueRoundId}));
+    const result = await fetchData<leagueRound[]>(() => sportsDataAPI.getLeagueRounds({seasonYear, leagueId, leagueRoundId}));
     leagueRounds.value = result.data ?? [];
     error.value = result.error;
     loading.value = result.loading;
