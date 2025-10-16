@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from "vue";
 import { RouterLink } from "vue-router";
-import { useSportsDataStore } from "../stores/SportsDataStore";
+import { useSportsDataStore } from "../../stores/SportsDataStore";
 
 type Props = {
   id: string;

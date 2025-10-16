@@ -3,7 +3,7 @@
 
 </template>
 <script lang="ts" setup>
-defineOptions({ name: "SimulationItemView" });
+defineOptions({ name: "SimulationItem" });
 
 type Props = { id: string };
 const props = defineProps<Props>();

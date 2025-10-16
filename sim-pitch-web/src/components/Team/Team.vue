@@ -19,7 +19,7 @@
 defineOptions({ name: "Team" });
 
 import { onMounted, watch, computed } from "vue";
-import { useSportsDataStore } from "../stores/SportsDataStore";
+import { useSportsDataStore } from "../../stores/SportsDataStore";
 import TeamCard from "./TeamCard.vue";
 
 type Props = {

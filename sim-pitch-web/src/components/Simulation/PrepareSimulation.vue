@@ -78,12 +78,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { SeasonYear, seasonYearsOptions } from '../models/seasonYear'
-import { useSportsDataStore } from '../stores/SportsDataStore'
-import { fetchData } from '../api/fetchData'
-import { engineAPI } from '../api/engine.api'
-import ErrorEndpoint from './ErrorEndpoint.vue'
-import type { formSimulationProps } from '../models/formSimulationProps'
+import { SeasonYear, seasonYearsOptions } from '../../models/seasonYear'
+import { useSportsDataStore } from '../../stores/SportsDataStore'
+import { fetchData } from '../../api/fetchData'
+import { engineAPI } from '../../api/engine.api'
+import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
+import type { formSimulationProps } from '../../models/formSimulationProps'
 
 defineOptions({ name: "PrepareSimulation"})
 
@@ -124,7 +124,7 @@ async function submitForm() {
     SeasonYears: form.seasonYears,
     LeagueId: form.league_id,
     Iterations: form.iterations,
-    LeagueRoundId: form.league_round_id ?? null
+    LeagueRoundId: form.league_round_id ?? ''
   }
   try {
     const result = await fetchData<any>(() => engineAPI.createSimulation(payload))
@@ -145,7 +145,7 @@ function resetForm() {
   form.seasonYears = []
   form.league_id = ''
   form.iterations = 1
-  form.league_round_id = ''
+  form.league_round_id = null
   status.value = ''
   errorSimulation.value = null
 }
