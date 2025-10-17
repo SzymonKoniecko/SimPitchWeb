@@ -68,6 +68,11 @@
           <button type="button" @click="resetForm">Reset</button>
         </div>
 
+        <div v-if="simulationId">
+          <router-link :to="{ name: 'SimulationItem', params: { id: simulationId }}" class="btn-primary">
+            Check the simulation results
+          </router-link>
+        </div>
         <div v-if="status" class="status">
           {{ status }}
         </div>
@@ -83,7 +88,7 @@ import { useSportsDataStore } from '../../stores/SportsDataStore'
 import { fetchData } from '../../api/fetchData'
 import { engineAPI } from '../../api/engine.api'
 import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
-import type { formSimulationProps } from '../../models/formSimulationProps'
+import type { simulationParams } from '../../models/simulationParams'
 
 defineOptions({ name: "PrepareSimulation"})
 
@@ -120,11 +125,11 @@ async function submitForm() {
   errorSimulation.value = null
   status.value = ''
   simulationId.value = ''
-  const payload: formSimulationProps = {
+  const payload: simulationParams = {
     SeasonYears: form.seasonYears,
     LeagueId: form.league_id,
     Iterations: form.iterations,
-    LeagueRoundId: form.league_round_id ?? ''
+    LeagueRoundId: form.league_round_id ?? undefined
   }
   try {
     const result = await fetchData<any>(() => engineAPI.createSimulation(payload))

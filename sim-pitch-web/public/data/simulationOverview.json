@@ -1,0 +1,32 @@
+[
+  {
+    "id": "4bff8dce-f385-4af8-be76-67c373f8584f",
+    "title": "Title: 2024/2025 -- 4",
+    "createdDate": "2025-10-17T13:01:38",
+    "simulationParams": {
+      "seasonYears": [
+        "2024/2025",
+        "2022/2023",
+        "2025/2026"
+      ],
+      "leagueId": "027c6ceb-f38e-4383-8807-b4bd9df1c42f",
+      "iterations": 4,
+      "leagueRoundId": "00000000-0000-0000-0000-000000000000"
+    }
+  },
+  {
+    "id": "21d280ea-253d-4d1b-ae30-f9059cf21a8c",
+    "title": "Title: 2024/2025 -- 1",
+    "createdDate": "2025-10-17T12:54:18",
+    "simulationParams": {
+      "seasonYears": [
+        "2024/2025",
+        "2022/2023",
+        "2025/2026"
+      ],
+      "leagueId": "027c6ceb-f38e-4383-8807-b4bd9df1c42f",
+      "iterations": 1,
+      "leagueRoundId": "00000000-0000-0000-0000-000000000000"
+    }
+  }
+]
