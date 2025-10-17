@@ -114,7 +114,7 @@ watch(() => props.id, loadSimulation)
       </details>
 
       <footer style="margin-top: 1rem;">
-        <router-link to="/simulations" role="button" class="secondary">
+        <router-link to="/simulation" role="button" class="secondary">
           ← Back to list
         </router-link>
       </footer>
