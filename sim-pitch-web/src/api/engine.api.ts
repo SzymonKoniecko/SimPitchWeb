@@ -28,6 +28,10 @@ apiClient.interceptors.response.use(
 );
 
 class EngineAPI {
+  async getSimulations() {
+    const { data } = await apiClient.get(BASE+ `/simulation`);
+    return data;
+  }
   
   async getSimulation(id: string) {
     const { data } = await apiClient.get(BASE+ `/simulation/${id}`);

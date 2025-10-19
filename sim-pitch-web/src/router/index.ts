@@ -5,12 +5,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('../components/Home.vue') // lazy load
+    component: () => import('../components/Main/Home.vue')
   },
   {
     path: '/about',
     name: 'About',
-    component: () => import('../components/About.vue')
+    component: () => import('../components/Main/About.vue')
   },
   {
     path: '/test',
@@ -20,25 +20,30 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/prepareSimulation',
     name: 'PrepareSimulation',
-    component: () => import('../components/PrepareSimulation.vue')
+    component: () => import('../components/Simulation/PrepareSimulation.vue')
+  },
+  {
+    path: '/simulation',
+    name: 'SimulationList',
+    component: () => import('../components/Simulation/SimulationList.vue')
   },
   {
     path: '/simulation/:id',
-    name: 'SimulationItemView',
-    component: () => import('../components/SimulationItemView.vue'),
+    name: 'SimulationItem',
+    component: () => import('../components/Simulation/SimulationItem.vue'),
     props: true
   },
   {
     path: '/team/:id',
     name: 'Team',
-    component: () => import('../components/Team.vue'),
+    component: () => import('../components/Team/Team.vue'),
     props: true
   },
   // catch-all 404
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: () => import('../components/NotFound.vue')
+    component: () => import('../components/Main/NotFound.vue')
   }
 ]
 

@@ -1,0 +1,94 @@
+{
+	"id": "4bff8dce-f385-4af8-be76-67c373f8584f",
+	"winnersSummary": "1st JAG (30%) 2nd LEG (20%) 3rd ZAG (10%)",
+	"completedIterations": 4,
+	"simulationParams": null,
+	"iterationPreviews": [
+		{
+			"scoreboardId": "7924870c-8a4b-445c-9904-27b4fca2e318",
+			"iterationIndex": 2,
+			"teamId": "e4b7d5c8-9f6a-4d2e-8a3c-1b0f8c0f4d2a",
+			"points": 11,
+			"rank": 1
+		},
+		{
+			"scoreboardId": "1f56a0e1-1d72-4cea-af5b-608c5468e77c",
+			"iterationIndex": 3,
+			"teamId": "e4b7d5c8-9f6a-4d2e-8a3c-1b0f8c0f4d2a",
+			"points": 11,
+			"rank": 1
+		},
+		{
+			"scoreboardId": "d523f107-a567-4db6-8c01-6cdfb0694943",
+			"iterationIndex": 4,
+			"teamId": "e4b7d5c8-9f6a-4d2e-8a3c-1b0f8c0f4d2a",
+			"points": 11,
+			"rank": 1
+		},
+		{
+			"scoreboardId": "61c573b6-9b00-4e49-9f38-86ce2976ed4e",
+			"iterationIndex": 1,
+			"teamId": "e4b7d5c8-9f6a-4d2e-8a3c-1b0f8c0f4d2a",
+			"points": 11,
+			"rank": 1
+		},
+		{
+			"scoreboardId": "7924870c-8a4b-445c-9904-27b4fca2e318",
+			"iterationIndex": 2,
+			"teamId": "b9f8d3a7-1e6c-4a2b-9f4d-3e0a1c8f7d2b",
+			"points": 11,
+			"rank": 2
+		},
+		{
+			"scoreboardId": "1f56a0e1-1d72-4cea-af5b-608c5468e77c",
+			"iterationIndex": 3,
+			"teamId": "b9f8d3a7-1e6c-4a2b-9f4d-3e0a1c8f7d2b",
+			"points": 11,
+			"rank": 2
+		},
+		{
+			"scoreboardId": "d523f107-a567-4db6-8c01-6cdfb0694943",
+			"iterationIndex": 4,
+			"teamId": "b9f8d3a7-1e6c-4a2b-9f4d-3e0a1c8f7d2b",
+			"points": 11,
+			"rank": 2
+		},
+		{
+			"scoreboardId": "61c573b6-9b00-4e49-9f38-86ce2976ed4e",
+			"iterationIndex": 1,
+			"teamId": "e8b2d7f3-1a4c-4e9f-8b5d-0c7f1a6e3d9b",
+			"points": 11,
+			"rank": 2
+		},
+		{
+			"scoreboardId": "7924870c-8a4b-445c-9904-27b4fca2e318",
+			"iterationIndex": 2,
+			"teamId": "e8b2d7f3-1a4c-4e9f-8b5d-0c7f1a6e3d9b",
+			"points": 11,
+			"rank": 3
+		},
+		{
+			"scoreboardId": "1f56a0e1-1d72-4cea-af5b-608c5468e77c",
+			"iterationIndex": 3,
+			"teamId": "e8b2d7f3-1a4c-4e9f-8b5d-0c7f1a6e3d9b",
+			"points": 11,
+			"rank": 3
+		},
+		{
+			"scoreboardId": "d523f107-a567-4db6-8c01-6cdfb0694943",
+			"iterationIndex": 4,
+			"teamId": "e8b2d7f3-1a4c-4e9f-8b5d-0c7f1a6e3d9b",
+			"points": 11,
+			"rank": 3
+		},
+		{
+			"scoreboardId": "61c573b6-9b00-4e49-9f38-86ce2976ed4e",
+			"iterationIndex": 1,
+			"teamId": "b9f8d3a7-1e6c-4a2b-9f4d-3e0a1c8f7d2b",
+			"points": 11,
+			"rank": 3
+		}
+	],
+	"simulatedMatches": 13,
+	"priorLeagueStrength": 0.49074075
+}
