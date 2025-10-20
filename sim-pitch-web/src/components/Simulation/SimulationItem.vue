@@ -32,6 +32,7 @@ const loadSimulation = async () => {
 }
 
 const getTeamName = (id: string) => teams.value.find(t => t.id === id)?.name ?? id
+const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name ?? id
 
 const groupedPreviews = computed(() => {
   const previews = state.value.data?.iterationPreviews ?? []
@@ -68,6 +69,14 @@ watch(() => props.id, loadSimulation)
 
     <section v-else-if="state.data" class="container-content">
       <h2>Summary</h2>
+      <details close class="details">
+        <summary><strong>[-> Simulation Parameters <-]</strong></summary>
+        <ul>
+          <li><strong>League:</strong> {{ getLeagueName(state.data.simulationParams.leagueId) }}</li>
+          <li><strong>Iterations:</strong> {{ state.data.simulationParams.iterations }}</li>
+          <li><strong>Seasons:</strong> {{ state.data.simulationParams.seasonYears.join(', ') }}</li>
+        </ul>
+      </details> 
       <p><strong>Winners:</strong> {{ state.data.winnersSummary }}</p>
       <p><strong>Completed iterations:</strong> {{ state.data.completedIterations }}</p>
       <p><strong>Simulated matches:</strong> {{ state.data.simulatedMatches }}</p>
@@ -135,5 +144,9 @@ tr:hover {
 }
 button{
   float: right;
+}
+.details{
+  float: right;
+  font-size: 125%;
 }
 </style>
