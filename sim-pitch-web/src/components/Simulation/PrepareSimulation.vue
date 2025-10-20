@@ -1,10 +1,91 @@
+
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted } from 'vue'
+import { SeasonYear, seasonYearsOptions } from '../../models/seasonYear'
+import { useSportsDataStore } from '../../stores/SportsDataStore'
+import { fetchData } from '../../api/fetchData'
+import { engineAPI } from '../../api/engine.api'
+import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
+import type { simulationParams } from '../../models/simulationParams'
+
+defineOptions({ name: "PrepareSimulation"})
+
+const sportsDataStore = useSportsDataStore()
+const loadingSimulation = ref(false)
+const errorSimulation = ref<string | null>(null)
+const loading = computed(() => sportsDataStore.loading)
+const error = computed(() => sportsDataStore.error)
+const leagues = computed(() => sportsDataStore.leagues)
+const leagueRounds = computed(() => sportsDataStore.leagueRounds)
+const simulationId = ref('')
+
+const form = reactive({
+  seasonYears: [] as SeasonYear[],
+  league_id: '',
+  iterations: 1,
+  league_round_id: null
+})
+
+const ensureData = async () => {
+  if (!leagues.value || leagues.value.length === 0) {
+    await sportsDataStore.loadLeagues()
+  }
+}
+
+onMounted(async () => {
+  await ensureData()
+})
+
+const status = ref('')
+
+async function submitForm() {
+  loadingSimulation.value = true
+  errorSimulation.value = null
+  status.value = ''
+  simulationId.value = ''
+  const payload: simulationParams = {
+    seasonYears: form.seasonYears,
+    leagueId: form.league_id,
+    iterations: form.iterations,
+    leagueRoundId: form.league_round_id ?? undefined
+  }
+  try {
+    const result = await fetchData<any>(() => engineAPI.createSimulation(payload))
+    if (result.error) {
+      errorSimulation.value = result.error
+    } else {
+      simulationId.value = result.data ?? ''
+      status.value = 'Simulation has been sent!'
+    }
+  } catch (err: any) {
+    errorSimulation.value = err.message || 'Unexpected error'
+  } finally {
+    loadingSimulation.value = false
+  }
+}
+
+function resetForm() {
+  form.seasonYears = []
+  form.league_id = ''
+  form.iterations = 1
+  form.league_round_id = null
+  status.value = ''
+  errorSimulation.value = null
+}
+</script>
 <template>
   <main>
+    <section v-if="simulationId" class="simulation-result">
+      <h5>Simulation ID: {{ simulationId }}</h5>
+      <router-link :to="{ name: 'SimulationItem', params: { id: simulationId }}" class="button-link">
+        <button type="submit" class="button-primary">Check the simulation results</button>
+      </router-link>
+    </section>
+
     <section>
-      <div v-if="simulationId">🧩 Simulation ID: {{ simulationId }}</div>
-      <div v-if="loading">⏳ Loading...</div>
-      <div v-else-if="error">❌ {{ error }}</div>
-      <div v-if="loadingSimulation">⏳ Working simulation, wait..</div>
+      <div v-if="loading" class="info">⏳ Loading...</div>
+      <div v-else-if="error" class="error">❌ {{ error }}</div>
+      <div v-if="loadingSimulation" class="info">⚙️ Working simulation, please wait…</div>
       <ErrorEndpoint v-else-if="errorSimulation" :error="errorSimulation" />
 
       <form class="form" @submit.prevent="submitForm">
@@ -64,140 +145,141 @@
         </div>
 
         <div class="actions">
-          <button type="submit">Simulate</button>
-          <button type="button" @click="resetForm">Reset</button>
-        </div>
-
-        <div v-if="simulationId">
-          <router-link :to="{ name: 'SimulationItem', params: { id: simulationId }}" class="btn-primary">
-            Check the simulation results
-          </router-link>
-        </div>
-        <div v-if="status" class="status">
-          {{ status }}
+          <button type="submit" class="button-primary">Simulate</button>
+          <button type="button" class="button-secondary" @click="resetForm">Reset</button>
         </div>
       </form>
     </section>
   </main>
 </template>
 
-<script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-import { SeasonYear, seasonYearsOptions } from '../../models/seasonYear'
-import { useSportsDataStore } from '../../stores/SportsDataStore'
-import { fetchData } from '../../api/fetchData'
-import { engineAPI } from '../../api/engine.api'
-import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
-import type { simulationParams } from '../../models/simulationParams'
-
-defineOptions({ name: "PrepareSimulation"})
-
-const sportsDataStore = useSportsDataStore()
-const loadingSimulation = ref(false)
-const errorSimulation = ref<string | null>(null)
-const loading = computed(() => sportsDataStore.loading)
-const error = computed(() => sportsDataStore.error)
-const leagues = computed(() => sportsDataStore.leagues)
-const leagueRounds = computed(() => sportsDataStore.leagueRounds)
-const simulationId = ref('')
-
-const form = reactive({
-  seasonYears: [] as SeasonYear[],
-  league_id: '',
-  iterations: 1,
-  league_round_id: null
-})
-
-const ensureData = async () => {
-  if (!leagues.value || leagues.value.length === 0) {
-    await sportsDataStore.loadLeagues()
-  }
-}
-
-onMounted(async () => {
-  await ensureData()
-})
-
-const status = ref('')
-
-async function submitForm() {
-  loadingSimulation.value = true
-  errorSimulation.value = null
-  status.value = ''
-  simulationId.value = ''
-  const payload: simulationParams = {
-    SeasonYears: form.seasonYears,
-    LeagueId: form.league_id,
-    Iterations: form.iterations,
-    LeagueRoundId: form.league_round_id ?? undefined
-  }
-  try {
-    const result = await fetchData<any>(() => engineAPI.createSimulation(payload))
-    if (result.error) {
-      errorSimulation.value = result.error
-    } else {
-      simulationId.value = result.data ?? ''
-      status.value = 'Simulation has been sent!'
-    }
-  } catch (err: any) {
-    errorSimulation.value = err.message || 'Unexpected error'
-  } finally {
-    loadingSimulation.value = false
-  }
-}
-
-function resetForm() {
-  form.seasonYears = []
-  form.league_id = ''
-  form.iterations = 1
-  form.league_round_id = null
-  status.value = ''
-  errorSimulation.value = null
-}
-</script>
-
 <style scoped>
-main, section {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-.form {
+main {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  max-width: 480px;
-  margin: 2rem auto;
-  background: var(--color-bg-surface);
+  align-items: center;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-text-main);
+}
+
+/* ---- SECTIONS ---- */
+section {
+  width: 100%;
+  max-width: 90%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.simulation-result {
+  background-color: var(--color-surface-sections);
   border: 1px solid var(--color-grid);
-  border-radius: 10px;
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  float: center;
+}
+.simulation-result:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4);
+}
+
+/* ---- FORM ---- */
+.form {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-grid);
+  border-radius: 16px;
   padding: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
 }
-.field label {
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+label {
   font-weight: 600;
-  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
 }
+
+select,
+input[type="number"] {
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: var(--color-surface-sections);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-grid);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+select:focus,
+input:focus {
+  border-color: var(--color-accent-blue);
+  box-shadow: 0 0 0 3px rgba(41, 121, 255, 0.35);
+  outline: none;
+}
+
 .checkbox-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 0.5rem;
 }
+
 .checkbox-item {
+  background: var(--color-surface-sections);
+  border: 1px solid var(--color-grid);
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  background: var(--color-bg-surface-secondary);
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
-.actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
+.checkbox-item:hover {
+  background: var(--color-accent-blue);
+  color: #fff;
+  transform: translateY(-1px);
 }
+
+/* ---- BUTTONS ---- */
+button {
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  padding: 0.75rem 1.5rem;
+  border: none;
+}
+
+/* ---- INFO / STATUS ---- */
 .status {
-  margin-top: 1rem;
-  font-weight: 500;
   color: var(--color-accent-green);
+  font-weight: 600;
 }
+
+.info {
+  color: var(--color-text-secondary);
+}
+
+.error {
+  color: var(--color-accent-yellow);
+  font-weight: 600;
+}
+
 </style>

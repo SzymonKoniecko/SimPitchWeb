@@ -31,7 +31,6 @@ const loadSimulation = async () => {
 }
 
 const getTeamName = (id: string) => teams.value.find(t => t.id === id)?.name ?? id
-const getLeagueName = (id: string) => leagues.value.find(l => l.id === id)?.name ?? id
 
 const groupedPreviews = computed(() => {
   const previews = state.value.data?.iterationPreviews ?? []

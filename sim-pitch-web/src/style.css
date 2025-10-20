@@ -1,32 +1,30 @@
 @import url("https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css");
 
-/* Paleta kolorów */
+
 :root {
-  --color-bg: #22C55E;
-  --color-surface: #ffffff;
-  --color-grid: #E5E7EB;
-  --color-accent-green: #22C55E;
-  --color-pastel-green: #A7F3D0;
-  --color-text-main: #111827;
-  --color-text-secondary: #6B7280;
-  --color-button: #10B981;
-  --color-hover: #059669;
-}
+  --color-bg: #0A0F1C;                /* bardzo ciemne granatowe tło – profesjonalne, sportowe */
+  --color-surface: #141B2D;           /* główna powierzchnia – lekko jaśniejszy granat */
+  --color-surface-sections: #151822;  /* sekcje lub karty – subtelny kontrast */
+  --color-grid: #2B3558;              /* linie siatki, tła wykresów, granice */
 
-/* Dark mode */
-html.dark {
-  --color-bg: #111827;
-  --color-surface: #1F2937;
-  --color-grid: #374151;
-  --color-accent-green: #22C55E;
-  --color-pastel-green: #34D399;
-  --color-text-main: #F9FAFB;
-  --color-text-secondary: #D1D5DB;
-  --color-button: #10B981;
-  --color-hover: #059669;
-}
+  --color-accent-green: #00E676;      /* świeża zieleń – energia, sukces, dynamika */
+  --color-pastel-green: #66FFA6;      /* pastelowa zieleń – delikatniejszy odcień dla tła, efektów */
+  --color-accent-blue: #2979FF;       /* niebieski akcent – chłodny, analityczny */
+  --color-accent-yellow: #FFD54F;     /* żółty – uwaga, losowość, emocje sportowe */
 
-/* Reset globalny */
+  --color-text-main: #E8EDF5;         /* prawie biały – wysoki kontrast, nie męczy wzroku */
+  --color-text-secondary: #A0AEC0;    /* szaroniebieski – opis, metadane, drugoplanowy tekst */
+
+  --color-button: #00BFA6;            /* turkus – nowoczesny, wyróżnia CTA */
+  --color-hover: #00897B;             /* ciemniejszy na hover – głębia i kontrast */
+
+  --color-home-team: #42A5F5;         /* kolor drużyny gospodarzy – niebieski */
+  --color-away-team: #FF7043;         /* kolor drużyny gości – pomarańczowy */
+  --color-goals: #81C784;             /* gole – jasna zieleń */
+  --color-randomness: #FFB300;        /* losowość / wariancja – złotożółty */
+
+  --color-border: #d7e9f8;
+}
 html,
 body {
   margin: 0;
@@ -36,77 +34,144 @@ body {
   overflow-x: hidden;
   background-color: var(--color-bg);
   color: var(--color-text-main);
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", "Segoe UI", Helvetica, Arial, sans-serif;
   box-sizing: border-box;
 }
 
-/* ✅ główny kontener Vue */
 #app {
   display: block;
   position: relative;
-  margin: 5%;
+  margin: 2%;
   padding: 2rem;
   background-color: var(--color-surface);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  box-sizing: border-box;
-  max-width: 90%;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  width: 96%;
+  min-height: 96%;
+  max-width: 98%;
   overflow-x: hidden;
+  transition: background-color 0.3s ease;
 }
 
-/* Nadpisanie stylów Pico, które powodują overflow */
 main, section, article {
   margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box;
 }
 
-/* Linki */
+section {
+  background-color: var(--color-surface-sections);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-block: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
 a {
   color: var(--color-accent-green);
   text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
 }
+
 a:hover {
-  color: var(--color-hover);
+  color: var(--color-accent-blue);
 }
 
-/* Przyciski */
-button {
-  background-color: var(--color-button);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 0.6em 1.2em;
+/* === NOWY STYL PRZYCISKU === */
+.button {
+  background: linear-gradient(135deg, var(--color-button) 0%, var(--color-accent-blue) 100%);
+  border-radius: 40px;
+  border: 2px solid var(--color-accent-blue);
+  display: inline-block;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-button:hover {
-  background-color: var(--color-hover);
+  font-family: "Inter", "Segoe UI", sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  padding: 14px 38px;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0, 191, 166, 0.4);
+  transition: all 0.25s ease-in-out;
 }
 
+.button:hover {
+  background: linear-gradient(135deg, var(--color-accent-blue) 0%, var(--color-button) 100%);
+  box-shadow: 0 6px 16px rgba(0, 191, 166, 0.6);
+  transform: translateY(-2px);
+}
+
+.button:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(0, 191, 166, 0.4);
+}
+
+
+.button-primary {
+  background: linear-gradient(135deg, var(--color-button), var(--color-accent-blue));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 191, 166, 0.4);
+}
+.button-primary:hover {
+  background: linear-gradient(135deg, var(--color-accent-blue), var(--color-button));
+  box-shadow: 0 6px 16px rgba(0, 191, 166, 0.6);
+  transform: translateY(-2px);
+}
+.button-primary:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(0, 191, 166, 0.4);
+}
+
+.button-secondary {
+  background: var(--color-surface-sections);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-grid);
+}
+.button-secondary:hover {
+  background: var(--color-grid);
+  color: var(--color-text-main);
+}
+.button-secondary:active {
+  transform: translateY(1px);
+}
+
+/* === ALERTY I BŁĘDY === */
 .endpoint-error {
-  --_bg: #fee;           /* light red background */ 
-  --_border: #f5a3a3;    /* soft red border */
-  --_text: #7a0000;      /* dark red text for contrast */
+  --_bg: #2a1b1b;          /* ciemne tło błędu, pasujące do ciemnego motywu */
+  --_border: #e57373;      /* ciepła czerwień dla akcentu */
+  --_text: #ffb4b4;        /* jasna czerwień dla kontrastu */
   background-color: var(--_bg);
   border: 1px solid var(--_border);
   color: var(--_text);
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   margin-block: 0.75rem;
+  box-shadow: 0 2px 6px rgba(229, 115, 115, 0.25);
 }
 
 [role="alert"] {
-  background-color: #fff4f4;
-  border: 1px solid #f3b1b1;
-  color: #7a0000;
+  background-color: #2a1b1b;
+  border: 1px solid #ef5350;
+  color: #ffb3b3;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   margin-block: 0.75rem;
+  box-shadow: 0 2px 6px rgba(239, 83, 80, 0.25);
 }
 
 .endpoint-error::before,
 [role="alert"]::before {
   content: "⚠️";
   margin-right: 0.5rem;
+}
+h1, h2{
+  color: var(--color-text-main);
+}
+h1{
+  margin-left: 1rem;
+}
+
+h3, h4, h5 {
+  font-style: italic;
+  color: var(--color-text-main);
 }

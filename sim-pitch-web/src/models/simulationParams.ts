@@ -1,8 +1,8 @@
 import type { SeasonYear } from "./seasonYear";
 
 export interface simulationParams{
-    SeasonYears: SeasonYear[];
-    LeagueId: string;
-    Iterations: number;
-    LeagueRoundId?: string;
+    seasonYears: SeasonYear[];
+    leagueId: string;
+    iterations: number;
+    leagueRoundId?: string;
 }
