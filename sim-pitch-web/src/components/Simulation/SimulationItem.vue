@@ -4,6 +4,7 @@ import { engineAPI } from '../../api/engine.api'
 import { fetchData, type ApiState } from '../../api/fetchData'
 import type { Simulation } from '../../models/simulation'
 import type { iterationPreview } from '../../models/iterationPreview'
+import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
 import { useSportsDataStore } from '../../stores/SportsDataStore'
 
 
@@ -31,14 +32,12 @@ const loadSimulation = async () => {
 }
 
 const getTeamName = (id: string) => teams.value.find(t => t.id === id)?.name ?? id
-const getLeagueName = (id: string) => leagues.value.find(l => l.id === id)?.name ?? id
 
 const groupedPreviews = computed(() => {
   const previews = state.value.data?.iterationPreviews ?? []
   const groups: Record<string, iterationPreview[]> = {}
 
   for (const p of previews) {
-    // 🔹 Używamy lokalnej zmiennej, więc TS wie że nie jest undefined
     const list = groups[p.scoreboardId] ?? (groups[p.scoreboardId] = [])
     list.push(p)
   }
@@ -62,43 +61,29 @@ watch(() => props.id, loadSimulation)
 
 <template>
   <main class="container">
-    <header style="display: flex; justify-content: space-between; align-items: center;">
-      <h1>Simulation Details</h1>
-      <button @click="loadSimulation" :aria-busy="state.loading">Reload</button>
-    </header>
+      <button @click="loadSimulation" :aria-busy="state.loading" class="button-primary">Reload</button> <br/>
 
     <article v-if="state.loading" aria-busy="true">Loading simulation...</article>
-    <article v-else-if="state.error" class="error">Error: {{ state.error }}</article>
+    <ErrorEndpoint v-else-if="state.error" :error="state.error" />
 
-    <article v-else-if="state.data">
+    <section v-else-if="state.data" class="container-content">
       <h2>Summary</h2>
       <p><strong>Winners:</strong> {{ state.data.winnersSummary }}</p>
       <p><strong>Completed iterations:</strong> {{ state.data.completedIterations }}</p>
       <p><strong>Simulated matches:</strong> {{ state.data.simulatedMatches }}</p>
       <p><strong>Prior league strength:</strong> {{ state.data.priorLeagueStrength }}</p>
 
-      <!-- <details open>
-        <summary><strong>Simulation Parameters</strong></summary>
-        <ul>
-          <li><strong>League:</strong> {{ getLeagueName(state.data.simulationParams.LeagueId) }}</li>
-          <li><strong>Iterations:</strong> {{ state.data.simulationParams.Iterations }}</li>
-          <li><strong>Seasons:</strong> {{ state.data.simulationParams.SeasonYears.join(', ') }}</li>
-        </ul>
-      </details> -->
-
-      <!-- ✅ Nowe: grupowanie po scoreboardId -->
       <details open>
         <summary><strong>Iteration Previews (grouped by scoreboard)</strong></summary>
 
-        <div v-for="(items, scoreboardId) in groupedPreviews" :key="scoreboardId" class="scoreboard-block">
-          <h3>Scoreboard: {{ scoreboardId }}</h3>
+        <div v-for="(items, scoreboardId, iterationIndex) in groupedPreviews" :key="scoreboardId" class="scoreboard-block">
+          <h3 style="float: right;">#{{ iterationIndex + 1}}</h3><small>Scoreboard: {{ scoreboardId }}</small>
           <table>
             <thead>
               <tr>
                 <th>Rank</th>
                 <th>Team</th>
                 <th>Points</th>
-                <th>Iteration</th>
               </tr>
             </thead>
             <tbody>
@@ -106,7 +91,6 @@ watch(() => props.id, loadSimulation)
                 <td>{{ p.rank }}</td>
                 <td>{{ getTeamName(p.teamId) }}</td>
                 <td>{{ p.points }}</td>
-                <td>{{ p.iterationIndex }}</td>
               </tr>
             </tbody>
           </table>
@@ -118,7 +102,7 @@ watch(() => props.id, loadSimulation)
           ← Back to list
         </router-link>
       </footer>
-    </article>
+    </section>
   </main>
 </template>
 
@@ -126,7 +110,10 @@ watch(() => props.id, loadSimulation)
 .scoreboard-block {
   margin-bottom: 2rem;
 }
-
+.container-content{
+  margin-left: 30%;
+  gap: 3rem;
+}
 table {
   width: 100%;
   border-collapse: collapse;
@@ -145,5 +132,8 @@ tr:hover {
 
 .error {
   color: var(--del-color);
+}
+button{
+  float: right;
 }
 </style>

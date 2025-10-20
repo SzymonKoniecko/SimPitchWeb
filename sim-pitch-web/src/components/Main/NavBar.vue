@@ -1,25 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
 
-// Reaktywne dane
-const isDark = ref(false);
-
-// Przełączanie motywu i zapis w localStorage
-function toggleTheme() {
-  isDark.value = !isDark.value;
-  const root = document.documentElement;
-  root.classList.toggle("dark", isDark.value);
-  localStorage.setItem("theme", isDark.value ? "dark" : "light");
-}
-
-// Wczytaj preferencję przy starcie
-onMounted(() => {
-  const saved = localStorage.getItem("theme");
-  if (saved === "dark") {
-    document.documentElement.classList.add("dark");
-    isDark.value = true;
-  }
-});
 </script>
 
 <template>
@@ -30,21 +10,13 @@ onMounted(() => {
     
 
     <nav class="nav-links">
-      <router-link to="/" exact-active-class="active">Home</router-link>
-      <router-link to="/simulation" exact-active-class="active">Simulation</router-link>
-      <router-link to="/about" exact-active-class="active">About</router-link>
-      <router-link to="/settings" exact-active-class="active">Settings</router-link>
+      <div class="link"><router-link to="/" exact-active-class="active">Home</router-link></div> <hr/>
+      <div class="link"><router-link to="/simulation" exact-active-class="active">All simulations</router-link></div> <hr/>
+      <div class="link"><router-link to="/prepareSimulation" exact-active-class="active">
+        Prepare a new simulation
+      </router-link></div> <hr/>
+      <div class="link"><router-link to="/about" exact-active-class="active">About</router-link> </div><hr/>
     </nav>
-
-    <button
-      class="theme-toggle"
-      @click="toggleTheme"
-      :aria-pressed="isDark"
-      :title="isDark ? 'Dark mode' : 'Light mode'"
-    >
-      <span v-if="isDark">🌙</span>
-      <span v-else>🌞</span>
-    </button>
   </header>
 </template>
 
@@ -53,54 +25,84 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--color-bg-surface);
+  background-color: var(--color-bg);
   border-bottom: 1px solid var(--color-grid);
   padding: 1rem 2rem;
-  max-width: 80%;
   box-sizing: border-box;
-  overflow-x: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  margin-bottom: 1.5rem;
 }
 
 .logo {
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--color-text-primary);
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: var(--color-accent-green);
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 8px rgba(0, 230, 118, 0.4);
+  transition: transform 0.2s ease, text-shadow 0.2s ease;
+}
+.logo:hover {
+  transform: scale(1.05);
+  text-shadow: 0 0 12px rgba(0, 230, 118, 0.7);
 }
 
+/* ---- LINKS ---- */
 .nav-links {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
+  gap: 1rem;
 }
 
 .nav-links a {
   color: var(--color-text-secondary);
   font-weight: 500;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
 }
 
 .nav-links a.active {
   color: var(--color-accent-green);
+  font-weight: 600;
+  background: rgba(0, 230, 118, 0.1);
+  box-shadow: 0 0 6px rgba(0, 230, 118, 0.3);
 }
 
 .nav-links a:hover {
-  color: var(--color-hover);
+  color: var(--color-accent-blue);
+  transform: translateY(-1px);
 }
 
-.theme-toggle {
-  background: transparent;
+/* ---- PRIMARY BUTTON LINK ---- */
+.nav-links .btn-primary {
+  background: linear-gradient(135deg, var(--color-button), var(--color-accent-blue));
+  color: #fff !important;
+  padding: 0.6rem 1.2rem;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 191, 166, 0.4);
   border: none;
-  font-size: 1.25rem;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 6px;
-  transition: background-color 0.2s;
+}
+.nav-links .btn-primary:hover {
+  background: linear-gradient(135deg, var(--color-accent-blue), var(--color-button));
+  box-shadow: 0 6px 16px rgba(0, 191, 166, 0.6);
+  transform: translateY(-2px);
+}
+.nav-links .btn-primary:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(0, 191, 166, 0.4);
 }
 
-.theme-toggle:hover {
-  background-color: var(--color-pastel-green);
+/* ---- SEPARATOR PIONOWY ---- */
+hr {
+  width: 1px;
+  height: 24px;
+  background-color: var(--color-grid);
+  border: none;
+  opacity: 0.6;
+  margin: 0 0.5rem;
 }
 </style>

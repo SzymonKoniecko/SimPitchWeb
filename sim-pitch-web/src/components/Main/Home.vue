@@ -6,11 +6,11 @@
         Match and league round simulation based on <b>Poisson</b> and <b>Gamma</b> models.
       </p>
       <router-link to="/prepareSimulation" class="btn-primary">
-        Prepare a simulation
+        Prepare a new simulation
       </router-link>
     </section>
 
-    <section class="goal">
+    <section class="text">
       <h2>🎯 System Goal</h2>
       <ul>
         <li>Analysis of team history (matches, goals scored and conceded)</li>
@@ -19,25 +19,38 @@
         <li>Simulation of goal distribution using probabilistic models</li>
       </ul>
     </section>
+
+    <section class="text">
+      <h2> Heat map (not developed)</h2>
+      <img :src="monteCarlo" alt="Monte Carlo Example" />
+    </section>
+
+    <section class="text">
+      <h2> Posterior (Gamma) (not developed)</h2>
+      <img :src="posterior" alt="Monte Carlo Example" />
+    </section>
   </main>
 </template>
 
 <style scoped>
-main, section {
+main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; 
+  gap: 3rem;
   max-width: 100%;
   overflow-x: hidden;
-}
-.home {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  align-items: center;
-  min-height: auto;
+  padding: 5rem;
 }
 
-.hero {
+section {
+  flex: 1 1 45%;
+  box-sizing: border-box;
+  max-width: 600px
+}
+
+.hero, .text, .img {
   text-align: center;
-  max-height: fit-content;
 }
 
 .subtitle {
@@ -51,22 +64,28 @@ main, section {
   border-radius: 6px;
   padding: 0.6rem 1.2rem;
   text-decoration: none;
+  display: inline-block;
+  margin-top: 1rem;
 }
 .btn-primary:hover {
   background-color: var(--color-hover);
 }
 
-.goal ul {
+.text ul {
   text-align: left;
-  max-width: 500px;
+  max-width: 400px;
   margin: 0 auto;
+}
+
+.img img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
 </style>
 
 
-<script lang="ts">
-
-export default {
-  name: "Home"
-};
+<script setup lang="ts">
+import monteCarlo from '@/assets/monte_carlo_example.png'
+import posterior from '@/assets/posterior_example.png'
 </script>
