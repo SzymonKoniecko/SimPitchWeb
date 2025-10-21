@@ -6,7 +6,7 @@
     class="endpoint-error"
     aria-live="assertive"
   >
-    Error in simulation: {{ error }}
+    Error in endpoint: {{ error }}
   </div>
 </template>
 

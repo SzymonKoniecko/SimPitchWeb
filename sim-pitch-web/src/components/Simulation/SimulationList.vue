@@ -30,7 +30,7 @@ const ensureSportsData = async () => {
 
 const loadSimulations = async () => {
   state.value = await fetchData<SimulationOverview[]>(() =>
-    engineAPI.getSimulations()
+    engineAPI.SimulationController.getSimulations()
   )
 }
 //const getTeamName = (id: string) => teams.value.find(t => t.id === id)?.name ?? id
@@ -67,7 +67,7 @@ const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name
               </ul>
             </article>
             <router-link
-              :to="{ name: 'SimulationItem', params: { id: sim.id } }"
+              :to="{ name: 'SimulationOverviewItem', params: { id: sim.id } }"
               role="button"
               class="button-primary"
             >

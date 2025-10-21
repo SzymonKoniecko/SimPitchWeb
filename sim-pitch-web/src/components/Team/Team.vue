@@ -10,8 +10,6 @@
     <div v-else>
       ⚠️ Team not found.
     </div>
-    <TeamCard :id="props.id" variant="mini"/>
-    <TeamCard :id="props.id" variant="large"/>
   </section>
 </template>
 
@@ -20,7 +18,6 @@ defineOptions({ name: "Team" });
 
 import { onMounted, watch, computed } from "vue";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
-import TeamCard from "./TeamCard.vue";
 
 type Props = {
   id: string; // /team/:id (via props: true)

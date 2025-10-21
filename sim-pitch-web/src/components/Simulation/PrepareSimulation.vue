@@ -50,7 +50,7 @@ async function submitForm() {
     leagueRoundId: form.league_round_id ?? undefined
   }
   try {
-    const result = await fetchData<any>(() => engineAPI.createSimulation(payload))
+    const result = await fetchData<any>(() => engineAPI.SimulationController.createSimulation(payload))
     if (result.error) {
       errorSimulation.value = result.error
     } else {
@@ -84,8 +84,8 @@ function resetForm() {
 
     <section>
       <div v-if="loading" class="info">⏳ Loading...</div>
-      <div v-else-if="error" class="error">❌ {{ error }}</div>
-      <div v-if="loadingSimulation" class="info">⚙️ Working simulation, please wait…</div>
+      <ErrorEndpoint v-else-if="error" :error="error" />
+      <div v-if="loadingSimulation" class="info"> Working simulation, please wait…</div>
       <ErrorEndpoint v-else-if="errorSimulation" :error="errorSimulation" />
 
       <form class="form" @submit.prevent="submitForm">

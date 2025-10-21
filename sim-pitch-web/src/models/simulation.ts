@@ -1,7 +1,7 @@
 import type { iterationPreview } from "./iterationPreview"
 import type { simulationParams } from "./simulationParams"
 
-export interface Simulation {
+export interface SimulationOverview {
   id: string
   winnersSummary: string
   completedIterations: number

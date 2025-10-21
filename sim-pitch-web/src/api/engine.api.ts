@@ -28,20 +28,45 @@ apiClient.interceptors.response.use(
 );
 
 class EngineAPI {
-  async getSimulations() {
-    const { data } = await apiClient.get(BASE+ `/simulation`);
-    return data;
-  }
-  
-  async getSimulation(id: string) {
-    const { data } = await apiClient.get(BASE+ `/simulation/${id}`);
-    return data;
+  SimulationController: InstanceType<typeof EngineAPI.SimulationController>;
+  ScoreboardController: InstanceType<typeof EngineAPI.ScoreboardController>;
+
+  constructor() {
+    this.SimulationController = new EngineAPI.SimulationController();
+    this.ScoreboardController = new EngineAPI.ScoreboardController();
   }
 
-  async createSimulation(payload: any) {
-    const { data } = await apiClient.post(BASE+ '/simulation', payload);
-    return data;
-  }
+  static SimulationController = class SimulationController {
+    private static readonly PrefixUrl = BASE+"/simulation";
+
+    async getSimulations() {
+      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}`);
+      return data;
+    }
+
+    async getSimulationOverviews(id: string) {
+      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}/${id}`);
+      return data;
+    }
+
+    async createSimulation(payload: any) {
+      const { data } = await apiClient.post(`${SimulationController.PrefixUrl}`, payload);
+      return data;
+    }
+  };
+
+  static ScoreboardController = class ScoreboardController {
+    private static readonly PrefixUrl = BASE+"/scoreboard";
+
+    async getScoreboard(simulationId: string, iterationResultId?: string) {
+      let url = `${ScoreboardController.PrefixUrl}?simulationId=${simulationId}`;
+      if (iterationResultId != null) {
+        url += `&iterationResultId=${iterationResultId}`;
+      }
+      const { data } = await apiClient.get(url);
+      return data;
+    }
+  };
 }
 
 export const engineAPI = new EngineAPI();

@@ -2,12 +2,12 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { engineAPI } from '../../api/engine.api'
 import { fetchData, type ApiState } from '../../api/fetchData'
-import type { Simulation } from '../../models/simulation'
+import type { SimulationOverview } from '../../models/simulation'
 import type { iterationPreview } from '../../models/iterationPreview'
+import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
 import { useSportsDataStore } from '../../stores/SportsDataStore'
-
-
-defineOptions({ name: 'SimulationItem' })
+import ScoreboardItem from '../Iteration/ScoreboardItem.vue'
+defineOptions({ name: 'SimulationOverviewItem' })
 type Props = { id: string }
 const props = defineProps<Props>()
 
@@ -20,24 +20,23 @@ const ensureSportsData = async () => {
   if (!teams.value.length) await store.loadTeams()
 }
 
-const state = ref<ApiState<Simulation>>({
+const state = ref<ApiState<SimulationOverview>>({
   loading: true,
   error: null,
   data: null
 })
 
 const loadSimulation = async () => {
-  state.value = await fetchData<Simulation>(() => engineAPI.getSimulation(props.id))
+  state.value = await fetchData<SimulationOverview>(() => engineAPI.SimulationController.getSimulationOverviews(props.id))
 }
 
-const getTeamName = (id: string) => teams.value.find(t => t.id === id)?.name ?? id
+const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name ?? id
 
 const groupedPreviews = computed(() => {
   const previews = state.value.data?.iterationPreviews ?? []
   const groups: Record<string, iterationPreview[]> = {}
 
   for (const p of previews) {
-    // 🔹 Używamy lokalnej zmiennej, więc TS wie że nie jest undefined
     const list = groups[p.scoreboardId] ?? (groups[p.scoreboardId] = [])
     list.push(p)
   }
@@ -52,6 +51,7 @@ const groupedPreviews = computed(() => {
   return groups
 })
 
+
 onMounted(async () => {
   await ensureSportsData()
   await loadSimulation()
@@ -61,63 +61,46 @@ watch(() => props.id, loadSimulation)
 
 <template>
   <main class="container">
-    <header style="display: flex; justify-content: space-between; align-items: center;">
-      <h1>Simulation Details</h1>
-      <button @click="loadSimulation" :aria-busy="state.loading">Reload</button>
-    </header>
+      <button @click="loadSimulation" :aria-busy="state.loading" class="button-primary">Reload</button> <br/>
 
     <article v-if="state.loading" aria-busy="true">Loading simulation...</article>
-    <article v-else-if="state.error" class="error">Error: {{ state.error }}</article>
+    <ErrorEndpoint v-else-if="state.error" :error="state.error" />
 
-    <article v-else-if="state.data">
+    <section v-else-if="state.data" class="container-content">
       <h2>Summary</h2>
+      <details close class="details">
+        <summary><strong>[-> Simulation Parameters <-]</strong></summary>
+        <ul>
+          <li><strong>League:</strong> {{ getLeagueName(state.data.simulationParams.leagueId) }}</li>
+          <li><strong>Iterations:</strong> {{ state.data.simulationParams.iterations }}</li>
+          <li><strong>Seasons:</strong> {{ state.data.simulationParams.seasonYears.join(', ') }}</li>
+        </ul>
+      </details> 
       <p><strong>Winners:</strong> {{ state.data.winnersSummary }}</p>
       <p><strong>Completed iterations:</strong> {{ state.data.completedIterations }}</p>
       <p><strong>Simulated matches:</strong> {{ state.data.simulatedMatches }}</p>
       <p><strong>Prior league strength:</strong> {{ state.data.priorLeagueStrength }}</p>
 
-      <!-- <details open>
-        <summary><strong>Simulation Parameters</strong></summary>
-        <ul>
-          <li><strong>League:</strong> {{ getLeagueName(state.data.simulationParams.LeagueId) }}</li>
-          <li><strong>Iterations:</strong> {{ state.data.simulationParams.Iterations }}</li>
-          <li><strong>Seasons:</strong> {{ state.data.simulationParams.SeasonYears.join(', ') }}</li>
-        </ul>
-      </details> -->
-
-      <!-- ✅ Nowe: grupowanie po scoreboardId -->
       <details open>
         <summary><strong>Iteration Previews (grouped by scoreboard)</strong></summary>
 
-        <div v-for="(items, scoreboardId) in groupedPreviews" :key="scoreboardId" class="scoreboard-block">
-          <h3>Scoreboard: {{ scoreboardId }}</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Rank</th>
-                <th>Team</th>
-                <th>Points</th>
-                <th>Iteration</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="p in items" :key="p.teamId + '-' + p.iterationIndex">
-                <td>{{ p.rank }}</td>
-                <td>{{ getTeamName(p.teamId) }}</td>
-                <td>{{ p.points }}</td>
-                <td>{{ p.iterationIndex }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div v-for="(items, scoreboardId, iterationIndex) in groupedPreviews" :key="scoreboardId" class="scoreboard-block">
+          <h3 style="float: right;">#{{ iterationIndex + 1}}</h3><small>Scoreboard: {{ scoreboardId }}</small>
+          <ScoreboardItem :scoreboard_id="scoreboardId" variant="preview" :teams="teams" :iteration_preview="items"/>
+          <router-link 
+            :to="{ name: 'IterationItem', params: { simulation_id: props.id, id: items[0]?.iterationId}}"
+            role="button" class="button-secondary">
+            ->  Check complete iteration details 
+          </router-link>
         </div>
       </details>
 
       <footer style="margin-top: 1rem;">
-        <router-link to="/simulations" role="button" class="secondary">
+        <router-link to="/simulation" role="button" class="secondary">
           ← Back to list
         </router-link>
       </footer>
-    </article>
+    </section>
   </main>
 </template>
 
@@ -125,7 +108,10 @@ watch(() => props.id, loadSimulation)
 .scoreboard-block {
   margin-bottom: 2rem;
 }
-
+.container-content{
+  margin-left: 30%;
+  gap: 3rem;
+}
 table {
   width: 100%;
   border-collapse: collapse;
@@ -144,5 +130,12 @@ tr:hover {
 
 .error {
   color: var(--del-color);
+}
+button{
+  float: right;
+}
+.details{
+  float: right;
+  font-size: 125%;
 }
 </style>
