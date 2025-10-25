@@ -2,8 +2,8 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { engineAPI } from '../../api/engine.api'
 import { fetchData, type ApiState } from '../../api/fetchData'
-import type { SimulationOverview } from '../../models/simulation'
-import type { iterationPreview } from '../../models/iterationPreview'
+import type { SimulationOverview } from '../../models/Simulations/simulation'
+import type { IterationPreview } from '../../models/Iterations/iterationPreview'
 import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
 import { useSportsDataStore } from '../../stores/SportsDataStore'
 import ScoreboardItem from '../Iteration/ScoreboardItem.vue'
@@ -34,7 +34,7 @@ const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name
 
 const groupedPreviews = computed(() => {
   const previews = state.value.data?.iterationPreviews ?? []
-  const groups: Record<string, iterationPreview[]> = {}
+  const groups: Record<string, IterationPreview[]> = {}
 
   for (const p of previews) {
     const list = groups[p.scoreboardId] ?? (groups[p.scoreboardId] = [])

@@ -25,6 +25,34 @@
 
   --color-border: #d7e9f8;
 }
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg: #F4F7FB;                /* bardzo jasne tło – neutralne, lekko niebieskawe */
+    --color-surface: #FFFFFF;           /* główna powierzchnia – czysta biel dla kontrastu */
+    --color-surface-sections: #F0F3F9;  /* sekcje lub karty – delikatny szaroniebieski */
+    --color-grid: #D6DEEB;              /* linie siatki, tła wykresów – jasny granatowy szary */
+
+    --color-accent-green: #00C853;      /* żywa zieleń – sportowa energia */
+    --color-pastel-green: #80E27E;      /* jaśniejsza, pastelowa zieleń – tło, akcenty */
+    --color-accent-blue: #2962FF;       /* mocny niebieski akcent – chłodny i profesjonalny */
+    --color-accent-yellow: #FFB300;     /* złotożółty – podkreślenie dynamiki i emocji */
+
+    --color-text-main: #1A1F2C;         /* ciemny granatowy – dobry kontrast, nie czysta czerń */
+    --color-text-secondary: #5A6B87;    /* szaroniebieski – opisy, metadane */
+
+    --color-button: #009688;            /* turkus – świeży, współczesny kolor CTA */
+    --color-hover: #00796B;             /* ciemniejszy odcień przy hoverze */
+
+    --color-home-team: #1976D2;         /* kolor drużyny gospodarzy – chłodny niebieski */
+    --color-away-team: #E64A19;         /* kolor drużyny gości – sportowy pomarańcz */
+    --color-goals: #43A047;             /* gole – zieleń sukcesu */
+    --color-randomness: #FBC02D;        /* losowość / wariancja – energetyczny żółty */
+
+    --color-border: #B0BEC5;            /* delikatne granice, subtelne oddzielenie sekcji */
+  }
+}
+
 html,
 body {
   margin: 0;
@@ -58,7 +86,6 @@ main, section, article {
   padding: 0 !important;
   box-sizing: border-box;
 }
-
 section {
   background-color: var(--color-surface-sections);
   border-radius: 12px;

@@ -1,12 +1,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { SeasonYear, seasonYearsOptions } from '../../models/seasonYear'
+import { SeasonYear, seasonYearsOptions } from '../../models/Consts/seasonYear'
 import { useSportsDataStore } from '../../stores/SportsDataStore'
 import { fetchData } from '../../api/fetchData'
 import { engineAPI } from '../../api/engine.api'
 import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
-import type { simulationParams } from '../../models/simulationParams'
+import type { SimulationParams } from '../../models/Simulations/simulationParams'
 
 defineOptions({ name: "PrepareSimulation"})
 
@@ -43,7 +43,7 @@ async function submitForm() {
   errorSimulation.value = null
   status.value = ''
   simulationId.value = ''
-  const payload: simulationParams = {
+  const payload: SimulationParams = {
     seasonYears: form.seasonYears,
     leagueId: form.league_id,
     iterations: form.iterations,

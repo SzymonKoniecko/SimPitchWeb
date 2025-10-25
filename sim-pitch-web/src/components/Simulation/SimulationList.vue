@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { engineAPI } from '../../api/engine.api'
 import { fetchData, type ApiState } from '../../api/fetchData'
-import type { SimulationOverview } from '../../models/simulationOverview'
+import type { SimulationOverview } from '../../models/Simulations/simulationOverview'
 import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
 import { useSportsDataStore } from '../../stores/SportsDataStore'
 

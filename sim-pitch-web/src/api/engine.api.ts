@@ -30,10 +30,11 @@ apiClient.interceptors.response.use(
 class EngineAPI {
   SimulationController: InstanceType<typeof EngineAPI.SimulationController>;
   ScoreboardController: InstanceType<typeof EngineAPI.ScoreboardController>;
-
+  IterationResultController: InstanceType<typeof EngineAPI.IterationResultController>;
   constructor() {
     this.SimulationController = new EngineAPI.SimulationController();
     this.ScoreboardController = new EngineAPI.ScoreboardController();
+    this.IterationResultController = new EngineAPI.IterationResultController();
   }
 
   static SimulationController = class SimulationController {
@@ -63,6 +64,16 @@ class EngineAPI {
       if (iterationResultId != null) {
         url += `&iterationResultId=${iterationResultId}`;
       }
+      const { data } = await apiClient.get(url);
+      return data;
+    }
+  };
+
+  static IterationResultController = class IterationResultController {
+    private static readonly PrefixUrl = BASE+"/iterationresult";
+
+    async getIterationResult(iterationId: string) {
+      let url = `${IterationResultController.PrefixUrl}/${iterationId}`;
       const { data } = await apiClient.get(url);
       return data;
     }

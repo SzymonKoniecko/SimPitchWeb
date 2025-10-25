@@ -1,4 +1,4 @@
-export interface iterationPreview {
+export interface IterationPreview {
   scoreboardId: string
   iterationId: string
   iterationIndex: number

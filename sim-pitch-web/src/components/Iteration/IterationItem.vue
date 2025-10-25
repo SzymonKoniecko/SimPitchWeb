@@ -1,8 +1,21 @@
 <template>
     <div>
-        <div v-if="scoreboardState.loading" class="info"> Loading details..., please wait…</div>
+        <div v-if="scoreboardState.loading" class="info"> Loading scoreboard..., please wait…</div>
         <ErrorEndpoint v-else-if="scoreboardState.error" :error="scoreboardState.error" />
+        <div v-if="iterationResultState.loading" class="info"> Loading iteration result..., please wait…</div>
+        <ErrorEndpoint v-else-if="iterationResultState.error" :error="iterationResultState.error" />
     </div>
+    <section>
+        <article v-if="iterationResultState.data" class="iteration-info-article">
+            <ul class="iteration-info">
+                <li><p><strong>League strength: </strong>{{ iterationResultState.data.leagueStrength }}</p></li>
+                <li><p><strong>Prior league strength: </strong>{{ iterationResultState.data.priorLeagueStrength }}</p></li>
+                <li><p><strong>Number of simulated matches: </strong>{{ iterationResultState.data.simulatedMatchRounds.length }}</p></li>
+                <li><p><strong>Start time: </strong>{{ iterationResultState.data.startDate }}</p></li>                
+                <li><p><strong>Execution time: </strong>{{ iterationResultState.data.executionTime }}</p></li>
+            </ul>
+        </article>
+    </section>
     <div class="scoreboard">
         <ScoreboardItem 
             variant="complete_details" 
@@ -10,18 +23,63 @@
             :scoreboard="scoreboardState.data?.[0]"
         />
     </div>
+    <section>
+        <article v-if="scoreboardState.data">
+            <h2>Simulated matches:</h2>
+        </article>
+    </section>
+    <section>
+        <div v-for="matchRound in iterationResultState.data?.simulatedMatchRounds">
+            <MatchResultItem 
+                :match-round="matchRound" 
+                :teams="teams" 
+                :home-team-strength="
+                    iterationResultState.data?.teamStrengths?.find(
+                    t => t.teamId === matchRound.homeTeamId && t.roundId === matchRound.roundId
+                    )"
+                :away-team-strength="
+                    iterationResultState.data?.teamStrengths?.find(
+                    t => t.teamId === matchRound.awayTeamId && t.roundId === matchRound.roundId
+                    )"
+            />
+        </div>
+    </section>
 </template>
 <style scoped>
+.iteration-info-article {
+    background-color: var(--color-bg);
+}
+.iteration-info {
+    list-style: none;
+    padding: 0;
+    margin-left: 2rem;
+}
+
+.iteration-info li {
+    margin-bottom: 0.5rem;
+}
+
+.iteration-info strong {
+    color: var(--color-text-main);
+}
+
+.iteration-info p {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+}
 </style>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { fetchData, type ApiState } from '../../api/fetchData';
 import ErrorEndpoint from '../Other/ErrorEndpoint.vue';
-import type { Scoreboard } from '../../models/scoreboard';
+import type { Scoreboard } from '../../models/Scoreboards/scoreboard';
 import { useSportsDataStore } from '../../stores/SportsDataStore';
 import { engineAPI } from '../../api/engine.api';
 import ScoreboardItem from './ScoreboardItem.vue';
+import type { IterationResult } from '../../models/Iterations/iterationResult';
+import MatchResultItem from './MatchResultItem.vue';
 defineOptions({ name: 'IterationItem' })
 type Props = {
     id: string; // iteration_id
@@ -34,6 +92,11 @@ const scoreboardState = ref<ApiState<Scoreboard[]>>({
   error: null,
   data: null
 })
+const iterationResultState = ref<ApiState<IterationResult>>({
+  loading: true,
+  error: null,
+  data: null
+})
 const store = useSportsDataStore()
 const leagues = computed(() => store.leagues)
 const teams = computed(() => store.teams)
@@ -41,6 +104,10 @@ const teams = computed(() => store.teams)
 const loadScoreboard = async () => {
     scoreboardState.value = await fetchData<Scoreboard[]>(() => 
         engineAPI.ScoreboardController.getScoreboard(props.simulation_id, props.id))
+}
+const loadIterationResult = async () => {
+    iterationResultState.value = await fetchData<IterationResult>(() => 
+        engineAPI.IterationResultController.getIterationResult(props.id))
 }
 //const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name ?? id
 const ensureData = async () => {
@@ -53,6 +120,7 @@ const ensureData = async () => {
     }
     if (props.id || props.simulation_id != undefined) {
         await loadScoreboard();
+        await loadIterationResult();
     }
 };
 

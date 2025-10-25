@@ -48,18 +48,20 @@
 </template>
 
 <style lang="css" scoped>
-
+table tr td{
+    background-color: var(--color-bg);
+}
 </style>
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { iterationPreview } from '../../models/iterationPreview';
-import type { Team } from '../../models/team';
-import type { Scoreboard } from '../../models/scoreboard';
+import type { IterationPreview } from '../../models/Iterations/iterationPreview';
+import type { Team } from '../../models/SportsDataModels/team';
+import type { Scoreboard } from '../../models/Scoreboards/scoreboard';
 defineOptions({ name: "ScoreboardItem" });
 type Props = {
     teams: Team[];
-    iteration_preview?: iterationPreview[]
+    iteration_preview?: IterationPreview[]
     scoreboard?: Scoreboard | undefined
     variant?: "preview" | "complete_details"
 }
