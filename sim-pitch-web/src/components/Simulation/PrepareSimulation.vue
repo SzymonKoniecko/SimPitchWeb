@@ -1,12 +1,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { SeasonYear, seasonYearsOptions } from '../../models/seasonYear'
+import { SeasonYear, seasonYearsOptions } from '../../models/Consts/seasonYear'
 import { useSportsDataStore } from '../../stores/SportsDataStore'
 import { fetchData } from '../../api/fetchData'
 import { engineAPI } from '../../api/engine.api'
 import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
-import type { simulationParams } from '../../models/simulationParams'
+import type { SimulationParams } from '../../models/Simulations/simulationParams'
 
 defineOptions({ name: "PrepareSimulation"})
 
@@ -43,19 +43,20 @@ async function submitForm() {
   errorSimulation.value = null
   status.value = ''
   simulationId.value = ''
-  const payload: simulationParams = {
+  const payload: SimulationParams = {
     seasonYears: form.seasonYears,
     leagueId: form.league_id,
     iterations: form.iterations,
     leagueRoundId: form.league_round_id ?? undefined
   }
   try {
-    const result = await fetchData<any>(() => engineAPI.createSimulation(payload))
+    const result = await fetchData<any>(() => engineAPI.SimulationController.createSimulation(payload))
     if (result.error) {
       errorSimulation.value = result.error
     } else {
       simulationId.value = result.data ?? ''
       status.value = 'Simulation has been sent!'
+      console.log(simulationId.value)
     }
   } catch (err: any) {
     errorSimulation.value = err.message || 'Unexpected error'
@@ -77,15 +78,15 @@ function resetForm() {
   <main>
     <section v-if="simulationId" class="simulation-result">
       <h5>Simulation ID: {{ simulationId }}</h5>
-      <router-link :to="{ name: 'SimulationItem', params: { id: simulationId }}" class="button-link">
+      <router-link :to="{ name: 'SimulationOverviewItem', params: { id: simulationId }}" class="button-link">
         <button type="submit" class="button-primary">Check the simulation results</button>
       </router-link>
     </section>
 
     <section>
       <div v-if="loading" class="info">⏳ Loading...</div>
-      <div v-else-if="error" class="error">❌ {{ error }}</div>
-      <div v-if="loadingSimulation" class="info">⚙️ Working simulation, please wait…</div>
+      <ErrorEndpoint v-else-if="error" :error="error" />
+      <div v-if="loadingSimulation" class="info"> Working simulation, please wait…</div>
       <ErrorEndpoint v-else-if="errorSimulation" :error="errorSimulation" />
 
       <form class="form" @submit.prevent="submitForm">

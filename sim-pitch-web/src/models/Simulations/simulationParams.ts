@@ -1,6 +1,6 @@
-import type { SeasonYear } from "./seasonYear";
+import type { SeasonYear } from "../Consts/seasonYear";
 
-export interface simulationParams{
+export interface SimulationParams{
     seasonYears: SeasonYear[];
     leagueId: string;
     iterations: number;

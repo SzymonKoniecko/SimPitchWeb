@@ -1,24 +1,44 @@
 <template>
   <article class="team-card" :class="variant">
-    <header class="team-card__header">
-      <RouterLink class="team-card__name" :to="{ name: 'Team', params: { id } }">
-      </RouterLink>
-      <section v-if="variant === 'mini'" class="team-card__mini">
-        <p><strong>{{ team?.shortName }}</strong></p>
-        <p><strong>Country:</strong> {{ team?.country?.code ?? 'N/A' }}</p>
-      </section>
-    </header>
+    <RouterLink class="team-card__link" :to="{ name: 'Team', params: { id } }">
+      
 
-    <section v-if="variant === 'large'" class="team-card__body">
-      <p><strong>Team:</strong> {{ team?.name }}</p>
-      <p><strong></strong> ({{ team?.shortName }})</p>
-      <p><strong>League:</strong> {{ team?.league?.name ?? 'N/A' }}</p>
-      <!-- Slot for extra details when using the large variant -->
-      <slot />
-    </section>
+      <section v-if="variant === 'mini'" class="team-card__mini">
+        <header class="team-card__header">
+          <h3 class="team-card__title">
+            {{ team?.shortName ?? 'Unknown Team' }}
+          </h3>
+        </header>
+          <p class="team-card__details">
+            <strong>Country:</strong> {{ team?.country?.code ?? 'N/A' }}
+          </p>
+      </section>
+
+      <section v-if="variant === 'normal'" class="team-card__normal">
+        <header class="team-card__header">
+          <h3 class="team-card__title">
+            {{ team?.name ?? 'Unknown Team' }}
+          </h3>
+        </header>
+        <p class="team-name">{{ team?.shortName ?? 'N/A' }}</p>
+          <strong>Country:</strong> <p>{{ team?.country?.code ?? 'N/A' }}</p>
+      </section>
+
+      <section v-else class="team-card__large">
+        <header class="team-card__header">
+          <h3 class="team-card__title">
+            {{ team?.name ?? 'Unknown Team' }}
+          </h3>
+        </header>
+        <p class="team-name">{{ team?.shortName ?? 'N/A' }}</p>
+        <p><strong>Abbr:</strong> ({{ team?.shortName ?? 'N/A' }})</p>
+        <p><strong>League:</strong> {{ team?.league?.name ?? 'N/A' }}</p>
+        <slot />
+      </section>
+    </RouterLink>
 
     <footer v-if="loading || error" class="team-card__footer">
-      <span v-if="loading">Loading...</span>
+      <span v-if="loading" class="loading">Loading...</span>
       <span v-else class="error">{{ error }}</span>
     </footer>
   </article>
@@ -31,11 +51,10 @@ import { useSportsDataStore } from "../../stores/SportsDataStore";
 
 type Props = {
   id: string;
-  variant?: "mini" | "large";
+  variant?: "mini" | "normal" | "large";
 };
 
 const props = defineProps<Props>();
-
 const variant = computed(() => props.variant ?? "mini");
 
 const store = useSportsDataStore();
@@ -48,34 +67,95 @@ const team = computed(() => {
 });
 
 const ensureData = async () => {
-  if (!Array.isArray(store.leagues) || store.leagues.length === 0) {
-    await store.loadLeagues();
-  }
-  if (!Array.isArray(store.teams) || store.teams.length === 0) {
-    await store.loadTeams();
-  }
+  if (!store.leagues?.length) await store.loadLeagues();
+  if (!store.teams?.length) await store.loadTeams();
 };
 
-onMounted(async () => {
-  await ensureData();
-});
-
-watch(
-  () => props.id,
-  async () => {
-    await ensureData();
-  }
-);
+onMounted(ensureData);
+watch(() => props.id, ensureData);
 </script>
 
 <style scoped>
-.team-card { padding: 0.75rem 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; }
-.team-card.mini { display: flex; align-items: baseline; gap: 0.5rem; }
-article.team-card.mini { max-width: min-content; }
-.team-card.large { display: block; }
-.team-card__header { display: flex; align-items: baseline; gap: 0.5rem; }
-.team-card__name { font-weight: 600; text-decoration: none; color: #1e40af; }
-.team-card__name:hover { text-decoration: underline; }
-.team-card__league { color: #64748b; }
-.error { color: #b00020; }
+.team-card {
+  background: var(--color-surface-sections);
+  color: var(--color-text-main);
+  border-radius: 1rem;
+  padding: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 400px;
+  height: min-content;
+}
+
+.team-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.45);
+}
+
+.team-card.mini {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  text-align: left;
+}
+.team-card.normal {
+  flex-direction: row;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+}
+p {
+  font-weight: 600;
+}
+
+.team-card.large {
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 1rem;
+}
+
+.team-card__header {
+  margin-bottom: 0.25rem;
+}
+
+.team-card__title {
+  font-weight: 900;
+  font-size: 4ch;
+  color: var(--color-accent-blue);
+}
+
+.team-card__mini p,
+.team-card__normal p,
+.team-card__large p {
+  letter-spacing: 0.1em;
+  margin: 0.15rem 0;
+  color: var(--color-text-secondary);
+}
+
+.team-card__link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.team-card__link:hover .team-card__title {
+  color: var(--color-accent-green);
+}
+
+.team-card__footer {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+.team-name{
+  font-size: 1.2rem;
+}
+.error {
+  color: #ff5252;
+}
+
+.loading {
+  color: var(--color-accent-yellow);
+}
 </style>
