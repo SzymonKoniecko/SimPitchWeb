@@ -40,7 +40,11 @@ const stopSimulation = async (id: string) => {
   )
   loadSimulations()
 }
-
+const checkStatus = (state: string): boolean => {
+  if(state === "Pending" || state === "Running")
+    return true;
+  return false;
+}
 //const getTeamName = (id: string) => teams.value.find(t => t.id === id)?.name ?? id
 const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name ?? id
 </script>
@@ -66,7 +70,7 @@ const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name
             <small>Created: {{ new Date(sim.createdDate).toLocaleDateString() }}</small> <br/>
             <small>Completed iterations: {{ sim.state.lastCompletedIteration }} / {{ sim.simulationParams.iterations}}</small> <br/>
             <small>Percentage: {{ sim.state.progressPercent}}%</small> <br/> 
-            <div v-if="sim.state.lastCompletedIteration !== sim.simulationParams.iterations" class="loader"></div>
+            <div v-if="checkStatus(sim.state.state)" class="loader"></div>
           </header>
           <details close>
             <article class="details-article"><strong>Iterations:</strong> {{ sim.simulationParams.iterations }}</article>
@@ -80,7 +84,7 @@ const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name
             </article>
           </details>
           <router-link
-            :to="{ name: 'SimulationOverviewItem', params: { id: sim.id } }"
+            :to="{ name: 'SimulationItem', params: { id: sim.id } }"
             role="button"
             class="button-primary"
           >
