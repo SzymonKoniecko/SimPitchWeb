@@ -7,7 +7,8 @@ import type { IterationPreview } from '../../models/Iterations/iterationPreview'
 import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
 import { useSportsDataStore } from '../../stores/SportsDataStore'
 import ScoreboardItem from '../Iteration/ScoreboardItem.vue'
-defineOptions({ name: 'SimulationOverviewItem' })
+import type { SimulationState } from '../../models/Simulations/simulationState'
+defineOptions({ name: 'SimulationItem' })
 type Props = { id: string }
 const props = defineProps<Props>()
 
@@ -28,6 +29,15 @@ const state = ref<ApiState<Simulation>>({
 
 const loadSimulation = async () => {
   state.value = await fetchData<Simulation>(() => engineAPI.SimulationController.getSimulationOverviews(props.id))
+}
+
+const stopSimulation = async (id?: string) => {
+  if(id != null && id != undefined && id !== ""){
+    await fetchData<SimulationState>(() =>
+      engineAPI.SimulationController.stopSimulation(id)
+    )
+    loadSimulation()
+  }
 }
 
 const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name ?? id
@@ -60,8 +70,11 @@ watch(() => props.id, loadSimulation)
 </script>
 
 <template>
+  <div style="display: flex;">
+    <button @click="loadSimulation" :aria-busy="state.loading" role="button" class="button-primary">Reload</button> <br/>
+    <button @click="stopSimulation(state.data?.state.simulationId)" :aria-busy="state.loading" role="button" class="button-secondary">Stop simulation</button>
+  </div>
   <main class="container">
-      <button @click="loadSimulation" :aria-busy="state.loading" class="button-primary">Reload</button> <br/>
 
     <article v-if="state.loading" aria-busy="true">Loading simulation...</article>
     <ErrorEndpoint v-else-if="state.error" :error="state.error" />
@@ -77,7 +90,8 @@ watch(() => props.id, loadSimulation)
         </ul>
       </details> 
       <p><strong>Winners:</strong> {{ state.data.winnersSummary }}</p>
-      <p><strong>Completed iterations:</strong> {{ state.data.completedIterations }}</p>
+      <p><strong>Completed iterations:</strong> {{ state.data.state.lastCompletedIteration }} / {{ state.data?.simulationParams.iterations }} ({{ state.data?.state.progressPercent }}%)</p>
+      <p><strong>State:</strong> {{ state.data.state.state}} --- {{new Date(state.data.state.updatedAt).toLocaleString() }}</p>
       <p><strong>Simulated matches:</strong> {{ state.data.simulatedMatches }}</p>
       <p><strong>Prior league strength:</strong> {{ state.data.priorLeagueStrength }}</p>
 

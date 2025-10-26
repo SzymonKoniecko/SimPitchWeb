@@ -29,8 +29,8 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/simulation/:id',
-    name: 'SimulationOverviewItem',
-    component: () => import('../components/Simulation/SimulationOverviewItem.vue'),
+    name: 'SimulationItem',
+    component: () => import('../components/Simulation/SimulationItem.vue'),
     props: true
   },
   {

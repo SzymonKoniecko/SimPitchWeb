@@ -5,6 +5,7 @@ import { fetchData, type ApiState } from '../../api/fetchData'
 import type { SimulationOverview } from '../../models/Simulations/simulationOverview'
 import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
 import { useSportsDataStore } from '../../stores/SportsDataStore'
+import type { SimulationState } from '../../models/Simulations/simulationState'
 
 defineOptions({ name: 'SimulationList' })
 
@@ -34,7 +35,7 @@ const loadSimulations = async () => {
   )
 }
 const stopSimulation = async (id: string) => {
-  await fetchData<SimulationOverview[]>(() =>
+  await fetchData<SimulationState>(() =>
     engineAPI.SimulationController.stopSimulation(id)
   )
   loadSimulations()
@@ -84,7 +85,7 @@ const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name
             class="button-primary"
           >
           Check the results
-          </router-link> - 
+          </router-link> <-> 
           <button @click="stopSimulation(sim.state.simulationId)" :aria-busy="state.loading" role="button" class="button-secondary">Stop simulation</button>
         </section>
       </li>
