@@ -1,8 +1,10 @@
 import type { SimulationParams } from "./simulationParams";
+import type { SimulationState } from "./simulationState";
 
 export interface SimulationOverview {
   id: string; // Guid → string
   title: string;
   createdDate: string; // DateTime → string (ISO format)
   simulationParams: SimulationParams;
+  state: SimulationState
 }

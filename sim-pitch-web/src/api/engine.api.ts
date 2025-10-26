@@ -54,6 +54,11 @@ class EngineAPI {
       const { data } = await apiClient.post(`${SimulationController.PrefixUrl}`, payload);
       return data;
     }
+
+    async stopSimulation(id: string) {
+      const { data } = await apiClient.delete(`${SimulationController.PrefixUrl}/stop/${id}`);
+      return data;
+    }
   };
 
   static ScoreboardController = class ScoreboardController {

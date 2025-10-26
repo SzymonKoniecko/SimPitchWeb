@@ -33,6 +33,13 @@ const loadSimulations = async () => {
     engineAPI.SimulationController.getSimulations()
   )
 }
+const stopSimulation = async (id: string) => {
+  await fetchData<SimulationOverview[]>(() =>
+    engineAPI.SimulationController.stopSimulation(id)
+  )
+  loadSimulations()
+}
+
 //const getTeamName = (id: string) => teams.value.find(t => t.id === id)?.name ?? id
 const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name ?? id
 </script>
@@ -52,9 +59,13 @@ const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name
       <li v-for="sim in state.data" :key="sim.id">
         <section class="simulation">
           <header class="title-details">
-            <h2>{{ sim.title }}</h2>
-            <small style="float: right;">Created: {{ new Date(sim.createdDate).toLocaleDateString() }}</small> <br/>
-            <small style="float: right;">League: {{ getLeagueName(sim.simulationParams.leagueId)}}</small>
+            <h2 style="text-align: center;">{{ sim.title }}</h2>
+            <small>State: {{ sim.state.state}}</small>  <br/>
+            <small>League: {{ getLeagueName(sim.simulationParams.leagueId)}}</small>  <br/>
+            <small>Created: {{ new Date(sim.createdDate).toLocaleDateString() }}</small> <br/>
+            <small>Completed iterations: {{ sim.state.lastCompletedIteration }} / {{ sim.simulationParams.iterations}}</small> <br/>
+            <small>Percentage: {{ sim.state.progressPercent}}%</small> <br/> 
+            <div v-if="sim.state.lastCompletedIteration !== sim.simulationParams.iterations" class="loader"></div>
           </header>
           <details close>
             <article class="details-article"><strong>Iterations:</strong> {{ sim.simulationParams.iterations }}</article>
@@ -66,14 +77,15 @@ const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name
                 </li>
               </ul>
             </article>
-            <router-link
-              :to="{ name: 'SimulationOverviewItem', params: { id: sim.id } }"
-              role="button"
-              class="button-primary"
-            >
-            More details
-            </router-link>
           </details>
+          <router-link
+            :to="{ name: 'SimulationOverviewItem', params: { id: sim.id } }"
+            role="button"
+            class="button-primary"
+          >
+          Check the results
+          </router-link> - 
+          <button @click="stopSimulation(sim.state.simulationId)" :aria-busy="state.loading" role="button" class="button-secondary">Stop simulation</button>
         </section>
       </li>
     </ul>

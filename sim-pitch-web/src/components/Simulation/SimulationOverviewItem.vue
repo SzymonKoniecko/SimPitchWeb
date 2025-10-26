@@ -2,7 +2,7 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { engineAPI } from '../../api/engine.api'
 import { fetchData, type ApiState } from '../../api/fetchData'
-import type { SimulationOverview } from '../../models/Simulations/simulation'
+import type { Simulation } from '../../models/Simulations/simulation'
 import type { IterationPreview } from '../../models/Iterations/iterationPreview'
 import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
 import { useSportsDataStore } from '../../stores/SportsDataStore'
@@ -20,14 +20,14 @@ const ensureSportsData = async () => {
   if (!teams.value.length) await store.loadTeams()
 }
 
-const state = ref<ApiState<SimulationOverview>>({
+const state = ref<ApiState<Simulation>>({
   loading: true,
   error: null,
   data: null
 })
 
 const loadSimulation = async () => {
-  state.value = await fetchData<SimulationOverview>(() => engineAPI.SimulationController.getSimulationOverviews(props.id))
+  state.value = await fetchData<Simulation>(() => engineAPI.SimulationController.getSimulationOverviews(props.id))
 }
 
 const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name ?? id
