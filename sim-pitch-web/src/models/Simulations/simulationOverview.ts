@@ -9,7 +9,7 @@ export interface SimulationOverview {
   state: SimulationState
 }
 export interface SimulationOverviewList {
-  Items: SimulationOverview[];
+  items: SimulationOverview[];
   totalCount: number;
   pageNumber: number;
   pageSize: number;

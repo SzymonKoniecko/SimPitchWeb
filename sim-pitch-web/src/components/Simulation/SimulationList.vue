@@ -2,12 +2,11 @@
 import { ref, onMounted, computed } from "vue";
 import { engineAPI } from "../../api/engine.api";
 import { fetchData, type ApiState } from "../../api/fetchData";
-import type {
-  SimulationOverviewList,
-} from "../../models/Simulations/simulationOverview";
+import type { SimulationOverviewList } from "../../models/Simulations/simulationOverview";
 import ErrorEndpoint from "../Other/ErrorEndpoint.vue";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
 import type { SimulationState } from "../../models/Simulations/simulationState";
+import Pagination from "../Other/Pagination.vue";
 
 defineOptions({ name: "SimulationList" });
 
@@ -20,10 +19,10 @@ const state = ref<ApiState<SimulationOverviewList>>({
 const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
-const simulationOverviews = computed(() => state.value.data?.Items);
+const simulationOverviews = computed(() => state.value.data?.items);
 
-const currentPage = computed(() => state.value.data?.pageNumber ?? 1);
-const pageSize = computed(() => state.value.data?.pageSize ?? 10);
+const currentPage = ref(1);
+const pageSize = ref(10);
 const totalCount = computed(() => state.value.data?.totalCount ?? 0);
 const totalPages = computed(() => state.value.data?.totalPages ?? 1);
 
@@ -46,16 +45,16 @@ const loadSimulations = async () => {
 };
 
 const loadIterationPage = async (newPage: number) => {
-  state.value.loading = true
-  state.value = await fetchData<SimulationOverviewList>(() =>
-    engineAPI.SimulationController.getSimulations(
-      newPage,
-      pageSize.value
-    )
-  )
-  state.value.loading = false
-}
-
+  currentPage.value = newPage;
+  state.value.loading = true;
+  loadSimulations();
+  state.value.loading = false;
+};
+const changePageSize = async (newSize: number) => {
+  pageSize.value = newSize;
+  currentPage.value = 1;
+  await loadSimulations();
+};
 
 const stopSimulation = async (id: string) => {
   await fetchData<SimulationState>(() =>
@@ -106,6 +105,7 @@ const getLeagueName = (id: string) =>
         :current-page="currentPage"
         :total-pages="totalPages"
         @update:page="loadIterationPage"
+        @update:pageSize="changePageSize"
       />
       <li v-for="sim in simulationOverviews" :key="sim.id">
         <section class="simulation">
@@ -163,6 +163,14 @@ const getLeagueName = (id: string) =>
           </button>
         </section>
       </li>
+      <Pagination
+        :total-items="totalCount"
+        :page-size="pageSize"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @update:page="loadIterationPage"
+        @update:pageSize="changePageSize"
+      />
     </ul>
 
     <!-- EMPTY -->

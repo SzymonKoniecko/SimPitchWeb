@@ -7,7 +7,7 @@ export interface IterationPreview {
   rank: number;
 }
 export interface IterationPreviewList {
-  Items: IterationPreview[];
+  items: IterationPreview[];
   totalCount: number;
   pageNumber: number;
   pageSize: number;

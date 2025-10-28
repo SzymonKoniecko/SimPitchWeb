@@ -3,13 +3,13 @@ import { ref, onMounted, watch, computed } from "vue";
 import { engineAPI } from "../../api/engine.api";
 import { fetchData, type ApiState } from "../../api/fetchData";
 import type { Simulation } from "../../models/Simulations/simulation";
-import type {
-  IterationPreview,
-} from "../../models/Iterations/iterationPreview";
+import type { IterationPreview } from "../../models/Iterations/iterationPreview";
 import ErrorEndpoint from "../Other/ErrorEndpoint.vue";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
 import ScoreboardItem from "../Iteration/ScoreboardItem.vue";
 import type { SimulationState } from "../../models/Simulations/simulationState";
+import Pagination from "../Other/Pagination.vue";
+
 defineOptions({ name: "SimulationItem" });
 type Props = { id: string };
 const props = defineProps<Props>();
@@ -18,12 +18,14 @@ const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
 
-const currentPage = computed(
-  () => state.value.data?.iterationPreviews?.pageNumber ?? 1
-);
-const pageSize = computed(
-  () => state.value.data?.iterationPreviews?.pageSize ?? 10
-);
+const state = ref<ApiState<Simulation>>({
+  loading: true,
+  error: null,
+  data: null,
+});
+
+const currentPage = ref(1);
+const pageSize = ref(10);
 const totalCount = computed(
   () => state.value.data?.iterationPreviews?.totalCount ?? 0
 );
@@ -31,42 +33,40 @@ const totalPages = computed(
   () => state.value.data?.iterationPreviews?.totalPages ?? 1
 );
 
-
 const ensureSportsData = async () => {
   if (!leagues.value.length) await store.loadLeagues();
   if (!teams.value.length) await store.loadTeams();
 };
 
-const state = ref<ApiState<Simulation>>({
-  loading: true,
-  error: null,
-  data: null,
-});
-
 const loadSimulation = async () => {
   state.value = await fetchData<Simulation>(() =>
-    engineAPI.SimulationController.getSimulationOverviews(props.id, currentPage.value, pageSize.value)
+    engineAPI.SimulationController.getSimulationOverviews(
+      props.id,
+      currentPage.value,
+      pageSize.value
+    )
   );
 };
 
 const loadIterationPage = async (newPage: number) => {
-  state.value.loading = true
-  state.value = await fetchData<Simulation>(() =>
-    engineAPI.SimulationController.getSimulationOverviews(
-      props.id,
-      newPage,
-      pageSize.value
-    )
-  )
-  state.value.loading = false
-}
+  currentPage.value = newPage;
+  state.value.loading = true;
+  loadSimulation();
+  state.value.loading = false;
+};
+
+const changePageSize = async (newSize: number) => {
+  pageSize.value = newSize;
+  currentPage.value = 1;
+  await loadSimulation();
+};
 
 const stopSimulation = async (id?: string) => {
   if (id != null && id != undefined && id !== "") {
     await fetchData<SimulationState>(() =>
       engineAPI.SimulationController.stopSimulation(id)
     );
-    loadSimulation();
+    loadSimulation(currentPage.value);
   }
 };
 
@@ -74,9 +74,9 @@ const getLeagueName = (id: string) =>
   leagues.value.find((t) => t.id === id)?.name ?? id;
 
 const groupedPreviews = computed(() => {
-  const previews = state.value.data?.iterationPreviews?.Items ?? [];
+  const previews = state.value.data?.iterationPreviews.items ?? [];
   const groups: Record<string, IterationPreview[]> = {};
-
+  console.log(state.value.data);
   for (const p of previews) {
     if (p.scoreboardId !== null && p.scoreboardId !== undefined) {
       if (!groups[p.scoreboardId]) groups[p.scoreboardId] = [];
@@ -99,15 +99,20 @@ const groupedPreviewEntries = computed(() =>
 );
 onMounted(async () => {
   await ensureSportsData();
-  await loadSimulation();
+  await loadSimulation(currentPage.value);
 });
-watch(() => props.id, loadSimulation);
+watch(
+  () => props.id,
+  async () => {
+    await loadSimulation(currentPage.value);
+  }
+);
 </script>
 
 <template>
   <div style="display: flex">
     <button
-      @click="loadSimulation"
+      @click="() => loadSimulation(currentPage)"
       :aria-busy="state.loading"
       role="button"
       class="button-primary"
@@ -176,6 +181,7 @@ watch(() => props.id, loadSimulation);
           :current-page="currentPage"
           :total-pages="totalPages"
           @update:page="loadIterationPage"
+          @update:pageSize="changePageSize"
         />
         <summary>
           <strong>Iteration Previews (grouped by scoreboard)</strong>
@@ -209,6 +215,14 @@ watch(() => props.id, loadSimulation);
             → Check complete iteration details
           </router-link>
         </div>
+        <Pagination
+          :total-items="totalCount"
+          :page-size="pageSize"
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @update:page="loadIterationPage"
+          @update:pageSize="changePageSize"
+        />
       </details>
 
       <footer style="margin-top: 1rem">
