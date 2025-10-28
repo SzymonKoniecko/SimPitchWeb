@@ -40,13 +40,13 @@ class EngineAPI {
   static SimulationController = class SimulationController {
     private static readonly PrefixUrl = BASE+"/simulation";
 
-    async getSimulations() {
-      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}`);
+    async getSimulations(pageNumber: number, pageSize: number) {
+      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`);
       return data;
     }
 
-    async getSimulationOverviews(id: string) {
-      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}/${id}`);
+    async getSimulationOverviews(id: string, pageNumber: number, pageSize: number) {// 
+      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}/${id}?pageNumber=${pageNumber}&pageSize=${pageSize}`);
       return data;
     }
 

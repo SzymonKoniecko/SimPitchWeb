@@ -8,3 +8,10 @@ export interface SimulationOverview {
   simulationParams: SimulationParams;
   state: SimulationState
 }
+export interface SimulationOverviewList {
+  Items: SimulationOverview[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+}
