@@ -78,7 +78,7 @@ function resetForm() {
   <main>
     <section v-if="simulationId" class="simulation-result">
       <h5>Simulation ID: {{ simulationId }}</h5>
-      <router-link :to="{ name: 'SimulationOverviewItem', params: { id: simulationId }}" class="button-link">
+      <router-link :to="{ name: 'SimulationItem', params: { id: simulationId }}" class="button-link">
         <button type="submit" class="button-primary">Check the simulation results</button>
       </router-link>
     </section>
