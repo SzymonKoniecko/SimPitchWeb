@@ -9,6 +9,7 @@ import { useSportsDataStore } from "../../stores/SportsDataStore";
 import ScoreboardItem from "../Iteration/ScoreboardItem.vue";
 import type { SimulationState } from "../../models/Simulations/simulationState";
 import Pagination from "../Other/Pagination.vue";
+import Filter from "../Other/Filter.vue";
 
 defineOptions({ name: "SimulationItem" });
 type Props = { id: string };
@@ -23,7 +24,8 @@ const state = ref<ApiState<Simulation>>({
   error: null,
   data: null,
 });
-
+const sortOption = ref("CreatedDate");
+const condition = ref("");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const totalCount = computed(
@@ -43,7 +45,9 @@ const loadSimulation = async () => {
     engineAPI.SimulationController.getSimulationOverviews(
       props.id,
       currentPage.value,
-      pageSize.value
+      pageSize.value,
+      sortOption.value,
+      condition.value
     )
   );
 };
@@ -66,8 +70,17 @@ const stopSimulation = async (id?: string) => {
     await fetchData<SimulationState>(() =>
       engineAPI.SimulationController.stopSimulation(id)
     );
-    loadSimulation(currentPage.value);
+    await loadSimulation();
   }
+};
+
+const changeSortingOption = async (newSortingOption: string) => {
+  sortOption.value = newSortingOption;
+  await loadSimulation();
+};
+
+const changeCondition = async (newCondition: string) => {
+  condition.value = newCondition;
 };
 
 const getLeagueName = (id: string) =>
@@ -76,7 +89,6 @@ const getLeagueName = (id: string) =>
 const groupedPreviews = computed(() => {
   const previews = state.value.data?.iterationPreviews.items ?? [];
   const groups: Record<string, IterationPreview[]> = {};
-  console.log(state.value.data);
   for (const p of previews) {
     if (p.scoreboardId !== null && p.scoreboardId !== undefined) {
       if (!groups[p.scoreboardId]) groups[p.scoreboardId] = [];
@@ -99,12 +111,12 @@ const groupedPreviewEntries = computed(() =>
 );
 onMounted(async () => {
   await ensureSportsData();
-  await loadSimulation(currentPage.value);
+  await loadSimulation();
 });
 watch(
   () => props.id,
   async () => {
-    await loadSimulation(currentPage.value);
+    await loadSimulation();
   }
 );
 </script>
@@ -112,7 +124,7 @@ watch(
 <template>
   <div style="display: flex">
     <button
-      @click="() => loadSimulation(currentPage)"
+      @click="() => loadSimulation()"
       :aria-busy="state.loading"
       role="button"
       class="button-primary"
@@ -182,6 +194,12 @@ watch(
           :total-pages="totalPages"
           @update:page="loadIterationPage"
           @update:pageSize="changePageSize"
+        />
+        <Filter
+          :to-sort-option="sortOption"
+          :condition="condition"
+          @update:sorting-option="changeSortingOption"
+          @update:condition="changeCondition"
         />
         <summary>
           <strong>Iteration Previews (grouped by scoreboard)</strong>

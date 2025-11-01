@@ -12,11 +12,6 @@ const emit = defineEmits<{
   (e: "update:pageSize", value: number): void
 }>()
 
-
-const changePage = (page: number) => {
-  if (page < 1 || page > props.totalPages) return
-  emit('update:page', page)
-}
 const goToPage = (page: number) => {
   if (page >= 1 && page <= props.totalPages) {
     emit("update:page", page)
@@ -40,7 +35,9 @@ const changePageSize = (event: Event) => {
     <button @click="goToPage(props.currentPage + 1)" :disabled="props.currentPage >= props.totalPages">
       Next →
     </button>
-
+    <label class="page-size">
+      Total count: {{ props.totalItems }}
+    </label>
     <label class="page-size">
       Page size:
       <select :value="props.pageSize" @change="changePageSize">

@@ -45,8 +45,8 @@ class EngineAPI {
       return data;
     }
 
-    async getSimulationOverviews(id: string, pageNumber: number, pageSize: number) {// 
-      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}/${id}?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    async getSimulationOverviews(id: string, pageNumber: number, pageSize: number, sortingOption: string, condition: string) {// 
+      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}/${id}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}`);
       return data;
     }
 

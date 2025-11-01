@@ -1,0 +1,24 @@
+export const SortingOption = {
+  CreatedDate: "CreatedDate",
+  ExecutionTime: "ExecutionTime",
+  Name: "Name",
+  IterationResultNumber: "IterationResultNumber",
+  Team: "Team",
+  LeaderPoints: "LeaderPoints",
+} as const;
+
+export type SortingOption = (typeof SortingOption)[keyof typeof SortingOption];
+
+export const SortingOptions: SortingOption[] = Object.values(SortingOption);
+
+export function getLabel(option: SortingOption): string {
+  switch (option) {
+    case "CreatedDate": return "Created date";
+    case "ExecutionTime": return "Execution time";
+    case "Name": return "Name";
+    case "IterationResultNumber": return "Iteration";
+    case "Team": return "Team";
+    case "LeaderPoints": return "Leader points";
+    default: return option;
+  }
+}
