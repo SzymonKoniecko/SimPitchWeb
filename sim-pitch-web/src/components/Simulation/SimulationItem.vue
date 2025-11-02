@@ -21,7 +21,7 @@ const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
 const presentedTeams = ref<Team[]>([]);
-const filterValue = ref('Any')
+const filterValue = ref("Any");
 
 const state = ref<ApiState<Simulation>>({
   loading: true,
@@ -29,7 +29,7 @@ const state = ref<ApiState<Simulation>>({
   data: null,
 });
 const sortOption = ref("CreatedDate");
-const condition = ref("");
+const order = ref<"Descending" | "Ascending">("Descending");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const totalCount = computed(
@@ -51,7 +51,7 @@ const loadSimulation = async () => {
       currentPage.value,
       pageSize.value,
       sortOption.value,
-      condition.value
+      mapOrder(order.value)
     )
   );
 };
@@ -71,7 +71,7 @@ const changePageSize = async (newSize: number) => {
 
 const setFilteringByTeam = (teamId: string) => {
   filterValue.value = teamId;
-}
+};
 
 const stopSimulation = async (id?: string) => {
   if (id != null && id != undefined && id !== "") {
@@ -86,12 +86,17 @@ const changeSortingOption = async (newSortingOption: string) => {
   sortOption.value = newSortingOption;
   if (sortOption.value !== SortingOption.DynamicValue) {
     await loadSimulation();
-    filterValue.value = 'Any'
+    filterValue.value = "Any";
   }
 };
 
-const changeCondition = async (newCondition: string) => {
-  condition.value = newCondition;
+const changeOrder = async (newOrder: "Descending" | "Ascending") => {
+  order.value = newOrder;
+  await loadSimulation();
+};
+
+const mapOrder = (newOrder: "Descending" | "Ascending"): "DESC" | "ASC" => {
+  return newOrder === "Descending" ? "DESC" : "ASC";
 };
 
 const getLeagueName = (id: string) =>
@@ -120,12 +125,12 @@ const groupedPreviews = computed(() => {
     }
     addTeamIfNotPresented(p.teamId);
   }
-  if (filterValue.value !== 'Any') {
-    const teamId = filterValue.value
+  if (filterValue.value !== "Any") {
+    const teamId = filterValue.value;
     for (const key in groups) {
-      const hasTeam = groups[key]?.some(item => item.teamId === teamId)
+      const hasTeam = groups[key]?.some((item) => item.teamId === teamId);
       if (!hasTeam) {
-        delete groups[key] // usuń całą grupę, jeśli nie zawiera danego teamId
+        delete groups[key]; // usuń całą grupę, jeśli nie zawiera danego teamId
       }
     }
   }
@@ -231,10 +236,10 @@ watch(
         <Filter
           :variant="`SimulationItem`"
           :to-sort-option="sortOption"
-          :condition="condition"
+          :order="order"
           :filterDynamicValue="presentedTeams"
           @update:sorting-option="changeSortingOption"
-          @update:condition="changeCondition"
+          @update:order="changeOrder"
           @update:filter-by="setFilteringByTeam"
         />
         <summary>
@@ -246,9 +251,7 @@ watch(
           :key="scoreboardId"
           class="scoreboard-block"
         >
-          <h3 style="float: right">
-            #{{ items[0]?.iterationIndex}}
-          </h3>
+          <h3 style="float: right">#{{ items[0]?.iterationIndex }}</h3>
           <small>Scoreboard: {{ scoreboardId }}</small>
 
           <ScoreboardItem

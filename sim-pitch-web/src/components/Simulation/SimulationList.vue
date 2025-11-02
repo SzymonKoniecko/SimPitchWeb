@@ -27,8 +27,8 @@ const pageSize = ref(10);
 const totalCount = computed(() => state.value.data?.totalCount ?? 0);
 const totalPages = computed(() => state.value.data?.totalPages ?? 1);
 const sortOption = ref("CreatedDate");
-const condition = ref("");
 const filterValue = ref("Any");
+const order = ref<"Descending" | "Ascending">("Descending");
 
 const simulationOverviews = computed(() => {
   if (
@@ -57,7 +57,7 @@ const loadSimulations = async () => {
       currentPage.value,
       pageSize.value,
       sortOption.value,
-      condition.value
+      mapOrder(order.value)
     )
   );
 };
@@ -96,8 +96,13 @@ const changeSortingOption = async (newSortingOption: string) => {
   }
 };
 
-const changeCondition = async (newCondition: string) => {
-  condition.value = newCondition;
+const changeOrder = async (newOrder: "Descending" | "Ascending") => {
+  order.value = newOrder;
+  await loadSimulations();
+};
+
+const mapOrder = (newOrder: "Descending" | "Ascending"): "DESC" | "ASC" => {
+  return newOrder === "Descending" ? "DESC" : "ASC";
 };
 
 //const getTeamName = (id: string) => teams.value.find(t => t.id === id)?.name ?? id
@@ -123,10 +128,10 @@ const getLeagueName = (id: string) =>
       <Filter
         :variant="`SimulationList`"
         :to-sort-option="sortOption"
-        :condition="condition"
+          :order="order"
         :filterDynamicValue="leagues"
         @update:sorting-option="changeSortingOption"
-        @update:condition="changeCondition"
+          @update:order="changeOrder"
         @update:filter-by="setFilteringByLeague"
       />
     </section>

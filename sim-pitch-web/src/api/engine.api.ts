@@ -40,13 +40,13 @@ class EngineAPI {
   static SimulationController = class SimulationController {
     private static readonly PrefixUrl = BASE+"/simulation";
 
-    async getSimulations(pageNumber: number, pageSize: number, sortingOption: string, condition: string) {
-      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}`);
+    async getSimulations(pageNumber: number, pageSize: number, sortingOption: string, order: string) {
+      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}&order=${order}`);
       return data;
     }
 
-    async getSimulationOverviews(id: string, pageNumber: number, pageSize: number, sortingOption: string, condition: string) {// 
-      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}/${id}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}`);
+    async getSimulationOverviews(id: string, pageNumber: number, pageSize: number, sortingOption: string, order: string) {
+      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}/${id}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}&order=${order}`);
       return data;
     }
 

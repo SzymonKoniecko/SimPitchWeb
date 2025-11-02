@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import {
   SortingOption,
   SortingOptions,
@@ -13,7 +13,7 @@ defineOptions({ name: "Filter" });
 const props = defineProps<{
   variant: "SimulationItem" | "SimulationList";
   toSortOption: string;
-  condition?: string;
+  order?: "Descending" | "Ascending";
   filterDynamicValue: Team[] | League[];
 }>();
 
@@ -33,10 +33,11 @@ const variant = computed(() => props.variant ?? "SimulationItem");
 const sortingList = computed(() => {
   return setSortingOptions(variant.value);
 });
+const orderValue = ref(props.order || "Descending");
 
 const emit = defineEmits<{
   (e: "update:sortingOption", value: string): void;
-  (e: "update:condition", value: string): void;
+  (e: "update:order", value: "Descending" | "Ascending"): void;
   (e: "update:filterBy", value: string): void;
 }>();
 
@@ -45,9 +46,9 @@ const changeSortingOption = (event: Event) => {
   emit("update:sortingOption", newSortingOption);
 };
 
-const changeCondition = (event: Event) => {
-  const newCondition = String((event.target as HTMLSelectElement).value);
-  emit("update:condition", newCondition);
+const changeOrder = () => {
+  orderValue.value = orderValue.value === "Descending" ? "Ascending" : "Descending";
+  emit("update:order", orderValue.value);
 };
 
 const filterBy = (event: Event) => {
@@ -97,11 +98,7 @@ watch(() => props.variant, ensureData);
         </option>
       </select>
     </div>
-    <button class="secondary">Descending</button>
-    <div class="condition">
-      <label>condition</label>
-      <input :value="props.condition" @change="changeCondition" />
-    </div>
+    <button class="secondary" v-on:click="changeOrder">Toggle {{orderValue}}</button>
   </div>
   <hr></hr>
 </template>
