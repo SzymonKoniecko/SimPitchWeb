@@ -86,6 +86,7 @@ const changeSortingOption = async (newSortingOption: string) => {
   sortOption.value = newSortingOption;
   if (sortOption.value !== SortingOption.Team) {
     await loadSimulation();
+    filterValue.value = 'Any'
   }
 };
 
@@ -249,7 +250,7 @@ watch(
           class="scoreboard-block"
         >
           <h3 style="float: right">
-            #{{ index + 1 + (currentPage - 1) * pageSize }}
+            #{{ items[0]?.iterationIndex}}
           </h3>
           <small>Scoreboard: {{ scoreboardId }}</small>
 

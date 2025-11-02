@@ -16,7 +16,7 @@ export function getLabel(option: SortingOption): string {
     case "CreatedDate": return "Created date";
     case "ExecutionTime": return "Execution time";
     case "Name": return "Name";
-    case "IterationResultNumber": return "Iteration";
+    case "IterationResultNumber": return "Order by iteration";
     case "Team": return "Team";
     case "LeaderPoints": return "Leader points";
     default: return option;
