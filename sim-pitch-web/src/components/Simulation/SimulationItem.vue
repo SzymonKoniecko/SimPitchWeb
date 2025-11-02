@@ -9,6 +9,9 @@ import { useSportsDataStore } from "../../stores/SportsDataStore";
 import ScoreboardItem from "../Iteration/ScoreboardItem.vue";
 import type { SimulationState } from "../../models/Simulations/simulationState";
 import Pagination from "../Other/Pagination.vue";
+import Filter from "../Other/Filter.vue";
+import type { Team } from "../../models/SportsDataModels/team";
+import { SortingOption } from "../../models/Consts/sortingOption";
 
 defineOptions({ name: "SimulationItem" });
 type Props = { id: string };
@@ -17,13 +20,16 @@ const props = defineProps<Props>();
 const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
+const presentedTeams = ref<Team[]>([]);
+const filterValue = ref("Any");
 
 const state = ref<ApiState<Simulation>>({
   loading: true,
   error: null,
   data: null,
 });
-
+const sortOption = ref("CreatedDate");
+const order = ref<"Descending" | "Ascending">("Descending");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const totalCount = computed(
@@ -43,7 +49,9 @@ const loadSimulation = async () => {
     engineAPI.SimulationController.getSimulationOverviews(
       props.id,
       currentPage.value,
-      pageSize.value
+      pageSize.value,
+      sortOption.value,
+      mapOrder(order.value)
     )
   );
 };
@@ -61,26 +69,69 @@ const changePageSize = async (newSize: number) => {
   await loadSimulation();
 };
 
+const setFilteringByTeam = (teamId: string) => {
+  filterValue.value = teamId;
+};
+
 const stopSimulation = async (id?: string) => {
   if (id != null && id != undefined && id !== "") {
     await fetchData<SimulationState>(() =>
       engineAPI.SimulationController.stopSimulation(id)
     );
-    loadSimulation(currentPage.value);
+    await loadSimulation();
   }
 };
 
+const changeSortingOption = async (newSortingOption: string) => {
+  sortOption.value = newSortingOption;
+  if (sortOption.value !== SortingOption.DynamicValue) {
+    await loadSimulation();
+    filterValue.value = "Any";
+  }
+};
+
+const changeOrder = async (newOrder: "Descending" | "Ascending") => {
+  order.value = newOrder;
+  await loadSimulation();
+};
+
+const mapOrder = (newOrder: "Descending" | "Ascending"): "DESC" | "ASC" => {
+  return newOrder === "Descending" ? "DESC" : "ASC";
+};
+
 const getLeagueName = (id: string) =>
-  leagues.value.find((t) => t.id === id)?.name ?? id;
+  leagues.value.find((l) => l.id === id)?.name ?? id;
+
+function getTeamById(id: string): boolean {
+  return presentedTeams.value.some((team) => team.id === id);
+}
+
+function addTeamIfNotPresented(teamId: string) {
+  if (!getTeamById(teamId)) {
+    const teamToAdd = teams.value.find((team) => team.id === teamId);
+    if (teamToAdd) {
+      presentedTeams.value.push(teamToAdd);
+    }
+  }
+}
 
 const groupedPreviews = computed(() => {
   const previews = state.value.data?.iterationPreviews.items ?? [];
   const groups: Record<string, IterationPreview[]> = {};
-  console.log(state.value.data);
   for (const p of previews) {
     if (p.scoreboardId !== null && p.scoreboardId !== undefined) {
       if (!groups[p.scoreboardId]) groups[p.scoreboardId] = [];
       groups[p.scoreboardId]!.push(p);
+    }
+    addTeamIfNotPresented(p.teamId);
+  }
+  if (filterValue.value !== "Any") {
+    const teamId = filterValue.value;
+    for (const key in groups) {
+      const hasTeam = groups[key]?.some((item) => item.teamId === teamId);
+      if (!hasTeam) {
+        delete groups[key]; // usuń całą grupę, jeśli nie zawiera danego teamId
+      }
     }
   }
 
@@ -90,7 +141,6 @@ const groupedPreviews = computed(() => {
       group.sort((a, b) => a.rank - b.rank);
     }
   }
-
   return groups;
 });
 
@@ -99,12 +149,12 @@ const groupedPreviewEntries = computed(() =>
 );
 onMounted(async () => {
   await ensureSportsData();
-  await loadSimulation(currentPage.value);
+  await loadSimulation();
 });
 watch(
   () => props.id,
   async () => {
-    await loadSimulation(currentPage.value);
+    await loadSimulation();
   }
 );
 </script>
@@ -112,7 +162,7 @@ watch(
 <template>
   <div style="display: flex">
     <button
-      @click="() => loadSimulation(currentPage)"
+      @click="() => loadSimulation()"
       :aria-busy="state.loading"
       role="button"
       class="button-primary"
@@ -183,6 +233,15 @@ watch(
           @update:page="loadIterationPage"
           @update:pageSize="changePageSize"
         />
+        <Filter
+          :variant="`SimulationItem`"
+          :to-sort-option="sortOption"
+          :order="order"
+          :filterDynamicValue="presentedTeams"
+          @update:sorting-option="changeSortingOption"
+          @update:order="changeOrder"
+          @update:filter-by="setFilteringByTeam"
+        />
         <summary>
           <strong>Iteration Previews (grouped by scoreboard)</strong>
         </summary>
@@ -192,9 +251,7 @@ watch(
           :key="scoreboardId"
           class="scoreboard-block"
         >
-          <h3 style="float: right">
-            #{{ index + 1 + (currentPage - 1) * pageSize }}
-          </h3>
+          <h3 style="float: right">#{{ items[0]?.iterationIndex }}</h3>
           <small>Scoreboard: {{ scoreboardId }}</small>
 
           <ScoreboardItem

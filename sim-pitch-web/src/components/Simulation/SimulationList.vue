@@ -7,6 +7,8 @@ import ErrorEndpoint from "../Other/ErrorEndpoint.vue";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
 import type { SimulationState } from "../../models/Simulations/simulationState";
 import Pagination from "../Other/Pagination.vue";
+import { SortingOption } from "../../models/Consts/sortingOption";
+import Filter from "../Other/Filter.vue";
 
 defineOptions({ name: "SimulationList" });
 
@@ -19,12 +21,26 @@ const state = ref<ApiState<SimulationOverviewList>>({
 const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
-const simulationOverviews = computed(() => state.value.data?.items);
 
 const currentPage = ref(1);
 const pageSize = ref(10);
 const totalCount = computed(() => state.value.data?.totalCount ?? 0);
 const totalPages = computed(() => state.value.data?.totalPages ?? 1);
+const sortOption = ref("CreatedDate");
+const filterValue = ref("Any");
+const order = ref<"Descending" | "Ascending">("Descending");
+
+const simulationOverviews = computed(() => {
+  if (
+    sortOption.value === SortingOption.DynamicValue &&
+    filterValue.value !== "Any"
+  ) {
+    return state.value.data?.items.filter(
+      (x) => x.simulationParams.leagueId === filterValue.value
+    );
+  }
+  return state.value.data?.items;
+});
 
 onMounted(async () => {
   await ensureSportsData();
@@ -39,7 +55,9 @@ const loadSimulations = async () => {
   state.value = await fetchData<SimulationOverviewList>(() =>
     engineAPI.SimulationController.getSimulations(
       currentPage.value,
-      pageSize.value
+      pageSize.value,
+      sortOption.value,
+      mapOrder(order.value)
     )
   );
 };
@@ -55,6 +73,9 @@ const changePageSize = async (newSize: number) => {
   currentPage.value = 1;
   await loadSimulations();
 };
+const setFilteringByLeague = (leagueId: string) => {
+  filterValue.value = leagueId;
+};
 
 const stopSimulation = async (id: string) => {
   await fetchData<SimulationState>(() =>
@@ -66,6 +87,24 @@ const checkStatus = (state: string): boolean => {
   if (state === "Pending" || state === "Running") return true;
   return false;
 };
+
+const changeSortingOption = async (newSortingOption: string) => {
+  sortOption.value = newSortingOption;
+  if (sortOption.value !== SortingOption.DynamicValue) {
+    await loadSimulations();
+    filterValue.value = "Any";
+  }
+};
+
+const changeOrder = async (newOrder: "Descending" | "Ascending") => {
+  order.value = newOrder;
+  await loadSimulations();
+};
+
+const mapOrder = (newOrder: "Descending" | "Ascending"): "DESC" | "ASC" => {
+  return newOrder === "Descending" ? "DESC" : "ASC";
+};
+
 //const getTeamName = (id: string) => teams.value.find(t => t.id === id)?.name ?? id
 const getLeagueName = (id: string) =>
   leagues.value.find((t) => t.id === id)?.name ?? id;
@@ -85,6 +124,17 @@ const getLeagueName = (id: string) =>
         Reload
       </button>
     </header>
+    <section>
+      <Filter
+        :variant="`SimulationList`"
+        :to-sort-option="sortOption"
+        :order="order"
+        :filterDynamicValue="leagues"
+        @update:sorting-option="changeSortingOption"
+        @update:order="changeOrder"
+        @update:filter-by="setFilteringByLeague"
+      />
+    </section>
     <div v-if="state.loading" class="info">
       Loading simulations..., please wait…
     </div>
