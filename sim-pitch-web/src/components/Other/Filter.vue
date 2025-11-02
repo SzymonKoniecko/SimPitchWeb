@@ -5,6 +5,7 @@ import {
   SortingOptions,
   getLabel
 } from "../../models/Consts/sortingOption";
+import type { Team } from "../../models/SportsDataModels/team";
 
 defineOptions({ name: "Filter" });
 
@@ -12,6 +13,7 @@ const props = defineProps<{
   variant?: "SimulationItem" | "SimulationList";
   toSortOption: string;
   condition: string;
+  filterteams: Team[];
 }>();
 
 const variant = computed(() => props.variant ?? "SimulationItem");
@@ -22,6 +24,7 @@ const sortingList = computed(() => {
 const emit = defineEmits<{
   (e: "update:sortingOption", value: string): void;
   (e: "update:condition", value: string): void;
+  (e: "update:filterByTeam", value: string): void;
 }>();
 
 const changeSortingOption = (event: Event) => {
@@ -33,6 +36,12 @@ const changeCondition = (event: Event) => {
   const newCondition = String((event.target as HTMLSelectElement).value);
   emit("update:condition", newCondition);
 };
+
+const filterByTeamId = (event: Event) =>{
+    const newFilterTeamId = String((event.target as HTMLSelectElement).value);
+    console.log(newFilterTeamId)
+    emit("update:filterByTeam", newFilterTeamId);
+}
 
 const setSortingOptions = (variant: string) => {
   let list = [...SortingOptions];
@@ -67,6 +76,18 @@ watch(() => props.variant, ensureData);
       </option>
     </select>
     </label>
+  </div>
+  <div v-if="props.toSortOption === SortingOption.Team" class="team-container">
+    <label>Select team</label>
+    <select :value="props.filterteams" @change="filterByTeamId">
+      <option 
+        v-for="team in props.filterteams" 
+        :key="team.id" 
+        :value="team.id"
+      >
+        {{ team.name }}
+      </option>
+    </select>
   </div>
   <div class="condition">
     <label>condition</label>

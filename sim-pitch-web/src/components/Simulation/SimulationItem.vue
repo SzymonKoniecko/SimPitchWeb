@@ -10,6 +10,8 @@ import ScoreboardItem from "../Iteration/ScoreboardItem.vue";
 import type { SimulationState } from "../../models/Simulations/simulationState";
 import Pagination from "../Other/Pagination.vue";
 import Filter from "../Other/Filter.vue";
+import type { Team } from "../../models/SportsDataModels/team";
+import { SortingOption } from "../../models/Consts/sortingOption";
 
 defineOptions({ name: "SimulationItem" });
 type Props = { id: string };
@@ -18,6 +20,8 @@ const props = defineProps<Props>();
 const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
+const presentedTeams = ref<Team[]>([]);
+const filterValue = ref('Any')
 
 const state = ref<ApiState<Simulation>>({
   loading: true,
@@ -65,6 +69,10 @@ const changePageSize = async (newSize: number) => {
   await loadSimulation();
 };
 
+const setFilteringByTeam = (teamId: string) => {
+  filterValue.value = teamId;
+}
+
 const stopSimulation = async (id?: string) => {
   if (id != null && id != undefined && id !== "") {
     await fetchData<SimulationState>(() =>
@@ -76,7 +84,9 @@ const stopSimulation = async (id?: string) => {
 
 const changeSortingOption = async (newSortingOption: string) => {
   sortOption.value = newSortingOption;
-  await loadSimulation();
+  if (sortOption.value !== SortingOption.Team) {
+    await loadSimulation();
+  }
 };
 
 const changeCondition = async (newCondition: string) => {
@@ -84,7 +94,20 @@ const changeCondition = async (newCondition: string) => {
 };
 
 const getLeagueName = (id: string) =>
-  leagues.value.find((t) => t.id === id)?.name ?? id;
+  leagues.value.find((l) => l.id === id)?.name ?? id;
+
+function getTeamById(id: string): boolean {
+  return presentedTeams.value.some((team) => team.id === id);
+}
+
+function addTeamIfNotPresented(teamId: string) {
+  if (!getTeamById(teamId)) {
+    const teamToAdd = teams.value.find((team) => team.id === teamId);
+    if (teamToAdd) {
+      presentedTeams.value.push(teamToAdd);
+    }
+  }
+}
 
 const groupedPreviews = computed(() => {
   const previews = state.value.data?.iterationPreviews.items ?? [];
@@ -94,7 +117,21 @@ const groupedPreviews = computed(() => {
       if (!groups[p.scoreboardId]) groups[p.scoreboardId] = [];
       groups[p.scoreboardId]!.push(p);
     }
+    addTeamIfNotPresented(p.teamId);
   }
+  console.log("1st:")
+  console.table(groups)
+  if (filterValue.value !== 'Any') {
+    const teamId = filterValue.value
+    for (const key in groups) {
+      const hasTeam = groups[key]?.some(item => item.teamId === teamId)
+      if (!hasTeam) {
+        delete groups[key] // usuń całą grupę, jeśli nie zawiera danego teamId
+      }
+    }
+  }
+  console.log("2nd:")
+  console.table(groups)
 
   for (const key in groups) {
     const group = groups[key];
@@ -102,7 +139,6 @@ const groupedPreviews = computed(() => {
       group.sort((a, b) => a.rank - b.rank);
     }
   }
-
   return groups;
 });
 
@@ -198,8 +234,10 @@ watch(
         <Filter
           :to-sort-option="sortOption"
           :condition="condition"
+          :filterteams="presentedTeams"
           @update:sorting-option="changeSortingOption"
           @update:condition="changeCondition"
+          @update:filter-by-team="setFilteringByTeam"
         />
         <summary>
           <strong>Iteration Previews (grouped by scoreboard)</strong>
