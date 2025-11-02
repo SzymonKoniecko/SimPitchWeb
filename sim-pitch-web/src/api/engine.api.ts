@@ -1,16 +1,16 @@
-import axios from 'axios';
+import axios from "axios";
 const apiClient = axios.create({
-  baseURL: '',  // Relatywne ścieżki
+  baseURL: "", // Relatywne ścieżki
   timeout: 30000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
-const BASE = "/api/engine"
+const BASE = "/api/engine";
 
 apiClient.interceptors.request.use(
   (config) => {
-    console.log('*Request:', config.method?.toUpperCase(), config.url);
+    console.log("*Request:", config.method?.toUpperCase(), config.url);
     return config;
   },
   (error) => Promise.reject(error)
@@ -18,11 +18,11 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => {
-    console.log('**Response:', response.config.url, response.status);
+    console.log("**Response:", response.config.url, response.status);
     return response;
   },
   (error) => {
-    console.error('***Error:', error.config?.url, error.message);
+    console.error("***Error:", error.config?.url, error.message);
     return Promise.reject(error);
   }
 );
@@ -30,7 +30,9 @@ apiClient.interceptors.response.use(
 class EngineAPI {
   SimulationController: InstanceType<typeof EngineAPI.SimulationController>;
   ScoreboardController: InstanceType<typeof EngineAPI.ScoreboardController>;
-  IterationResultController: InstanceType<typeof EngineAPI.IterationResultController>;
+  IterationResultController: InstanceType<
+    typeof EngineAPI.IterationResultController
+  >;
   constructor() {
     this.SimulationController = new EngineAPI.SimulationController();
     this.ScoreboardController = new EngineAPI.ScoreboardController();
@@ -38,31 +40,51 @@ class EngineAPI {
   }
 
   static SimulationController = class SimulationController {
-    private static readonly PrefixUrl = BASE+"/simulation";
+    private static readonly PrefixUrl = BASE + "/simulation";
 
-    async getSimulations(pageNumber: number, pageSize: number, sortingOption: string, order: string) {
-      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}&order=${order}`);
+    async getSimulations(
+      pageNumber: number,
+      pageSize: number,
+      sortingOption: string,
+      order: string
+    ) {
+      const { data } = await apiClient.get(
+        `${SimulationController.PrefixUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}&order=${order}`
+      );
       return data;
     }
 
-    async getSimulationOverviews(id: string, pageNumber: number, pageSize: number, sortingOption: string, order: string) {
-      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}/${id}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}&order=${order}`);
+    async getSimulationOverviews(
+      id: string,
+      pageNumber: number,
+      pageSize: number,
+      sortingOption: string,
+      order: string
+    ) {
+      const { data } = await apiClient.get(
+        `${SimulationController.PrefixUrl}/${id}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}&order=${order}`
+      );
       return data;
     }
 
     async createSimulation(payload: any) {
-      const { data } = await apiClient.post(`${SimulationController.PrefixUrl}`, payload);
+      const { data } = await apiClient.post(
+        `${SimulationController.PrefixUrl}`,
+        payload
+      );
       return data;
     }
 
     async stopSimulation(id: string) {
-      const { data } = await apiClient.delete(`${SimulationController.PrefixUrl}/stop/${id}`);
+      const { data } = await apiClient.delete(
+        `${SimulationController.PrefixUrl}/stop/${id}`
+      );
       return data;
     }
   };
 
   static ScoreboardController = class ScoreboardController {
-    private static readonly PrefixUrl = BASE+"/scoreboard";
+    private static readonly PrefixUrl = BASE + "/scoreboard";
 
     async getScoreboard(simulationId: string, iterationResultId?: string) {
       let url = `${ScoreboardController.PrefixUrl}?simulationId=${simulationId}`;
@@ -75,7 +97,7 @@ class EngineAPI {
   };
 
   static IterationResultController = class IterationResultController {
-    private static readonly PrefixUrl = BASE+"/iterationresult";
+    private static readonly PrefixUrl = BASE + "/iterationresult";
 
     async getIterationResult(iterationId: string) {
       let url = `${IterationResultController.PrefixUrl}/${iterationId}`;

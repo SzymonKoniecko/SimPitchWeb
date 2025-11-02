@@ -92,7 +92,7 @@ const changeSortingOption = async (newSortingOption: string) => {
   sortOption.value = newSortingOption;
   if (sortOption.value !== SortingOption.DynamicValue) {
     await loadSimulations();
-    filterValue.value = 'Any';
+    filterValue.value = "Any";
   }
 };
 
@@ -128,10 +128,10 @@ const getLeagueName = (id: string) =>
       <Filter
         :variant="`SimulationList`"
         :to-sort-option="sortOption"
-          :order="order"
+        :order="order"
         :filterDynamicValue="leagues"
         @update:sorting-option="changeSortingOption"
-          @update:order="changeOrder"
+        @update:order="changeOrder"
         @update:filter-by="setFilteringByLeague"
       />
     </section>
