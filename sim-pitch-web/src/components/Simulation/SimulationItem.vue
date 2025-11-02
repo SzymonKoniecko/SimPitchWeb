@@ -84,7 +84,7 @@ const stopSimulation = async (id?: string) => {
 
 const changeSortingOption = async (newSortingOption: string) => {
   sortOption.value = newSortingOption;
-  if (sortOption.value !== SortingOption.Team) {
+  if (sortOption.value !== SortingOption.DynamicValue) {
     await loadSimulation();
     filterValue.value = 'Any'
   }
@@ -120,8 +120,6 @@ const groupedPreviews = computed(() => {
     }
     addTeamIfNotPresented(p.teamId);
   }
-  console.log("1st:")
-  console.table(groups)
   if (filterValue.value !== 'Any') {
     const teamId = filterValue.value
     for (const key in groups) {
@@ -131,8 +129,6 @@ const groupedPreviews = computed(() => {
       }
     }
   }
-  console.log("2nd:")
-  console.table(groups)
 
   for (const key in groups) {
     const group = groups[key];
@@ -233,12 +229,13 @@ watch(
           @update:pageSize="changePageSize"
         />
         <Filter
+          :variant="`SimulationItem`"
           :to-sort-option="sortOption"
           :condition="condition"
-          :filterteams="presentedTeams"
+          :filterDynamicValue="presentedTeams"
           @update:sorting-option="changeSortingOption"
           @update:condition="changeCondition"
-          @update:filter-by-team="setFilteringByTeam"
+          @update:filter-by="setFilteringByTeam"
         />
         <summary>
           <strong>Iteration Previews (grouped by scoreboard)</strong>

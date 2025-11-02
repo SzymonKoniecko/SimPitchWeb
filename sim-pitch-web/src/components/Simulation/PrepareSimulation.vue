@@ -56,7 +56,6 @@ async function submitForm() {
     } else {
       simulationId.value = result.data ?? ''
       status.value = 'Simulation has been sent!'
-      console.log(simulationId.value)
     }
   } catch (err: any) {
     errorSimulation.value = err.message || 'Unexpected error'

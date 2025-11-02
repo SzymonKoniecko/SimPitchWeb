@@ -25,6 +25,7 @@ const changePageSize = (event: Event) => {
 </script>
 
 <template>
+  <hr>
   <div class="pagination">
     <button @click="goToPage(props.currentPage - 1)" :disabled="props.currentPage <= 1">
       ← Prev

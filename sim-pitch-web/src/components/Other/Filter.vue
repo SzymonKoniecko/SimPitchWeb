@@ -3,18 +3,31 @@ import { computed, onMounted, watch } from "vue";
 import {
   SortingOption,
   SortingOptions,
-  getLabel
+  getLabel,
 } from "../../models/Consts/sortingOption";
 import type { Team } from "../../models/SportsDataModels/team";
+import type { League } from "../../models/SportsDataModels/league";
 
 defineOptions({ name: "Filter" });
 
 const props = defineProps<{
-  variant?: "SimulationItem" | "SimulationList";
+  variant: "SimulationItem" | "SimulationList";
   toSortOption: string;
-  condition: string;
-  filterteams: Team[];
+  condition?: string;
+  filterDynamicValue: Team[] | League[];
 }>();
+
+const filterObjValue = computed(() => {
+  const array = [...props.filterDynamicValue];
+
+  if (props.variant === "SimulationItem") {
+    array.push({ id: "Any", name: "( Any )" } as Team);
+  } else if (props.variant === "SimulationList") {
+    array.push({ id: "Any", name: "( Any )" } as League);
+  }
+
+  return array;
+});
 
 const variant = computed(() => props.variant ?? "SimulationItem");
 const sortingList = computed(() => {
@@ -24,7 +37,7 @@ const sortingList = computed(() => {
 const emit = defineEmits<{
   (e: "update:sortingOption", value: string): void;
   (e: "update:condition", value: string): void;
-  (e: "update:filterByTeam", value: string): void;
+  (e: "update:filterBy", value: string): void;
 }>();
 
 const changeSortingOption = (event: Event) => {
@@ -37,11 +50,10 @@ const changeCondition = (event: Event) => {
   emit("update:condition", newCondition);
 };
 
-const filterByTeamId = (event: Event) =>{
-    const newFilterTeamId = String((event.target as HTMLSelectElement).value);
-    console.log(newFilterTeamId)
-    emit("update:filterByTeam", newFilterTeamId);
-}
+const filterBy = (event: Event) => {
+  const newFilterTeamId = String((event.target as HTMLSelectElement).value);
+  emit("update:filterBy", newFilterTeamId);
+};
 
 const setSortingOptions = (variant: string) => {
   let list = [...SortingOptions];
@@ -50,7 +62,7 @@ const setSortingOptions = (variant: string) => {
     list = list.filter((opt) => opt !== SortingOption.Name);
   } else if (variant === "SimulationList") {
     list = list.filter(
-      (opt) => opt !== SortingOption.Team && opt !== SortingOption.LeaderPoints
+      (opt) => opt !== SortingOption.LeaderPoints
     );
   }
   return list;
@@ -63,35 +75,46 @@ onMounted(ensureData);
 watch(() => props.variant, ensureData);
 </script>
 <template>
+    <hr></hr>
   <div class="filter">
     <label class="sort-option">
       Sort by:
       <select :value="props.toSortOption" @change="changeSortingOption">
-      <option 
-        v-for="option in sortingList" 
-        :key="option" 
-        :value="option"
-      >
-        {{ getLabel(option) }}
-      </option>
-    </select>
+        <option v-for="option in sortingList" :key="option" :value="option">
+          {{ getLabel(option, variant) }}
+        </option>
+      </select>
     </label>
+    <div v-if="props.toSortOption === SortingOption.DynamicValue" class="sort-option">
+      <label>Select dynamic value:</label>
+      <select :value="filterObjValue" @change="filterBy">
+        <option
+          v-for="dynamicValue in filterObjValue"
+          :key="dynamicValue.id"
+          :value="dynamicValue.id"
+        >
+          {{ dynamicValue.name }}
+        </option>
+      </select>
+    </div>
+    <button class="secondary">Descending</button>
+    <div class="condition">
+      <label>condition</label>
+      <input :value="props.condition" @change="changeCondition" />
+    </div>
   </div>
-  <div v-if="props.toSortOption === SortingOption.Team" class="team-container">
-    <label>Select team</label>
-    <select :value="props.filterteams" @change="filterByTeamId">
-      <option 
-        v-for="team in props.filterteams" 
-        :key="team.id" 
-        :value="team.id"
-      >
-        {{ team.name }}
-      </option>
-    </select>
-  </div>
-  <div class="condition">
-    <label>condition</label>
-    <input :value="props.condition" @change="changeCondition" />
-  </div>
+  <hr></hr>
 </template>
-<style scoped></style>
+<style scoped>
+.filter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.sort-option {
+  font-size: 0.9rem;
+}
+button {
+  cursor: pointer;
+}
+</style>

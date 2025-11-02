@@ -40,8 +40,8 @@ class EngineAPI {
   static SimulationController = class SimulationController {
     private static readonly PrefixUrl = BASE+"/simulation";
 
-    async getSimulations(pageNumber: number, pageSize: number) {
-      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    async getSimulations(pageNumber: number, pageSize: number, sortingOption: string, condition: string) {
+      const { data } = await apiClient.get(`${SimulationController.PrefixUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}`);
       return data;
     }
 
