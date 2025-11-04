@@ -202,6 +202,10 @@ watch(
             <strong>Seasons:</strong>
             {{ state.data.simulationParams.seasonYears.join(", ") }}
           </li>
+          <li>
+            <strong>Created scoreboards during the simulation? -></strong>
+            {{ state.data.simulationParams.createScoreboardOnCompleteIteration }}
+          </li>
         </ul>
       </details>
       <p><strong>Winners:</strong> {{ state.data.winnersSummary }}</p>
