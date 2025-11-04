@@ -5,4 +5,5 @@ export interface SimulationParams{
     leagueId: string;
     iterations: number;
     leagueRoundId?: string;
+    createScoreboardOnCompleteIteration?: Boolean;
 }

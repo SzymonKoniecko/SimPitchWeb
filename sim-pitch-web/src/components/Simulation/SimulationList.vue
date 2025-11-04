@@ -177,6 +177,7 @@ const getLeagueName = (id: string) =>
             >
             <br />
             <small>Percentage: {{ sim.state.progressPercent }}%</small> <br />
+            <small>Scoreboards are created during the simulation? ->  {{ sim.simulationParams.createScoreboardOnCompleteIteration }} <-</small> <br />
             <div v-if="checkStatus(sim.state.state)" class="loader"></div>
           </header>
           <details close>

@@ -23,7 +23,8 @@ const form = reactive({
   seasonYears: [] as SeasonYear[],
   league_id: '',
   iterations: 1,
-  league_round_id: null
+  league_round_id: null,
+  createScoreboardOnCompleteIteration: true
 })
 
 const ensureData = async () => {
@@ -47,7 +48,8 @@ async function submitForm() {
     seasonYears: form.seasonYears,
     leagueId: form.league_id,
     iterations: form.iterations,
-    leagueRoundId: form.league_round_id ?? undefined
+    leagueRoundId: form.league_round_id ?? undefined,
+    createScoreboardOnCompleteIteration: form.createScoreboardOnCompleteIteration ?? false
   }
   try {
     const result = await fetchData<any>(() => engineAPI.SimulationController.createSimulation(payload))
@@ -143,7 +145,14 @@ function resetForm() {
             </option>
           </select>
         </div>
-
+        <div class="field">
+          <label for="leagueRoundId">Optional: Simulation should create scoreboards during the simulation?</label>
+           <input
+              type="checkbox"
+              :value="form.createScoreboardOnCompleteIteration"
+              v-model="form.createScoreboardOnCompleteIteration"
+            />
+        </div>
         <div class="actions">
           <button type="submit" class="button-primary">Simulate</button>
           <button type="button" class="button-secondary" @click="resetForm">Reset</button>
