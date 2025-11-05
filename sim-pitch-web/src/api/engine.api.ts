@@ -29,12 +29,14 @@ apiClient.interceptors.response.use(
 
 class EngineAPI {
   SimulationController: InstanceType<typeof EngineAPI.SimulationController>;
+  SimulationStatsController: InstanceType<typeof EngineAPI.SimulationStatsController>;
   ScoreboardController: InstanceType<typeof EngineAPI.ScoreboardController>;
   IterationResultController: InstanceType<
     typeof EngineAPI.IterationResultController
   >;
   constructor() {
     this.SimulationController = new EngineAPI.SimulationController();
+    this.SimulationStatsController = new EngineAPI.SimulationStatsController();
     this.ScoreboardController = new EngineAPI.ScoreboardController();
     this.IterationResultController = new EngineAPI.IterationResultController();
   }
@@ -79,6 +81,16 @@ class EngineAPI {
       const { data } = await apiClient.delete(
         `${SimulationController.PrefixUrl}/stop/${id}`
       );
+      return data;
+    }
+  };
+
+  static SimulationStatsController = class SimulationStatsController {
+    private static readonly PrefixUrl = BASE + "/simulationStats";
+
+    async getSimulationTeamStats(simulationId: string) {
+      let url = `${SimulationStatsController.PrefixUrl}/${simulationId}`;
+      const { data } = await apiClient.get(url);
       return data;
     }
   };
