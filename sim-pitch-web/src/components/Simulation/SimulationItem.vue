@@ -12,6 +12,8 @@ import Pagination from "../Other/Pagination.vue";
 import Filter from "../Other/Filter.vue";
 import type { Team } from "../../models/SportsDataModels/team";
 import { SortingOption } from "../../models/Consts/sortingOption";
+import type { SimulationTeamStats } from "../../models/Simulations/simulationTeamStats";
+import HeatMap from "../Diagrams/HeatMap.vue";
 
 defineOptions({ name: "SimulationItem" });
 type Props = { id: string };
@@ -23,20 +25,26 @@ const teams = computed(() => store.teams);
 const presentedTeams = ref<Team[]>([]);
 const filterValue = ref("Any");
 
-const state = ref<ApiState<Simulation>>({
+const simulationState = ref<ApiState<Simulation>>({
   loading: true,
   error: null,
   data: null,
 });
+const simulationTeamStatsState = ref<ApiState<SimulationTeamStats[]>>({
+  loading: true,
+  error: null,
+  data: null,
+});
+
 const sortOption = ref("CreatedDate");
 const order = ref<"Descending" | "Ascending">("Descending");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const totalCount = computed(
-  () => state.value.data?.iterationPreviews?.totalCount ?? 0
+  () => simulationState.value.data?.iterationPreviews?.totalCount ?? 0
 );
 const totalPages = computed(
-  () => state.value.data?.iterationPreviews?.totalPages ?? 1
+  () => simulationState.value.data?.iterationPreviews?.totalPages ?? 1
 );
 
 const ensureSportsData = async () => {
@@ -45,7 +53,7 @@ const ensureSportsData = async () => {
 };
 
 const loadSimulation = async () => {
-  state.value = await fetchData<Simulation>(() =>
+  simulationState.value = await fetchData<Simulation>(() =>
     engineAPI.SimulationController.getSimulationOverviews(
       props.id,
       currentPage.value,
@@ -54,13 +62,16 @@ const loadSimulation = async () => {
       mapOrder(order.value)
     )
   );
+  simulationTeamStatsState.value = await fetchData<SimulationTeamStats[]>(() =>
+    engineAPI.SimulationStatsController.getSimulationTeamStats(props.id)
+  );
 };
 
 const loadIterationPage = async (newPage: number) => {
   currentPage.value = newPage;
-  state.value.loading = true;
+  simulationState.value.loading = true;
   loadSimulation();
-  state.value.loading = false;
+  simulationState.value.loading = false;
 };
 
 const changePageSize = async (newSize: number) => {
@@ -116,7 +127,7 @@ function addTeamIfNotPresented(teamId: string) {
 }
 
 const groupedPreviews = computed(() => {
-  const previews = state.value.data?.iterationPreviews.items ?? [];
+  const previews = simulationState.value.data?.iterationPreviews.items ?? [];
   const groups: Record<string, IterationPreview[]> = {};
   for (const p of previews) {
     if (p.scoreboardId !== null && p.scoreboardId !== undefined) {
@@ -163,7 +174,7 @@ watch(
   <div style="display: flex">
     <button
       @click="() => loadSimulation()"
-      :aria-busy="state.loading"
+      :aria-busy="simulationState.loading"
       role="button"
       class="button-primary"
     >
@@ -171,8 +182,8 @@ watch(
     </button>
     <br />
     <button
-      @click="stopSimulation(state.data?.state.simulationId)"
-      :aria-busy="state.loading"
+      @click="stopSimulation(simulationState.data?.state.simulationId)"
+      :aria-busy="simulationState.loading"
       role="button"
       class="button-secondary"
     >
@@ -180,54 +191,69 @@ watch(
     </button>
   </div>
   <main class="container">
-    <article v-if="state.loading" aria-busy="true">
+    <article v-if="simulationState.loading" aria-busy="true">
       Loading simulation data...
     </article>
-    <ErrorEndpoint v-else-if="state.error" :error="state.error" />
+    <ErrorEndpoint
+      v-else-if="simulationState.error"
+      :error="simulationState.error"
+    />
+    <ErrorEndpoint
+      v-else-if="simulationTeamStatsState.error"
+      :error="simulationTeamStatsState.error"
+    />
 
-    <section v-else-if="state.data" class="container-content">
+    <section v-else-if="simulationState.data" class="container-content">
       <h2>Summary</h2>
       <details close class="details">
         <summary><strong>[-> Simulation Parameters <-]</strong></summary>
         <ul>
           <li>
             <strong>League:</strong>
-            {{ getLeagueName(state.data.simulationParams.leagueId) }}
+            {{ getLeagueName(simulationState.data.simulationParams.leagueId) }}
           </li>
           <li>
             <strong>Iterations:</strong>
-            {{ state.data.simulationParams.iterations }}
+            {{ simulationState.data.simulationParams.iterations }}
           </li>
           <li>
             <strong>Seasons:</strong>
-            {{ state.data.simulationParams.seasonYears.join(", ") }}
+            {{ simulationState.data.simulationParams.seasonYears.join(", ") }}
           </li>
           <li>
             <strong>Created scoreboards during the simulation? -></strong>
-            {{ state.data.simulationParams.createScoreboardOnCompleteIteration }}
+            {{
+              simulationState.data.simulationParams
+                .createScoreboardOnCompleteIteration
+            }}
           </li>
         </ul>
       </details>
-      <p><strong>Winners:</strong> {{ state.data.winnersSummary }}</p>
+      <p><strong>Winners:</strong> {{ simulationState.data.winnersSummary }}</p>
       <p>
         <strong>Completed iterations:</strong>
-        {{ state.data.state.lastCompletedIteration }} /
-        {{ state.data?.simulationParams.iterations }} ({{
-          state.data?.state.progressPercent
+        {{ simulationState.data.state.lastCompletedIteration }} /
+        {{ simulationState.data?.simulationParams.iterations }} ({{
+          simulationState.data?.state.progressPercent
         }}%)
       </p>
       <p>
-        <strong>State:</strong> {{ state.data.state.state }} ---
-        {{ new Date(state.data.state.updatedAt).toLocaleString() }}
+        <strong>State:</strong> {{ simulationState.data.state.state }} ---
+        {{ new Date(simulationState.data.state.updatedAt).toLocaleString() }}
       </p>
       <p>
-        <strong>Simulated matches:</strong> {{ state.data.simulatedMatches }}
+        <strong>Simulated matches:</strong>
+        {{ simulationState.data.simulatedMatches }}
       </p>
       <p>
         <strong>Prior league strength:</strong>
-        {{ state.data.priorLeagueStrength }}
+        {{ simulationState.data.priorLeagueStrength }}
       </p>
-
+      <HeatMap
+        v-if="simulationTeamStatsState?.data && teams?.length"
+        :simulation-team-stats="simulationTeamStatsState.data"
+        :teams="teams"
+      />
       <details open>
         <Pagination
           :total-items="totalCount"
