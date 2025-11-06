@@ -21,7 +21,7 @@
     </section>
 
     <section class="text">
-      <h2> Heat map (not developed)</h2>
+      <h2> Heat map</h2>
       <img :src="monteCarlo" alt="Monte Carlo Example" />
     </section>
 
