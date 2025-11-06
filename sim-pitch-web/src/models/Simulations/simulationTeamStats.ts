@@ -10,3 +10,11 @@ export interface SimulationTeamStats {
   averangeGoalsFor: number;
   averangeGoalsAgainst: number;
 }
+
+export function sortTeamStats(
+  simulationTeamStats: SimulationTeamStats[] | null | undefined
+): SimulationTeamStats[] {
+  return [...(simulationTeamStats ?? [])].sort(
+    (a, b) => (b.positionProbbility?.[0] || 0) - (a.positionProbbility?.[0] || 0)
+  );
+}

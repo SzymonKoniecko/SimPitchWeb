@@ -1,58 +1,88 @@
 @import url("https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css");
 
-
+/* === ZMIENNE GLOBALNE === */
 :root {
-  --color-bg: #0A0F1C;                /* bardzo ciemne granatowe tło – profesjonalne, sportowe */
-  --color-surface: #141B2D;           /* główna powierzchnia – lekko jaśniejszy granat */
-  --color-surface-sections: #151822;  /* sekcje lub karty – subtelny kontrast */
-  --color-grid: #2B3558;              /* linie siatki, tła wykresów, granice */
+  /* Tło i powierzchnie */
+  --color-bg: #0a0f1c;
+  --color-surface: #141b2d;
+  --color-surface-sections: #151822;
+  --color-grid: #2b3558;
 
-  --color-accent-green: #00E676;      /* świeża zieleń – energia, sukces, dynamika */
-  --color-pastel-green: #66FFA6;      /* pastelowa zieleń – delikatniejszy odcień dla tła, efektów */
-  --color-accent-blue: #2979FF;       /* niebieski akcent – chłodny, analityczny */
-  --color-accent-yellow: #FFD54F;     /* żółty – uwaga, losowość, emocje sportowe */
+  /* Akcenty */
+  --color-accent-green: #00e676;
+  --color-pastel-green: #66ffa6;
+  --color-pastel-darkgreen: #1e4e1d;
+  --color-accent-blue: #2979ff;
+  --color-accent-yellow: #ffd54f;
 
-  --color-text-main: #E8EDF5;         /* prawie biały – wysoki kontrast, nie męczy wzroku */
-  --color-text-secondary: #A0AEC0;    /* szaroniebieski – opis, metadane, drugoplanowy tekst */
+  /* Teksty */
+  --color-text-main: #e8edf5;
+  --color-text-secondary: #a0aec0;
 
-  --color-button: #00BFA6;            /* turkus – nowoczesny, wyróżnia CTA */
-  --color-hover: #00897B;             /* ciemniejszy na hover – głębia i kontrast */
+  /* Przyciski */
+  --color-button: #00bfa6;
+  --color-hover: #00897b;
 
-  --color-home-team: #42A5F5;         /* kolor drużyny gospodarzy – niebieski */
-  --color-away-team: #FF7043;         /* kolor drużyny gości – pomarańczowy */
-  --color-goals: #81C784;             /* gole – jasna zieleń */
-  --color-randomness: #FFB300;        /* losowość / wariancja – złotożółty */
+  /* Dodatkowe */
+  --color-home-team: #42a5f5;
+  --color-away-team: #ff7043;
+  --color-goals: #81c784;
+  --color-randomness: #ffb300;
 
+  /* Obramowania i cienie */
   --color-border: #d7e9f8;
+  --color-shadow-app: rgba(0, 0, 0, 0.25);
+  --color-shadow-button: rgba(0, 191, 166, 0.4);
+  --color-shadow-button_second: rgba(0, 191, 166, 0.6);
+
+  /* Kolory błędów / alertów */
+  --color-error-bg: #2a1b1b;
+  --color-error-border: #e57373;
+  --color-error-text: #ffb4b4;
+
+  /* Heatmap kolor bazowy */
+  --color-heatmap-max: #ff7043; /* ciepły pomarańczowo-czerwony */
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --color-bg: #F4F7FB;                /* bardzo jasne tło – neutralne, lekko niebieskawe */
-    --color-surface: #FFFFFF;           /* główna powierzchnia – czysta biel dla kontrastu */
-    --color-surface-sections: #F0F3F9;  /* sekcje lub karty – delikatny szaroniebieski */
-    --color-grid: #D6DEEB;              /* linie siatki, tła wykresów – jasny granatowy szary */
+    --color-bg: #f4f7fb;
+    --color-surface: #ffffff;
+    --color-surface-sections: #f0f3f9;
+    --color-grid: #d6deeb;
 
-    --color-accent-green: #00C853;      /* żywa zieleń – sportowa energia */
-    --color-pastel-green: #80E27E;      /* jaśniejsza, pastelowa zieleń – tło, akcenty */
-    --color-accent-blue: #2962FF;       /* mocny niebieski akcent – chłodny i profesjonalny */
-    --color-accent-yellow: #FFB300;     /* złotożółty – podkreślenie dynamiki i emocji */
+    --color-accent-green: #00c853;
+    --color-pastel-green: #80e27e;
+    --color-pastel-darkgreen: #1e4e1d;
+    --color-accent-blue: #2962ff;
+    --color-accent-yellow: #ffb300;
 
-    --color-text-main: #1A1F2C;         /* ciemny granatowy – dobry kontrast, nie czysta czerń */
-    --color-text-secondary: #5A6B87;    /* szaroniebieski – opisy, metadane */
+    --color-text-main: #1a1f2c;
+    --color-text-secondary: #5a6b87;
 
-    --color-button: #009688;            /* turkus – świeży, współczesny kolor CTA */
-    --color-hover: #00796B;             /* ciemniejszy odcień przy hoverze */
+    --color-button: #009688;
+    --color-hover: #00796b;
 
-    --color-home-team: #1976D2;         /* kolor drużyny gospodarzy – chłodny niebieski */
-    --color-away-team: #E64A19;         /* kolor drużyny gości – sportowy pomarańcz */
-    --color-goals: #43A047;             /* gole – zieleń sukcesu */
-    --color-randomness: #FBC02D;        /* losowość / wariancja – energetyczny żółty */
+    --color-home-team: #1976d2;
+    --color-away-team: #e64a19;
+    --color-goals: #43a047;
+    --color-randomness: #fbc02d;
 
-    --color-border: #B0BEC5;            /* delikatne granice, subtelne oddzielenie sekcji */
+    --color-border: #b0bec5;
+    --color-shadow-app: rgba(0, 0, 0, 0.25);
+    --color-shadow-button: rgba(0, 191, 166, 0.4);
+    --color-shadow-button_second: rgba(0, 191, 166, 0.6);
+
+    --color-error-bg: #fff1f1;
+    --color-error-border: #e57373;
+    --color-error-text: #b71c1c;
+
+    /* Heatmap kolor bazowy */
+    --color-heatmap-max: #e64a19; /* ciepły pomarańczowo-czerwony */
   }
 }
 
+/* === GLOBALNY UKŁAD === */
 html,
 body {
   margin: 0;
@@ -70,10 +100,10 @@ body {
   display: block;
   position: relative;
   margin: 2%;
-  padding: 2rem;
+  padding: 3rem;
   background-color: var(--color-surface);
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 16px var(--color-shadow-app);
   width: 96%;
   min-height: 96%;
   max-width: 98%;
@@ -81,11 +111,13 @@ body {
   transition: background-color 0.3s ease;
 }
 
-main, section, article {
+section,
+article {
   margin: 0 !important;
-  padding: 0 !important;
+  padding: 1rem;
   box-sizing: border-box;
 }
+
 section {
   background-color: var(--color-surface-sections);
   border-radius: 12px;
@@ -94,6 +126,7 @@ section {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
+/* === LINKI === */
 a {
   color: var(--color-accent-green);
   text-decoration: none;
@@ -105,9 +138,13 @@ a:hover {
   color: var(--color-accent-blue);
 }
 
-/* === NOWY STYL PRZYCISKU === */
+/* === PRZYCISKI === */
 .button {
-  background: linear-gradient(135deg, var(--color-button) 0%, var(--color-accent-blue) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-button) 0%,
+    var(--color-accent-blue) 100%
+  );
   border-radius: 40px;
   border: 2px solid var(--color-accent-blue);
   display: inline-block;
@@ -116,37 +153,49 @@ a:hover {
   font-size: 17px;
   font-weight: 600;
   color: #fff;
-  padding: 14px 38px;
   text-decoration: none;
-  box-shadow: 0 4px 12px rgba(0, 191, 166, 0.4);
+  box-shadow: 0 4px 12px var(--color-shadow-button);
   transition: all 0.25s ease-in-out;
 }
 
 .button:hover {
-  background: linear-gradient(135deg, var(--color-accent-blue) 0%, var(--color-button) 100%);
-  box-shadow: 0 6px 16px rgba(0, 191, 166, 0.6);
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-blue) 0%,
+    var(--color-button) 100%
+  );
+  box-shadow: 0 6px 16px var(--color-shadow-button_second);
   transform: translateY(-2px);
 }
 
 .button:active {
   transform: translateY(1px);
-  box-shadow: 0 3px 8px rgba(0, 191, 166, 0.4);
+  box-shadow: 0 3px 8px var(--color-shadow-button);
 }
-
 
 .button-primary {
-  background: linear-gradient(135deg, var(--color-button), var(--color-accent-blue));
+  background: linear-gradient(
+    135deg,
+    var(--color-button),
+    var(--color-accent-blue)
+  );
   color: #fff;
-  box-shadow: 0 4px 12px rgba(0, 191, 166, 0.4);
+  box-shadow: 0 4px 12px var(--color-shadow-button);
 }
+
 .button-primary:hover {
-  background: linear-gradient(135deg, var(--color-accent-blue), var(--color-button));
-  box-shadow: 0 6px 16px rgba(0, 191, 166, 0.6);
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-blue),
+    var(--color-button)
+  );
+  box-shadow: 0 6px 16px var(--color-shadow-button_second);
   transform: translateY(-2px);
 }
+
 .button-primary:active {
   transform: translateY(1px);
-  box-shadow: 0 3px 8px rgba(0, 191, 166, 0.4);
+  box-shadow: 0 3px 8px var(--color-shadow-button);
 }
 
 .button-secondary {
@@ -154,36 +203,26 @@ a:hover {
   color: var(--color-text-secondary);
   border: 1px solid var(--color-grid);
 }
+
 .button-secondary:hover {
   background: var(--color-grid);
   color: var(--color-text-main);
 }
+
 .button-secondary:active {
   transform: translateY(1px);
 }
 
 /* === ALERTY I BŁĘDY === */
-.endpoint-error {
-  --_bg: #2a1b1b;          /* ciemne tło błędu, pasujące do ciemnego motywu */
-  --_border: #e57373;      /* ciepła czerwień dla akcentu */
-  --_text: #ffb4b4;        /* jasna czerwień dla kontrastu */
-  background-color: var(--_bg);
-  border: 1px solid var(--_border);
-  color: var(--_text);
+.endpoint-error,
+[role="alert"] {
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error-text);
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   margin-block: 0.75rem;
   box-shadow: 0 2px 6px rgba(229, 115, 115, 0.25);
-}
-
-[role="alert"] {
-  background-color: #2a1b1b;
-  border: 1px solid #ef5350;
-  color: #ffb3b3;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  margin-block: 0.75rem;
-  box-shadow: 0 2px 6px rgba(239, 83, 80, 0.25);
 }
 
 .endpoint-error::before,
@@ -191,17 +230,63 @@ a:hover {
   content: "⚠️";
   margin-right: 0.5rem;
 }
-h1, h2{
+
+/* === NAGŁÓWKI === */
+h1,
+h2,
+h3,
+h4,
+h5 {
   color: var(--color-text-main);
-}
-h1{
-  margin-left: 1rem;
 }
 
-h3, h4, h5 {
+h3,
+h4,
+h5 {
   font-style: italic;
-  color: var(--color-text-main);
 }
+
+/* Details */
+summary {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Tables */
+th,
+td {
+  text-align: center;
+  border: 1px solid var(--color-grid);
+}
+
+thead th {
+  background-color: var(--color-grid);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+tbody th {
+  text-align: left;
+  background-color: var(--color-surface-sections);
+  color: var(--color-text-main);
+  position: sticky;
+  left: 0;
+}
+
+td {
+  transition: transform 0.15s ease, background-color 0.3s ease;
+}
+
+td:hover {
+  transform: scale(1.05);
+  z-index: 1;
+  border-color: var(--color-accent-yellow);
+}
+
+/* === LOADER === */
 .loader {
   width: 2rem;
   height: 2rem;
@@ -212,5 +297,7 @@ h3, h4, h5 {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

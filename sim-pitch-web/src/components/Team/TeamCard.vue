@@ -4,17 +4,14 @@
       
 
       <section v-if="variant === 'mini'" class="team-card__mini">
-        <header class="team-card__header">
-          <h3 class="team-card__title">
-            {{ team?.shortName ?? 'Unknown Team' }}
+        <header class="team-card__header_mini">
+          <h3 class="team-card__title_mini">
+            {{ team?.name ?? 'Unknown Team' }}
           </h3>
         </header>
-          <p class="team-card__details">
-            <strong>Country:</strong> {{ team?.country?.code ?? 'N/A' }}
-          </p>
       </section>
 
-      <section v-if="variant === 'normal'" class="team-card__normal">
+      <section v-else-if="variant === 'normal'" class="team-card__normal">
         <header class="team-card__header">
           <h3 class="team-card__title">
             {{ team?.name ?? 'Unknown Team' }}
@@ -62,29 +59,35 @@ const loading = computed(() => store.loading);
 const error = computed(() => store.error);
 
 const team = computed(() => {
-  const list = Array.isArray(store.teams) ? store.teams : [];
-  return list.find(t => t.id === props.id);
+  return store.teams.find(t => t.id === props.id);
 });
 
 const ensureData = async () => {
   if (!store.leagues?.length) await store.loadLeagues();
   if (!store.teams?.length) await store.loadTeams();
 };
-
 onMounted(ensureData);
 watch(() => props.id, ensureData);
 </script>
 
 <style scoped>
+section{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center;
+  text-align: center;
+}
 .team-card {
   background: var(--color-surface-sections);
   color: var(--color-text-main);
   border-radius: 1rem;
-  padding: 1rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  width: 400px;
-  height: min-content;
+  height: fit-content;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .team-card:hover {
@@ -92,52 +95,99 @@ watch(() => props.id, ensureData);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.45);
 }
 
+/* --- MINI VARIANT --- */
 .team-card.mini {
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 0.75rem 1rem;
   font-size: 0.85rem;
-  text-align: left;
+  width: 300px;
+  padding: 0;
+  box-shadow: none;
+  background: transparent;
 }
+
+.team-card__mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- NORMAL VARIANT --- */
 .team-card.normal {
-  flex-direction: row;
-  justify-content: center;
-  padding: 0.75rem 1rem;
-  font-size: 0.85rem;
-}
-p {
-  font-weight: 600;
-}
+  font-size: 0.9rem;
+  width: 100%;
+  padding: 1rem;
+  margin: 0.25rem 0;
+  box-sizing: border-box;
 
-.team-card.large {
+  display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  font-size: 1rem;
+  align-items: center;
+  justify-content: center;
 }
 
-.team-card__header {
+/* --- LARGE VARIANT --- */
+.team-card.large {
+  font-size: 1rem;
+  width: 100%;
+  padding: 1.25rem;
+  margin: 0.5rem 0;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- SHARED ELEMENTS --- */
+.team-card__header,
+.team-card__header_mini {
   margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+.team-card__title,
+.team-card__title_mini {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-pastel-darkgreen);
 }
 
 .team-card__title {
-  font-weight: 900;
   font-size: 4ch;
-  color: var(--color-accent-blue);
+}
+
+.team-card__title_mini {
+  font-size: 2ch;
+}
+
+.team-card__normal,
+.team-card__large {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .team-card__mini p,
 .team-card__normal p,
 .team-card__large p {
   letter-spacing: 0.1em;
-  margin: 0.15rem 0;
   color: var(--color-text-secondary);
+  margin: 0.25rem 0;
+  text-align: center;
 }
 
 .team-card__link {
   text-decoration: none;
   color: inherit;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 .team-card__link:hover .team-card__title {
@@ -147,10 +197,14 @@ p {
 .team-card__footer {
   margin-top: 0.5rem;
   font-size: 0.75rem;
+  text-align: center;
 }
-.team-name{
+
+.team-name {
   font-size: 1.2rem;
+  text-align: center;
 }
+
 .error {
   color: #ff5252;
 }
