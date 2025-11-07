@@ -111,11 +111,12 @@ const getLeagueName = (id: string) =>
 </script>
 
 <template>
+  <h2 style="text-align: center">All simulations</h2>
   <main class="container">
     <header
       style="display: flex; justify-content: space-between; align-items: center"
-    >
-      <h1>All simulations</h1>
+    ></header>
+    <div class="button-list">
       <button
         @click="loadSimulations"
         :aria-busy="state.loading"
@@ -123,7 +124,7 @@ const getLeagueName = (id: string) =>
       >
         Reload
       </button>
-    </header>
+    </div>
     <section>
       <Filter
         :variant="`SimulationList`"
@@ -177,7 +178,12 @@ const getLeagueName = (id: string) =>
             >
             <br />
             <small>Percentage: {{ sim.state.progressPercent }}%</small> <br />
-            <small>Scoreboards are created during the simulation? ->  {{ sim.simulationParams.createScoreboardOnCompleteIteration }} <-</small> <br />
+            <small
+              >Scoreboards are created during the simulation? ->
+              {{ sim.simulationParams.createScoreboardOnCompleteIteration }}
+              <-</small
+            >
+            <br />
             <div v-if="checkStatus(sim.state.state)" class="loader"></div>
           </header>
           <details close>
@@ -196,22 +202,24 @@ const getLeagueName = (id: string) =>
               </ul>
             </article>
           </details>
-          <router-link
-            :to="{ name: 'SimulationItem', params: { id: sim.id } }"
-            role="button"
-            class="button-primary"
-          >
-            Check the results
-          </router-link>
-          <->
-          <button
-            @click="stopSimulation(sim.state.simulationId)"
-            :aria-busy="state.loading"
-            role="button"
-            class="button-secondary"
-          >
-            Stop simulation
-          </button>
+          <div class="button-list">
+            <router-link
+              :to="{ name: 'SimulationItem', params: { id: sim.id } }"
+              role="button"
+              class="button-primary"
+            >
+              Check the results
+            </router-link>
+            <->
+            <button
+              @click="stopSimulation(sim.state.simulationId)"
+              :aria-busy="state.loading"
+              role="button"
+              class="button-secondary"
+            >
+              Stop simulation
+            </button>
+          </div>
         </section>
       </li>
       <Pagination
@@ -237,9 +245,7 @@ ul li {
 }
 .simulation-list {
   list-style: none;
-  margin: 3rem;
   display: grid;
-  gap: 3rem;
 }
 .error {
   color: var(--del-color);

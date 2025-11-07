@@ -1,14 +1,7 @@
 <template>
-  <article class="team-card" :class="variant">
     <RouterLink class="team-card__link" :to="{ name: 'Team', params: { id } }">
-      
-
       <section v-if="variant === 'mini'" class="team-card__mini">
-        <header class="team-card__header_mini">
-          <h3 class="team-card__title_mini">
-            {{ team?.name ?? 'Unknown Team' }}
-          </h3>
-        </header>
+      {{ team?.name ?? 'Unknown Team' }}
       </section>
 
       <section v-else-if="variant === 'normal'" class="team-card__normal">
@@ -38,7 +31,6 @@
       <span v-if="loading" class="loading">Loading...</span>
       <span v-else class="error">{{ error }}</span>
     </footer>
-  </article>
 </template>
 
 <script setup lang="ts">
@@ -85,8 +77,8 @@ section{
   border-radius: 1rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  height: fit-content;
-  width: 100%;
+  height: min-content;
+  width: max-content;
   box-sizing: border-box;
 }
 
@@ -99,7 +91,10 @@ section{
 .team-card.mini {
   font-size: 0.85rem;
   width: 300px;
-  padding: 0;
+  padding-top: 0rem;
+  padding-left: 0rem;
+  padding-right: 0rem;
+  padding-bottom: 0rem;
   box-shadow: none;
   background: transparent;
 }
@@ -109,6 +104,8 @@ section{
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 /* --- NORMAL VARIANT --- */
@@ -142,7 +139,6 @@ section{
 /* --- SHARED ELEMENTS --- */
 .team-card__header,
 .team-card__header_mini {
-  margin-bottom: 0.25rem;
   text-align: center;
 }
 
@@ -150,7 +146,6 @@ section{
 .team-card__title_mini {
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--color-pastel-darkgreen);
 }
 
 .team-card__title {
@@ -186,16 +181,13 @@ section{
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
 }
 
 .team-card__link:hover .team-card__title {
-  color: var(--color-accent-green);
+  color: var(--color-accent-blue);
 }
 
 .team-card__footer {
-  margin-top: 0.5rem;
   font-size: 0.75rem;
   text-align: center;
 }

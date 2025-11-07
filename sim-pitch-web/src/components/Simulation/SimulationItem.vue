@@ -40,6 +40,8 @@ const sortOption = ref("CreatedDate");
 const order = ref<"Descending" | "Ascending">("Descending");
 const currentPage = ref(1);
 const pageSize = ref(10);
+const scroll = ref<HTMLElement | null>(null)
+
 const totalCount = computed(
   () => simulationState.value.data?.iterationPreviews?.totalCount ?? 0
 );
@@ -52,7 +54,12 @@ const ensureSportsData = async () => {
   if (!teams.value.length) await store.loadTeams();
 };
 
+function scrollToSection() {
+  scroll?.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 const loadSimulation = async () => {
+  simulationState.value.loading = true;
   simulationState.value = await fetchData<Simulation>(() =>
     engineAPI.SimulationController.getSimulationOverviews(
       props.id,
@@ -65,6 +72,7 @@ const loadSimulation = async () => {
   simulationTeamStatsState.value = await fetchData<SimulationTeamStats[]>(() =>
     engineAPI.SimulationStatsController.getSimulationTeamStats(props.id)
   );
+  simulationState.value.loading = false;
 };
 
 const loadIterationPage = async (newPage: number) => {
@@ -73,7 +81,6 @@ const loadIterationPage = async (newPage: number) => {
   loadSimulation();
   simulationState.value.loading = false;
 };
-
 const changePageSize = async (newSize: number) => {
   pageSize.value = newSize;
   currentPage.value = 1;
@@ -99,11 +106,13 @@ const changeSortingOption = async (newSortingOption: string) => {
     await loadSimulation();
     filterValue.value = "Any";
   }
+  scrollToSection();
 };
 
 const changeOrder = async (newOrder: "Descending" | "Ascending") => {
   order.value = newOrder;
   await loadSimulation();
+  scrollToSection();
 };
 
 const mapOrder = (newOrder: "Descending" | "Ascending"): "DESC" | "ASC" => {
@@ -172,38 +181,59 @@ watch(
 
 <template>
   <main>
-      <div class="button-list">
-        <button
-          @click="() => loadSimulation()"
-          :aria-busy="simulationState.loading"
-          role="button"
-          class="button-primary"
-        >
-          Reload
-        </button>
-        <br />
-        <button
-          @click="stopSimulation(simulationState.data?.state.simulationId)"
-          :aria-busy="simulationState.loading"
-          role="button"
-          class="button-secondary"
-        >
-          Stop simulation
-        </button>
-      </div>
-      <article v-if="simulationState.loading" aria-busy="true">
-        Loading simulation data...
-      </article>
-      <ErrorEndpoint
-        v-else-if="simulationState.error"
-        :error="simulationState.error"
-      />
-      <ErrorEndpoint
-        v-else-if="simulationTeamStatsState.error"
-        :error="simulationTeamStatsState.error"
-      />
-      <section v-else-if="simulationState.data" class="container-content">
-        <h2>Summary</h2>
+    <div class="button-list">
+      <button
+        @click="() => loadSimulation()"
+        :aria-busy="simulationState.loading"
+        role="button"
+        class="button-primary"
+      >
+        Reload
+      </button>
+      <br />
+      <button
+        @click="stopSimulation(simulationState.data?.state.simulationId)"
+        :aria-busy="simulationState.loading"
+        role="button"
+        class="button-secondary"
+      >
+        Stop simulation
+      </button>
+    </div>
+    <article v-if="simulationState.loading" aria-busy="true">
+      Loading simulation data...
+    </article>
+    <ErrorEndpoint
+      v-else-if="simulationState.error"
+      :error="simulationState.error"
+    />
+    <ErrorEndpoint
+      v-else-if="simulationTeamStatsState.error"
+      :error="simulationTeamStatsState.error"
+    />
+    <section v-else-if="simulationState.data">
+      <h2 style="text-align: center">Summary of simulation</h2>
+      <p><strong>Winners:</strong> {{ simulationState.data.winnersSummary }}</p>
+      <p>
+        <strong>Completed iterations:</strong>
+        {{ simulationState.data.state.lastCompletedIteration }} /
+        {{ simulationState.data?.simulationParams.iterations }} ({{
+          simulationState.data?.state.progressPercent
+        }}%)
+      </p>
+      <p>
+        <strong>State:</strong> {{ simulationState.data.state.state }} ---
+        {{ new Date(simulationState.data.state.updatedAt).toLocaleString() }}
+      </p>
+      <p>
+        <strong>Simulated matches:</strong>
+        {{ simulationState.data.simulatedMatches }}
+      </p>
+      <p>
+        <strong>Prior league strength:</strong>
+        {{ simulationState.data.priorLeagueStrength }}
+      </p>
+      <section>
         <details close class="details">
           <summary><strong>[-> Simulation Parameters <-]</strong></summary>
           <ul>
@@ -230,38 +260,22 @@ watch(
             </li>
           </ul>
         </details>
-        <p>
-          <strong>Winners:</strong> {{ simulationState.data.winnersSummary }}
-        </p>
-        <p>
-          <strong>Completed iterations:</strong>
-          {{ simulationState.data.state.lastCompletedIteration }} /
-          {{ simulationState.data?.simulationParams.iterations }} ({{
-            simulationState.data?.state.progressPercent
-          }}%)
-        </p>
-        <p>
-          <strong>State:</strong> {{ simulationState.data.state.state }} ---
-          {{ new Date(simulationState.data.state.updatedAt).toLocaleString() }}
-        </p>
-        <p>
-          <strong>Simulated matches:</strong>
-          {{ simulationState.data.simulatedMatches }}
-        </p>
-        <p>
-          <strong>Prior league strength:</strong>
-          {{ simulationState.data.priorLeagueStrength }}
-        </p>
-        <HeatMap
-          v-if="simulationTeamStatsState?.data && teams?.length"
-          :simulation-team-stats="simulationTeamStatsState.data"
-        />
-        <ScoreboardItem
-          variant="simulation_averange"
-          :teams="teams"
-          :simulation-team-stats="simulationTeamStatsState?.data ?? undefined"
-        />
-        <details open>
+      </section>
+      <HeatMap
+        v-if="simulationTeamStatsState?.data && teams?.length"
+        :simulation-team-stats="simulationTeamStatsState.data"
+      />
+      <ScoreboardItem
+        variant="simulation_averange"
+        :teams="teams"
+        :simulation-team-stats="simulationTeamStatsState?.data ?? undefined"
+      />
+      <section>
+        <details open ref="scroll">
+          <hr></hr>
+          <summary>
+            <strong>Iteration Previews (grouped by scoreboard)</strong>
+          </summary>
           <Pagination
             :total-items="totalCount"
             :page-size="pageSize"
@@ -279,35 +293,37 @@ watch(
             @update:order="changeOrder"
             @update:filter-by="setFilteringByTeam"
           />
-          <summary>
-            <strong>Iteration Previews (grouped by scoreboard)</strong>
-          </summary>
-
-          <div
-            v-for="[scoreboardId, items] in groupedPreviewEntries"
-            :key="scoreboardId"
-            class="scoreboard-block"
-          >
-            <h3 style="float: right">#{{ items[0]?.iterationIndex }}</h3>
-            <small>Scoreboard: {{ scoreboardId }}</small>
-
-            <ScoreboardItem
-              :scoreboard_id="scoreboardId"
-              variant="preview"
-              :teams="teams"
-              :iteration_preview="items"
-            />
-
-            <router-link
-              :to="{
-                name: 'IterationItem',
-                params: { simulation_id: props.id, id: items[0]?.iterationId },
-              }"
-              role="button"
-              class="button-secondary"
+          <div class="scoreboards-list">
+            <div
+              v-for="[scoreboardId, items] in groupedPreviewEntries"
+              :key="scoreboardId"
+              class="scoreboard-block"
             >
-              → Check complete iteration details
-            </router-link>
+              <h3 style="float: right">#{{ items[0]?.iterationIndex }}</h3>
+              <small>Scoreboard: {{ scoreboardId }}</small>
+
+              <ScoreboardItem
+                :scoreboard_id="scoreboardId"
+                variant="preview"
+                :teams="teams"
+                :iteration_preview="items"
+              />
+              <div class="button-list">
+                <router-link
+                  :to="{
+                    name: 'IterationItem',
+                    params: {
+                      simulation_id: props.id,
+                      id: items[0]?.iterationId,
+                    },
+                  }"
+                  role="button"
+                  class="button-secondary"
+                >
+                  → Check complete iteration details
+                </router-link>
+              </div>
+            </div>
           </div>
           <Pagination
             :total-items="totalCount"
@@ -318,13 +334,13 @@ watch(
             @update:pageSize="changePageSize"
           />
         </details>
-
-        <footer>
-          <router-link to="/simulation" role="button" class="secondary">
-            ← Back to list
-          </router-link>
-        </footer>
       </section>
+      <footer>
+        <router-link to="/simulation" role="button" class="secondary">
+          ← Back to list
+        </router-link>
+      </footer>
+    </section>
   </main>
 </template>
 
@@ -337,41 +353,22 @@ main {
   border-bottom: 1px solid var(--color-grid);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
-.button-list {
-  display: flex;
-  background-color: var(--color-surface-sections);
-  justify-content: space-between;
-  box-sizing: border-box;
-  padding: 1rem;
+div {
+  margin-top: 1rem;
 }
-.container-content {
-  padding: 1rem;
-}
-/*
-
-
-table {
-}
-
-th,
-td {
-  border-bottom: 1px solid var(--muted-border-color);
-  text-align: left;
-}
-
-tr:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-}
-*/
-
 .error {
   color: var(--del-color);
 }
 button {
   float: right;
 }
-.details {
-  float: right;
-  font-size: 125%;
+.scoreboards-list {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping to next line */
+  gap: 1rem; /* Optional spacing between items */
+}
+
+.scoreboards-list > * {
+  flex: 1 1 calc(50% - 1rem); /* 2 items per row */
 }
 </style>
