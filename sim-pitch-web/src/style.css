@@ -1,47 +1,59 @@
 @import url("https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css");
 
-/* === ZMIENNE GLOBALNE === */
+/* globals */
 :root {
-  /* Tło i powierzchnie */
   --color-bg: #0a0f1c;
   --color-surface: #141b2d;
   --color-surface-sections: #151822;
   --color-grid: #2b3558;
 
-  /* Akcenty */
   --color-accent-green: #00e676;
   --color-pastel-green: #66ffa6;
   --color-pastel-darkgreen: #1e4e1d;
   --color-accent-blue: #2979ff;
   --color-accent-yellow: #ffd54f;
 
-  /* Teksty */
   --color-text-main: #e8edf5;
   --color-text-secondary: #a0aec0;
 
-  /* Przyciski */
   --color-button: #00bfa6;
   --color-hover: #00897b;
 
-  /* Dodatkowe */
   --color-home-team: #42a5f5;
   --color-away-team: #ff7043;
   --color-goals: #81c784;
   --color-randomness: #ffb300;
 
-  /* Obramowania i cienie */
   --color-border: #d7e9f8;
-  --color-shadow-app: rgba(0, 0, 0, 0.25);
-  --color-shadow-button: rgba(0, 191, 166, 0.4);
+  --color-shadow-app: rgba(255, 255, 255, 0.25);
+  --color-shadow-button: rgba(146, 153, 152, 0.4);
   --color-shadow-button_second: rgba(0, 191, 166, 0.6);
 
-  /* Kolory błędów / alertów */
+  --color-shadow-button-third: rgba(0, 0, 0, 0.2);
+  --color-surface-contrast: #1d2436;
+  --color-focus-outline: #66ffe0;
+
   --color-error-bg: #2a1b1b;
   --color-error-border: #e57373;
   --color-error-text: #ffb4b4;
 
-  /* Heatmap kolor bazowy */
-  --color-heatmap-max: #ff7043; /* ciepły pomarańczowo-czerwony */
+  --color-heatmap-max: #ff0048;
+
+  --color-button-primary: var(--color-button);
+  --color-button-primary-hover: var(--color-hover);
+
+  --color-button-secondary-bg: var(--color-surface-sections);
+  --color-button-secondary-border: var(--color-grid);
+  --color-button-secondary-hover-bg: var(--color-surface-contrast);
+
+  --color-button-tertiary-bg: var(--color-accent-green);
+  --color-button-tertiary-hover-bg: var(--color-pastel-green);
+
+  --color-button-quaternary-bg: var(--color-accent-blue);
+  --color-button-quaternary-hover-bg: var(--color-pastel-darkgreen);
+
+  --color-button-text: #ffffff;
+  --color-button-disabled: rgba(255, 255, 255, 0.4);
 }
 
 @media (prefers-color-scheme: light) {
@@ -70,19 +82,36 @@
 
     --color-border: #b0bec5;
     --color-shadow-app: rgba(0, 0, 0, 0.25);
-    --color-shadow-button: rgba(0, 191, 166, 0.4);
-    --color-shadow-button_second: rgba(0, 191, 166, 0.6);
+    --color-shadow-button: rgba(0, 191, 166, 0.3);
+    --color-shadow-button_second: rgba(0, 191, 166, 0.45);
+    --color-shadow-button-third: rgba(0, 0, 0, 0.15);
+    --color-surface-contrast: #ffffff;
+    --color-focus-outline: #00bfa6;
 
     --color-error-bg: #fff1f1;
     --color-error-border: #e57373;
     --color-error-text: #b71c1c;
 
-    /* Heatmap kolor bazowy */
-    --color-heatmap-max: #e64a19; /* ciepły pomarańczowo-czerwony */
+    --color-heatmap-max: #e64a19;
+
+        --color-button-primary: var(--color-button);
+    --color-button-primary-hover: var(--color-hover);
+
+    --color-button-secondary-bg: var(--color-surface-sections);
+    --color-button-secondary-border: var(--color-grid);
+    --color-button-secondary-hover-bg: #e3e8f1;
+
+    --color-button-tertiary-bg: var(--color-accent-green);
+    --color-button-tertiary-hover-bg: var(--color-pastel-green);
+
+    --color-button-quaternary-bg: var(--color-accent-blue);
+    --color-button-quaternary-hover-bg: #5c8aff;
+
+    --color-button-text: #ffffff;
+    --color-button-disabled: rgba(0, 0, 0, 0.3);
   }
 }
 
-/* === GLOBALNY UKŁAD === */
 html,
 body {
   margin: 0;
@@ -94,6 +123,7 @@ body {
   color: var(--color-text-main);
   font-family: "Inter", "Segoe UI", Helvetica, Arial, sans-serif;
   box-sizing: border-box;
+  font-size: 13px;
 }
 
 #app {
@@ -113,20 +143,18 @@ body {
 
 section,
 article {
-  margin: 0 !important;
+  margin: 0;
   padding: 1rem;
   box-sizing: border-box;
 }
 
 section {
-  background-color: var(--color-surface-sections);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-block: 1rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  background-color: var(--color-surface);
+  border-radius: 1rem;
+  padding: 1.2rem;
+  box-shadow: 0 0 20px var(--color-shadow-app);
+  color: var(--color-text-main);
 }
-
-/* === LINKI === */
 a {
   color: var(--color-accent-green);
   text-decoration: none;
@@ -138,31 +166,35 @@ a:hover {
   color: var(--color-accent-blue);
 }
 
-/* === PRZYCISKI === */
 .button {
-  background: linear-gradient(
-    135deg,
-    var(--color-button) 0%,
-    var(--color-accent-blue) 100%
-  );
-  border-radius: 40px;
-  border: 2px solid var(--color-accent-blue);
   display: inline-block;
   cursor: pointer;
   font-family: "Inter", "Segoe UI", sans-serif;
-  font-size: 17px;
+  font-size: 13px;
   font-weight: 600;
-  color: #fff;
+  letter-spacing: 0.3px;
+  color: var(--color-button-text);
   text-decoration: none;
-  box-shadow: 0 4px 12px var(--color-shadow-button);
+  border-radius: 40px;
+  border: 2px solid transparent;
+  padding: 0.6rem 1.4rem;
+  background: linear-gradient(
+    135deg,
+    var(--color-button-primary) 0%,
+    var(--color-accent-blue) 100%
+  );
+  box-shadow: 0 4px 10px var(--color-shadow-button);
   transition: all 0.25s ease-in-out;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
 }
 
 .button:hover {
   background: linear-gradient(
     135deg,
     var(--color-accent-blue) 0%,
-    var(--color-button) 100%
+    var(--color-button-primary-hover) 100%
   );
   box-shadow: 0 6px 16px var(--color-shadow-button_second);
   transform: translateY(-2px);
@@ -173,47 +205,116 @@ a:hover {
   box-shadow: 0 3px 8px var(--color-shadow-button);
 }
 
+.button:focus-visible {
+  outline: 2px solid var(--color-focus-outline);
+  outline-offset: 2px;
+}
+
 .button-primary {
   background: linear-gradient(
     135deg,
-    var(--color-button),
+    var(--color-button-primary),
     var(--color-accent-blue)
   );
-  color: #fff;
-  box-shadow: 0 4px 12px var(--color-shadow-button);
+  color: var(--color-button-text);
+  border-color: var(--color-accent-blue);
 }
 
 .button-primary:hover {
   background: linear-gradient(
     135deg,
     var(--color-accent-blue),
-    var(--color-button)
+    var(--color-button-primary-hover)
   );
-  box-shadow: 0 6px 16px var(--color-shadow-button_second);
-  transform: translateY(-2px);
-}
-
-.button-primary:active {
-  transform: translateY(1px);
-  box-shadow: 0 3px 8px var(--color-shadow-button);
 }
 
 .button-secondary {
-  background: var(--color-surface-sections);
+  background: var(--color-button-secondary-bg);
   color: var(--color-text-secondary);
-  border: 1px solid var(--color-grid);
+  border: 1px solid var(--color-button-secondary-border);
+  box-shadow: 0 2px 6px var(--color-shadow-button-third);
 }
 
 .button-secondary:hover {
-  background: var(--color-grid);
+  background: var(--color-button-secondary-hover-bg);
   color: var(--color-text-main);
 }
 
-.button-secondary:active {
-  transform: translateY(1px);
+.button-tertiary {
+  background-color: var(--color-button-tertiary-bg);
+  color: var(--color-button-text);
 }
 
-/* === ALERTY I BŁĘDY === */
+.button-tertiary:hover {
+  background-color: var(--color-button-tertiary-hover-bg);
+}
+
+.button-quaternary {
+  background-color: var(--color-button-quaternary-bg);
+  color: var(--color-button-text);
+}
+
+.button-quaternary:hover {
+  background-color: var(--color-button-quaternary-hover-bg);
+}
+
+.button::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(
+    circle,
+    var(--color-focus-outline) 10%,
+    transparent 10.01%
+  );
+  opacity: 0.5;
+  transform: translate(-50%, -50%) scale(1);
+  border-radius: 50%;
+  transition: width 0.5s ease, height 0.5s ease, opacity 0.8s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.button:active::after {
+  width: 250%;
+  height: 250%;
+  opacity: 0;
+}
+
+button:disabled,
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.button-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--color-surface-sections);
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  box-sizing: border-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 4px 10px var(--color-shadow-app);
+  border: 1px solid var(--color-grid);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.button-list:hover {
+  background-color: var(--color-surface-contrast);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 6px 14px var(--color-shadow-app);
+}
+
 .endpoint-error,
 [role="alert"] {
   background-color: var(--color-error-bg);
@@ -231,7 +332,6 @@ a:hover {
   margin-right: 0.5rem;
 }
 
-/* === NAGŁÓWKI === */
 h1,
 h2,
 h3,
@@ -246,16 +346,18 @@ h5 {
   font-style: italic;
 }
 
-/* Details */
+details{
+  height: min-content;
+  width: 100%;
+}
 summary {
   text-align: center;
-  margin-bottom: 1rem;
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.5px;
+  margin-bottom: 0.001%;
 }
 
-/* Tables */
 th,
 td {
   text-align: center;
@@ -281,12 +383,12 @@ td {
 }
 
 td:hover {
-  transform: scale(1.05);
+  transform: scale(1.005);
   z-index: 1;
   border-color: var(--color-accent-yellow);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
 }
 
-/* === LOADER === */
 .loader {
   width: 2rem;
   height: 2rem;

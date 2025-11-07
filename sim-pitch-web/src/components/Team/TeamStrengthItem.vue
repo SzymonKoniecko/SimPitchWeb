@@ -72,7 +72,6 @@ details {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
-  max-width: 220px;
 }
 
 .ts-home {

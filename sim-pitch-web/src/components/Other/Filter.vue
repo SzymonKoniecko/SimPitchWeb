@@ -98,7 +98,7 @@ watch(() => props.variant, ensureData);
         </option>
       </select>
     </div>
-    <button class="secondary" v-on:click="changeOrder">Toggle {{orderValue}}</button>
+    <button v-if="props.toSortOption !== SortingOption.DynamicValue" class="button-third" v-on:click="changeOrder">Toggle {{orderValue}}</button>
   </div>
   <hr></hr>
 </template>
@@ -110,8 +110,5 @@ watch(() => props.variant, ensureData);
 }
 .sort-option {
   font-size: 0.9rem;
-}
-button {
-  cursor: pointer;
 }
 </style>

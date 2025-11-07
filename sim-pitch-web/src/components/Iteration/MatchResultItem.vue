@@ -1,45 +1,56 @@
 <template>
-  <article class="match-card">
-    <header class="match-header">
-      <span
-        class="match-status"
+  <table class="match-body">
+  <colgroup>
+    <col>
+    <col>
+    <col>
+  </colgroup>
+    <tr>
+      <td rowspan="5" class="team">
+        <TeamCard :id="matchRound.homeTeamId" variant="normal" />
+      </td>
+      <td class="match-status"
         :class="{ played: matchRound.isPlayed, draw: matchRound.isDraw }"
       >
-        {{ matchRound.isPlayed ? (matchRound.isDraw ? "Draw" : "Played") : "Upcoming" }}
-      </span>
-    </header>
-    <section class="match-body">
-      <div class="match-line">
-        <!-- HOME -->
-        <div class="team home-team">
-          <span class="team-label">Home</span>
-          <TeamCard :id="matchRound.homeTeamId" variant="normal" />
-        </div>
-
-        <!-- SCORE -->
-        <div class="score">
-          <span class="home-goals">{{ matchRound.homeGoals }}</span>
-          <span class="separator">:</span>
-          <span class="away-goals">{{ matchRound.awayGoals }}</span>
-        </div>
-
-        <!-- AWAY -->
-        <div class="team away-team">
-          <span class="team-label">Away</span>
-          <TeamCard :id="matchRound.awayTeamId" variant="normal" />
-        </div>
-      </div>
-
-      <!-- STRENGTHS BELOW -->
-      <div class="strengths-grid" v-if="matchRound.isPlayed">
-        <TeamStrengthItem 
-            v-if="homeTeamStrength && awayTeamStrength" 
-            :homeTeamStrengthData="homeTeamStrength" 
-            :awayTeamStrengthData="awayTeamStrength" 
+        {{
+          matchRound.isPlayed
+            ? matchRound.isDraw
+              ? "Draw"
+              : "Played"
+            : "Upcoming"
+        }}
+      </td>
+      <td rowspan="5">
+        <TeamCard :id="matchRound.awayTeamId" variant="normal" />
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="score">
+        <span class="home-goals">{{ matchRound.homeGoals }}</span>
+        <span class="separator">:</span>
+        <span class="away-goals">{{ matchRound.awayGoals }}</span>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+    </tr>
+    <tr>
+      <td colspan="3" class="strengths-grid" v-if="matchRound.isPlayed">
+        <TeamStrengthItem
+          v-if="homeTeamStrength && awayTeamStrength"
+          :homeTeamStrengthData="homeTeamStrength"
+          :awayTeamStrengthData="awayTeamStrength"
         />
-      </div>
-    </section>
-  </article>
+      </td>
+    </tr>
+  </table>
+  <hr></hr>
 </template>
 
 <script setup lang="ts">
@@ -65,6 +76,22 @@ const awayTeamStrength = computed(() => props.awayTeamStrength);
 </script>
 
 <style scoped>
+table {
+    border-collapse: collapse;
+    border: none;
+    width: 100%;
+  }
+  td, th {
+    border: none;
+    padding: 8px;
+  }
+  col:nth-child(1),
+  col:nth-child(3) {
+    width: 40%;
+  }
+  col:nth-child(2) {
+    width: 20%;
+  }
 .match-status {
   font-weight: 600;
   text-transform: uppercase;
@@ -76,42 +103,19 @@ const awayTeamStrength = computed(() => props.awayTeamStrength);
   color: var(--color-accent-blue);
 }
 
-.match-round {
-  font-weight: 600;
-}
-.match-header {
-  display: flex;
-  justify-content: space-between;
-  margin: 1rem 1rem;
-  align-items: center;
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-}
-.match-line {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2rem;
-  width: 100%;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--color-grid);
-}
+.match-body {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
 
 .team {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  text-align: center
+  width: 40%;
+  max-width: 40%;
 }
-
-.team-label {
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  font-weight: 600;
+.team:hover,
+.score:hover{
+  transform: scale(1.05);
 }
-
 .score {
   display: flex;
   align-items: center;
@@ -121,33 +125,19 @@ const awayTeamStrength = computed(() => props.awayTeamStrength);
   color: var(--color-accent-green);
   min-width: 6rem;
 }
-
+.home-goals,
+.away-goals{
+  font-size: large;
+}
 .separator {
   color: var(--color-text-secondary);
   margin: 0 0.5rem;
 }
 
 .strengths-grid {
-    display: flex;
-    width: 100%;
-    margin-top: 1rem;
-    gap: 1.5rem;
+  width: 100%;
+  margin-top: 1rem;
+  gap: 1.5rem;
 }
 
-@media (max-width: 900px) {
-  .match-body {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .score {
-    flex-direction: row;
-    font-size: 1.6rem;
-  }
-
-  .strengths-grid {
-    flex-direction: column;
-    gap: 1rem;
-  }
-}
 </style>
