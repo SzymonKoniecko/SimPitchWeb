@@ -41,6 +41,7 @@ const order = ref<"Descending" | "Ascending">("Descending");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const scroll = ref<HTMLElement | null>(null)
+const winnersData = ref("Not loaded");
 
 const totalCount = computed(
   () => simulationState.value.data?.iterationPreviews?.totalCount ?? 0
@@ -167,6 +168,12 @@ const groupedPreviews = computed(() => {
 const groupedPreviewEntries = computed(() =>
   Object.entries(groupedPreviews.value)
 );
+
+const setWinnersData = (data: string) =>{
+  winnersData.value = data;
+}
+
+
 onMounted(async () => {
   await ensureSportsData();
   await loadSimulation();
@@ -213,7 +220,7 @@ watch(
     />
     <section v-else-if="simulationState.data">
       <h2 style="text-align: center">Summary of simulation</h2>
-      <p><strong>Winners:</strong> {{ simulationState.data.winnersSummary }}</p>
+      <p v-if="simulationTeamStatsState?.data"><strong>Winners:</strong> {{ winnersData }}</p>
       <p>
         <strong>Completed iterations:</strong>
         {{ simulationState.data.state.lastCompletedIteration }} /
@@ -264,6 +271,8 @@ watch(
       <HeatMap
         v-if="simulationTeamStatsState?.data && teams?.length"
         :simulation-team-stats="simulationTeamStatsState.data"
+        :teams="teams"
+        @update:winners-data="setWinnersData"
       />
       <ScoreboardItem
         variant="simulation_averange"
