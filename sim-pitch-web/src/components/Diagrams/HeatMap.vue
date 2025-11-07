@@ -5,14 +5,21 @@ import {
   type SimulationTeamStats,
 } from "../../models/Simulations/simulationTeamStats";
 import TeamCard from "../Team/TeamCard.vue";
+import type { Team } from "../../models/SportsDataModels/team";
 defineOptions({ name: "HeatMap" });
 
 const props = defineProps<{
   simulationTeamStats: SimulationTeamStats[];
+  teams: Team[]
 }>();
-
-const teamStats = computed(() => sortTeamStats(props.simulationTeamStats));
-
+const emit = defineEmits<{
+  (e: "update:winnersData", value: string): void;
+}>();
+const teamStats = computed(() => {
+  let sorted = sortTeamStats(props.simulationTeamStats)
+  changedWinnersData(sorted)
+  return sorted
+});
 const maxPositions = computed(() =>
   Math.max(
     ...(props.simulationTeamStats?.map((t) => t.positionProbbility.length) ?? [
@@ -20,6 +27,29 @@ const maxPositions = computed(() =>
     ])
   )
 );
+
+const changedWinnersData = (sortedTeamStats: SimulationTeamStats[]) => {
+  if (!sortedTeamStats || sortedTeamStats.length < 3) return;
+
+  const winnersString = [
+    `1st: ${getTeamNameById(sortedTeamStats[0]?.teamId)} ${(
+      100 * (sortedTeamStats[0]?.positionProbbility?.[0] ?? 0)
+    ).toFixed(2)}% - `,
+    `2nd: ${getTeamNameById(sortedTeamStats[1]?.teamId)} ${(
+      100 * (sortedTeamStats[1]?.positionProbbility?.[0] ?? 0)
+    ).toFixed(2)}% - `,
+    `3rd: ${getTeamNameById(sortedTeamStats[2]?.teamId)} ${(
+      100 * (sortedTeamStats[2]?.positionProbbility?.[0] ?? 0)
+    ).toFixed(2)}%`,
+  ];
+
+  emit("update:winnersData", winnersString.join(" "));
+};
+
+
+function getTeamNameById(id?: string): string {
+  return props.teams.find((team) => team.id === id)?.name || "UNKNOWN";
+}
 
 const getColor = (prob: number) => {
   const baseColor = getComputedStyle(document.documentElement)
