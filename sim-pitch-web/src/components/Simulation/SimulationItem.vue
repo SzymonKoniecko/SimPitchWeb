@@ -70,9 +70,11 @@ const loadSimulation = async () => {
       mapOrder(order.value)
     )
   );
-  simulationTeamStatsState.value = await fetchData<SimulationTeamStats[]>(() =>
-    engineAPI.SimulationStatsController.getSimulationTeamStats(props.id)
+  if (simulationTeamStatsState.value.data === null) {
+    simulationTeamStatsState.value = await fetchData<SimulationTeamStats[]>(() =>
+      engineAPI.SimulationStatsController.getSimulationTeamStats(props.id)
   );
+  }
   simulationState.value.loading = false;
 };
 
@@ -86,6 +88,7 @@ const changePageSize = async (newSize: number) => {
   pageSize.value = newSize;
   currentPage.value = 1;
   await loadSimulation();
+  scrollToSection();
 };
 
 const setFilteringByTeam = (teamId: string) => {
