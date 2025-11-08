@@ -11,10 +11,10 @@
 
     <nav class="nav-links">
       <div class="link"><router-link to="/" exact-active-class="active">Home</router-link></div> <hr/>
-      <div class="link"><router-link to="/simulation" exact-active-class="active">All simulations</router-link></div> <hr/>
       <div class="link"><router-link to="/prepareSimulation" exact-active-class="active">
         Prepare a new simulation
       </router-link></div> <hr/>
+      <div class="link"><router-link to="/simulation" exact-active-class="active">All simulations</router-link></div> <hr/>
       <div class="link"><router-link to="/about" exact-active-class="active">About</router-link> </div><hr/>
     </nav>
   </header>
