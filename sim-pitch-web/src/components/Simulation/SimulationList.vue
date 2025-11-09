@@ -161,7 +161,7 @@ const getLeagueName = (id: string) =>
       <li v-for="sim in simulationOverviews" :key="sim.id">
         <section class="simulation">
           <header class="title-details">
-            <h2 style="text-align: center">{{ sim.title }}</h2>
+            <h2 style="text-align: center">{{ sim.simulationParams.title }}</h2>
             <small>State: {{ sim.state.state }}</small> <br />
             <small
               >League: {{ getLeagueName(sim.simulationParams.leagueId) }}</small
