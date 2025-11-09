@@ -111,7 +111,7 @@ const getLeagueName = (id: string) =>
 </script>
 
 <template>
-  <h2 style="text-align: center">All simulations</h2>
+  <h2 style="text-align: center" selenium-id="title-all-simulations">All simulations</h2>
   <main class="container">
     <header
       style="display: flex; justify-content: space-between; align-items: center"

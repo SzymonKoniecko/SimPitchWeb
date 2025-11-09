@@ -77,6 +77,7 @@ function resetForm() {
 </script>
 <template>
   <main>
+    <h2 style="text-align: center" selenium-id="title-prepare-simulation">Prepare a new simulation</h2>
     <section v-if="simulationId" class="simulation-result">
       <h5>Simulation ID: {{ simulationId }}</h5>
       <router-link :to="{ name: 'SimulationItem', params: { id: simulationId }}" class="button-link">
