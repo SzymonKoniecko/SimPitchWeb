@@ -20,6 +20,7 @@ const leagueRounds = computed(() => sportsDataStore.leagueRounds)
 const simulationId = ref('')
 
 const form = reactive({
+  title: `Simulation - ${new Date().toISOString()}`,
   seasonYears: [] as SeasonYear[],
   league_id: '',
   iterations: 1,
@@ -45,6 +46,7 @@ async function submitForm() {
   status.value = ''
   simulationId.value = ''
   const payload: SimulationParams = {
+    title: form.title,
     seasonYears: form.seasonYears,
     leagueId: form.league_id,
     iterations: form.iterations,
@@ -109,7 +111,10 @@ function resetForm() {
             </label>
           </div>
         </div>
-
+        <div class="field">
+          <label for="title">Set Title</label>
+          <input v-model="form.title" selenium-id="input-title">
+        </div>
         <div class="field">
           <label for="leagueId">Choose league</label>
           <select id="leagueId" v-model="form.league_id">
@@ -117,6 +122,7 @@ function resetForm() {
               v-for="league in leagues"
               :key="league.name"
               :value="league.id"
+              :selenium-id="league.name"
             >
               {{ league.name }}
             </option>
@@ -131,6 +137,7 @@ function resetForm() {
             type="number"
             min="1"
             required
+            selenium-id="input-iterations"
           />
         </div>
 
@@ -152,6 +159,7 @@ function resetForm() {
               type="checkbox"
               :value="form.createScoreboardOnCompleteIteration"
               v-model="form.createScoreboardOnCompleteIteration"
+              selenium-id="input-create-scoreboards"
             />
         </div>
         <div class="actions">
