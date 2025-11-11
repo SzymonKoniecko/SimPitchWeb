@@ -1,95 +1,133 @@
-
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-import { SeasonYear, seasonYearsOptions } from '../../models/Consts/seasonYear'
-import { useSportsDataStore } from '../../stores/SportsDataStore'
-import { fetchData } from '../../api/fetchData'
-import { engineAPI } from '../../api/engine.api'
-import ErrorEndpoint from '../Other/ErrorEndpoint.vue'
-import type { SimulationParams } from '../../models/Simulations/simulationParams'
+import { ref, reactive, computed, onMounted } from "vue";
+import { SeasonYear, seasonYearsOptions } from "../../models/Consts/seasonYear";
+import { useSportsDataStore } from "../../stores/SportsDataStore";
+import { fetchData } from "../../api/fetchData";
+import { engineAPI } from "../../api/engine.api";
+import ErrorEndpoint from "../Other/ErrorEndpoint.vue";
+import type { SimulationParams } from "../../models/Simulations/simulationParams";
 
-defineOptions({ name: "PrepareSimulation"})
+defineOptions({ name: "PrepareSimulation" });
 
-const sportsDataStore = useSportsDataStore()
-const loadingSimulation = ref(false)
-const errorSimulation = ref<string | null>(null)
-const loading = computed(() => sportsDataStore.loading)
-const error = computed(() => sportsDataStore.error)
-const leagues = computed(() => sportsDataStore.leagues)
-const leagueRounds = computed(() => sportsDataStore.leagueRounds)
-const simulationId = ref('')
+const sportsDataStore = useSportsDataStore();
+const loadingSimulation = ref(false);
+const errorSimulation = ref<string | null>(null);
+const loading = computed(() => sportsDataStore.loading);
+const error = computed(() => sportsDataStore.error);
+const leagues = computed(() => sportsDataStore.leagues);
+const leagueRounds = computed(() => sportsDataStore.leagueRounds);
+const simulationId = ref("");
 
 const form = reactive({
   title: `Simulation - ${new Date().toISOString()}`,
   seasonYears: [] as SeasonYear[],
-  league_id: '',
+  league_id: "",
   iterations: 1,
   league_round_id: null,
-  createScoreboardOnCompleteIteration: true
-})
+  createScoreboardOnCompleteIteration: true,
+});
 
 const ensureData = async () => {
   if (!leagues.value || leagues.value.length === 0) {
-    await sportsDataStore.loadLeagues()
+    await sportsDataStore.loadLeagues();
   }
-}
+};
 
 onMounted(async () => {
-  await ensureData()
-})
+  await ensureData();
+});
 
-const status = ref('')
+const status = ref("");
+const validationErrors = ref<string[]>([]);
+
+function validateForm(): boolean {
+  const newErrors: string[] = [];
+
+  if (!form.title || form.title.trim().length < 3) {
+    newErrors.push("Title must have at least 3 characters");
+  }
+  if (!form.league_id) {
+    newErrors.push("You must select a league");
+  }
+  if (!form.seasonYears || form.seasonYears.length === 0) {
+    newErrors.push("Select at least one season");
+  }
+  if (!form.iterations || form.iterations < 1) {
+    newErrors.push("Iterations must be at least 1");
+  }
+
+  validationErrors.value = newErrors;
+
+  return newErrors.length === 0;
+}
 
 async function submitForm() {
-  loadingSimulation.value = true
-  errorSimulation.value = null
-  status.value = ''
-  simulationId.value = ''
+  const isValid = validateForm();
+  if (!isValid) return;
+
+  loadingSimulation.value = true;
+  errorSimulation.value = null;
+  status.value = "";
+  simulationId.value = "";
   const payload: SimulationParams = {
     title: form.title,
     seasonYears: form.seasonYears,
     leagueId: form.league_id,
     iterations: form.iterations,
     leagueRoundId: form.league_round_id ?? undefined,
-    createScoreboardOnCompleteIteration: form.createScoreboardOnCompleteIteration ?? false
-  }
+    createScoreboardOnCompleteIteration:
+      form.createScoreboardOnCompleteIteration ?? false,
+  };
   try {
-    const result = await fetchData<any>(() => engineAPI.SimulationController.createSimulation(payload))
+    const result = await fetchData<any>(() =>
+      engineAPI.SimulationController.createSimulation(payload)
+    );
     if (result.error) {
-      errorSimulation.value = result.error
+      errorSimulation.value = result.error;
     } else {
-      simulationId.value = result.data ?? ''
-      status.value = 'Simulation has been sent!'
+      simulationId.value = result.data ?? "";
+      status.value = "Simulation has been sent!";
     }
   } catch (err: any) {
-    errorSimulation.value = err.message || 'Unexpected error'
+    errorSimulation.value = err.message || "Unexpected error";
   } finally {
-    loadingSimulation.value = false
+    loadingSimulation.value = false;
   }
 }
 
 function resetForm() {
-  form.seasonYears = []
-  form.league_id = ''
-  form.iterations = 1
-  form.league_round_id = null
-  status.value = ''
-  errorSimulation.value = null
+  form.seasonYears = [];
+  form.league_id = "";
+  form.iterations = 1;
+  form.league_round_id = null;
+  status.value = "";
+  errorSimulation.value = null;
+  validationErrors.value = [];
 }
 </script>
 <template>
   <main>
+    <h2 style="text-align: center" selenium-id="title-prepare-simulation">
+      Prepare a new simulation
+    </h2>
     <section v-if="simulationId" class="simulation-result">
       <h5>Simulation ID: {{ simulationId }}</h5>
-      <router-link :to="{ name: 'SimulationItem', params: { id: simulationId }}" class="button-link">
-        <button type="submit" class="button-primary">Check the simulation results</button>
+      <router-link
+        :to="{ name: 'SimulationItem', params: { id: simulationId } }"
+        class="button-link"
+      >
+        <button type="submit" class="button-primary">
+          Check the simulation results
+        </button>
       </router-link>
     </section>
 
     <section>
       <div v-if="loading" class="info">⏳ Loading...</div>
       <ErrorEndpoint v-else-if="error" :error="error" />
-      <div v-if="loadingSimulation" class="info"> Working simulation, please wait…</div>
+      <div v-if="loadingSimulation" class="info">
+        Working simulation, please wait…
+      </div>
       <ErrorEndpoint v-else-if="errorSimulation" :error="errorSimulation" />
 
       <form class="form" @submit.prevent="submitForm">
@@ -110,14 +148,22 @@ function resetForm() {
             </label>
           </div>
         </div>
+        <div
+          v-if="validationErrors && validationErrors.length > 0"
+          class="validation-error"
+        >
+          <ul v-for="valError in validationErrors">
+            <li>{{ valError }}</li>
+          </ul>
+        </div>
         <div class="field">
           <label for="title">Set Title</label>
-          <input v-model="form.title" selenium-id="input-title">
+          <input v-model="form.title" selenium-id="input-title" />
         </div>
         <div class="field">
           <label for="leagueId">Choose league</label>
           <select id="leagueId" v-model="form.league_id">
-            <option 
+            <option
               v-for="league in leagues"
               :key="league.name"
               :value="league.id"
@@ -141,9 +187,11 @@ function resetForm() {
         </div>
 
         <div class="field">
-          <label for="leagueRoundId">Optional: With specified round of league</label>
+          <label for="leagueRoundId"
+            >Optional: With specified round of league</label
+          >
           <select id="leagueRoundId" v-model="form.league_round_id">
-            <option 
+            <option
               v-for="leagueRounds in leagueRounds"
               :key="leagueRounds.round"
               :value="leagueRounds.id"
@@ -153,17 +201,22 @@ function resetForm() {
           </select>
         </div>
         <div class="field">
-          <label for="leagueRoundId">Optional: Simulation should create scoreboards during the simulation?</label>
-           <input
-              type="checkbox"
-              :value="form.createScoreboardOnCompleteIteration"
-              v-model="form.createScoreboardOnCompleteIteration"
-              selenium-id="input-create-scoreboards"
-            />
+          <label for="leagueRoundId"
+            >Optional: Simulation should create scoreboards during the
+            simulation?</label
+          >
+          <input
+            type="checkbox"
+            :value="form.createScoreboardOnCompleteIteration"
+            v-model="form.createScoreboardOnCompleteIteration"
+            selenium-id="input-create-scoreboards"
+          />
         </div>
         <div class="actions">
           <button type="submit" class="button-primary">Simulate</button>
-          <button type="button" class="button-secondary" @click="resetForm">Reset</button>
+          <button type="button" class="button-secondary" @click="resetForm">
+            Reset
+          </button>
         </div>
       </form>
     </section>
@@ -181,7 +234,6 @@ main {
   color: var(--color-text-main);
 }
 
-/* ---- SECTIONS ---- */
 section {
   width: 100%;
   max-width: 90%;
@@ -206,7 +258,6 @@ section {
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4);
 }
 
-/* ---- FORM ---- */
 .form {
   background-color: var(--color-surface);
   border: 1px solid var(--color-grid);
@@ -298,5 +349,4 @@ button {
   color: var(--color-accent-yellow);
   font-weight: 600;
 }
-
 </style>

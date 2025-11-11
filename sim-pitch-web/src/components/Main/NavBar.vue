@@ -10,12 +10,12 @@
     
 
     <nav class="nav-links">
-      <div class="link"><router-link to="/" exact-active-class="active">Home</router-link></div> <hr/>
-      <div class="link"><router-link to="/prepareSimulation" exact-active-class="active">
+      <div class="link"><router-link to="/" exact-active-class="active" selenium-id="home-nav">Home</router-link></div> <hr/>
+      <div class="link"><router-link to="/prepareSimulation" exact-active-class="active" selenium-id="prepareSimulation-nav">
         Prepare a new simulation
       </router-link></div> <hr/>
-      <div class="link"><router-link to="/simulation" exact-active-class="active">All simulations</router-link></div> <hr/>
-      <div class="link"><router-link to="/about" exact-active-class="active">About</router-link> </div><hr/>
+      <div class="link"><router-link to="/simulation" exact-active-class="active" selenium-id="simulations-nav">All simulations</router-link></div> <hr/>
+      <div class="link"><router-link to="/about" exact-active-class="active" selenium-id="about-nav">About</router-link> </div><hr/>
     </nav>
   </header>
 </template>
@@ -46,7 +46,6 @@
   text-shadow: 0 0 12px rgba(0, 230, 118, 0.7);
 }
 
-/* ---- LINKS ---- */
 .nav-links {
   display: flex;
   flex-direction: row;
@@ -75,7 +74,6 @@
   transform: translateY(-1px);
 }
 
-/* ---- PRIMARY BUTTON LINK ---- */
 .nav-links .btn-primary {
   background: linear-gradient(135deg, var(--color-button), var(--color-accent-blue));
   color: #fff !important;
@@ -96,7 +94,6 @@
   box-shadow: 0 3px 8px rgba(0, 191, 166, 0.4);
 }
 
-/* ---- SEPARATOR PIONOWY ---- */
 hr {
   width: 1px;
   height: 24px;

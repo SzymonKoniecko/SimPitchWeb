@@ -332,6 +332,43 @@ button:disabled,
   margin-right: 0.5rem;
 }
 
+.validation-error {
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error-text);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-block: 0.75rem;
+  box-shadow: 0 2px 6px rgba(229, 115, 115, 0.25);
+}
+
+.validation-error ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  list-style-type: "** ";
+}
+
+.validation-error li {
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.validation-error {
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 h1,
 h2,
 h3,

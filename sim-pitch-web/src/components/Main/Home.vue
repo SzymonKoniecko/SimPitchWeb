@@ -5,12 +5,12 @@
       <p class="subtitle">
         Match and league round simulation based on <b>Poisson</b> and <b>Gamma</b> models.
       </p>
-      <router-link to="/prepareSimulation" class="btn-primary">
+      <router-link to="/prepareSimulation" class="btn-primary" selenium-Id="prepareSimulation">
         Prepare a new simulation
       </router-link>
     </section>
 
-    <section class="text">
+    <section class="text" selenium-id="system-goal">
       <h2>🎯 System Goal</h2>
       <ul>
         <li>Analysis of team history (matches, goals scored and conceded)</li>
@@ -20,14 +20,14 @@
       </ul>
     </section>
 
-    <section class="text">
-      <h2> Heat map</h2>
+    <section class="text" selenium-id="using-example-1">
+      <h2> Heat Map</h2>
       <img :src="monteCarlo" alt="Monte Carlo Example" />
     </section>
 
-    <section class="text">
+    <section class="text" selenium-id="using-example-2">
       <h2> Posterior (Gamma) (not developed)</h2>
-      <img :src="posterior" alt="Monte Carlo Example" />
+      <img :src="posterior" alt="Posterior Example" />
     </section>
   </main>
 </template>
