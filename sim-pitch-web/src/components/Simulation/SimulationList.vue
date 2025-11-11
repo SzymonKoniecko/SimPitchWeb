@@ -23,7 +23,7 @@ const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
 
 const currentPage = ref(1);
-const pageSize = ref(10);
+const pageSize = ref(5);
 const totalCount = computed(() => state.value.data?.totalCount ?? 0);
 const totalPages = computed(() => state.value.data?.totalPages ?? 1);
 const sortOption = ref("CreatedDate");
@@ -158,9 +158,9 @@ const getLeagueName = (id: string) =>
         @update:page="loadIterationPage"
         @update:pageSize="changePageSize"
       />
-      <li v-for="sim in simulationOverviews" :key="sim.id">
+      <li v-for="(sim, index) in simulationOverviews" :key="sim.id">
         <section class="simulation">
-          <header class="title-details">
+          <header class="title-details" :selenium-id="`title-details-${index}`">
             <h2 style="text-align: center">{{ sim.simulationParams.title }}</h2>
             <small>State: {{ sim.state.state }}</small> <br />
             <small
@@ -186,13 +186,13 @@ const getLeagueName = (id: string) =>
             <br />
             <div v-if="checkStatus(sim.state.state)" class="loader"></div>
           </header>
-          <details close>
+          <details close :selenium-id="`title-details-close-${index}`">
             <article class="details-article">
               <strong>Iterations:</strong> {{ sim.simulationParams.iterations }}
             </article>
             <article class="details-article">
               <strong>Season years used in simulation:</strong>
-              <ul
+              <ul 
                 v-if="state.data && sim.simulationParams.seasonYears.length > 0"
                 class="season-years-list"
               >

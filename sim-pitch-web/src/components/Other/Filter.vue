@@ -76,31 +76,34 @@ onMounted(ensureData);
 watch(() => props.variant, ensureData);
 </script>
 <template>
-    <hr></hr>
+  <hr>
+  </hr>
   <div class="filter">
     <label class="sort-option">
       Sort by:
-      <select :value="props.toSortOption" @change="changeSortingOption">
-        <option v-for="option in sortingList" :key="option" :value="option">
+      <select :value="props.toSortOption" @change="changeSortingOption" selenium-id="sorting-select">
+        <option v-for="option in sortingList" :key="option" :value="option" :selenium-id="`${getLabel(option, variant)
+          .replace(/\s+/g, '-')
+          .toLowerCase()}`">
           {{ getLabel(option, variant) }}
         </option>
       </select>
     </label>
     <div v-if="props.toSortOption === SortingOption.DynamicValue" class="sort-option">
       <label>Select dynamic value:</label>
-      <select :value="filterObjValue" @change="filterBy">
-        <option
-          v-for="dynamicValue in filterObjValue"
-          :key="dynamicValue.id"
-          :value="dynamicValue.id"
-        >
+      <select :value="filterObjValue" @change="filterBy" selenium-id="dynamic-select">
+        <option v-for="dynamicValue in filterObjValue" :key="dynamicValue.id" :value="dynamicValue.id" :selenium-id="`${dynamicValue.name
+          .replace(/\s+/g, '-')
+          .toLowerCase()}`">
           {{ dynamicValue.name }}
         </option>
       </select>
     </div>
-    <button v-if="props.toSortOption !== SortingOption.DynamicValue" class="button-third" v-on:click="changeOrder">Toggle {{orderValue}}</button>
+    <button v-if="props.toSortOption !== SortingOption.DynamicValue" class="button-third" selenium-id="button-order"
+      v-on:click="changeOrder">Toggle {{ orderValue }}</button>
   </div>
-  <hr></hr>
+  <hr>
+  </hr>
 </template>
 <style scoped>
 .filter {
@@ -108,6 +111,7 @@ watch(() => props.variant, ensureData);
   align-items: center;
   gap: 1rem;
 }
+
 .sort-option {
   font-size: 0.9rem;
 }
