@@ -31,6 +31,7 @@ const changePageSize = (event: Event) => {
         class="button-fourth"
         @click="goToPage(props.currentPage - 1)"
         :disabled="props.currentPage <= 1"
+        selenium-id="prev-button"
       >
         ← Prev
       </button>
@@ -41,17 +42,20 @@ const changePageSize = (event: Event) => {
         class="button-fourth"
         @click="goToPage(props.currentPage + 1)"
         :disabled="props.currentPage >= props.totalPages"
+        selenium-id="next-button"
       >
         Next →
       </button>
-      <label class="page-size"> Total count: {{ props.totalItems }} </label>
+      <label class="page-size" selenium-id="total-count">Total count: {{ props.totalItems }} </label>
       <label class="page-size">
         Page size:
-        <select :value="props.pageSize" @change="changePageSize">
-          <option :value="10">10</option>
-          <option :value="25">25</option>
-          <option :value="50">50</option>
-          <option :value="100">100</option>
+        <select :value="props.pageSize" @change="changePageSize"
+            selenium-id="size-select">
+          <option selenium-id="size-5" :value="5">5</option>
+          <option selenium-id="size-10" :value="10">10</option>
+          <option selenium-id="size-25" :value="25">25</option>
+          <option selenium-id="size-50" :value="50">50</option>
+          <option selenium-id="size-100" :value="100">100</option>
         </select>
       </label>
     </div>

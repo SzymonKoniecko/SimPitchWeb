@@ -111,12 +111,18 @@ function resetForm() {
       Prepare a new simulation
     </h2>
     <section v-if="simulationId" class="simulation-result">
-      <h5>Simulation ID: {{ simulationId }}</h5>
+      <h5 selenium-id="simulation-id-text">
+        Simulation ID: {{ simulationId }}
+      </h5>
       <router-link
         :to="{ name: 'SimulationItem', params: { id: simulationId } }"
         class="button-link"
       >
-        <button type="submit" class="button-primary">
+        <button
+          type="submit"
+          class="button-primary"
+          selenium-id="simulation-result"
+        >
           Check the simulation results
         </button>
       </router-link>
@@ -162,12 +168,17 @@ function resetForm() {
         </div>
         <div class="field">
           <label for="leagueId">Choose league</label>
-          <select id="leagueId" v-model="form.league_id">
+          <select
+            id="leagueId"
+            v-model="form.league_id"
+            selenium-id="league-select"
+            name="league"
+          >
             <option
               v-for="league in leagues"
-              :key="league.name"
+              :key="league.id"
               :value="league.id"
-              :selenium-id="league.name"
+              :selenium-id="`${league.name.replace(/\s+/g, '-').toLowerCase()}`"
             >
               {{ league.name }}
             </option>
@@ -324,7 +335,6 @@ input:focus {
   transform: translateY(-1px);
 }
 
-/* ---- BUTTONS ---- */
 button {
   cursor: pointer;
   font-size: 1rem;
@@ -335,7 +345,6 @@ button {
   border: none;
 }
 
-/* ---- INFO / STATUS ---- */
 .status {
   color: var(--color-accent-green);
   font-weight: 600;

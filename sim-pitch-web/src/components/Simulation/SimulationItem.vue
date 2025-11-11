@@ -70,7 +70,7 @@ const loadSimulation = async () => {
       mapOrder(order.value)
     )
   );
-  if (simulationTeamStatsState.value.data === null) {
+  if (simulationTeamStatsState.value.data === null && simulationState.value.data?.state.state !== 'Running') {
     simulationTeamStatsState.value = await fetchData<SimulationTeamStats[]>(() =>
       engineAPI.SimulationStatsController.getSimulationTeamStats(props.id)
   );
@@ -246,9 +246,9 @@ watch(
         {{ simulationState.data.priorLeagueStrength }}
       </p>
       <section>
-        <details close class="details">
+        <details close class="details" selenium-id="sim-params-details">
           <summary><strong>[-> Simulation Parameters <-]</strong></summary>
-          <ul>
+          <ul selenium-id="sim-params-details-list">
             <li>
               <strong>League:</strong>
               {{
@@ -273,13 +273,16 @@ watch(
           </ul>
         </details>
       </section>
+      <summary v-if="simulationTeamStatsState?.data == null">Wait for completed simulation for heatmap</summary>
       <HeatMap
-        v-if="simulationTeamStatsState?.data && teams?.length"
+        v-else="simulationTeamStatsState?.data && teams?.length"
         :simulation-team-stats="simulationTeamStatsState.data"
         :teams="teams"
         @update:winners-data="setWinnersData"
       />
+      <summary v-if="simulationTeamStatsState?.data == null">Wait for completed simulation for averange stats</summary>
       <ScoreboardItem
+        v-else="simulationTeamStatsState?.data && teams?.length"
         variant="simulation_averange"
         :teams="teams"
         :simulation-team-stats="simulationTeamStatsState?.data ?? undefined"
