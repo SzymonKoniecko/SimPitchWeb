@@ -226,14 +226,14 @@ watch(
       <hr></hr>
       <h3><strong> {{ simulationState.data.simulationParams.title }}</strong> </h3>
       <p v-if="simulationTeamStatsState?.data"><strong>Winners:</strong> {{ winnersData }}</p>
-      <p>
+      <p selenium-id="iterations">
         <strong>Completed iterations:</strong>
         {{ simulationState.data.state.lastCompletedIteration }} /
         {{ simulationState.data?.simulationParams.iterations }} ({{
           simulationState.data?.state.progressPercent
         }}%)
       </p>
-      <p>
+      <p selenium-id="state">
         <strong>State:</strong> {{ simulationState.data.state.state }} ---
         {{ new Date(simulationState.data.state.updatedAt).toLocaleString() }}
       </p>
