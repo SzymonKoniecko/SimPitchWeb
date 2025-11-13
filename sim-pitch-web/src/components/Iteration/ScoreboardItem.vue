@@ -19,7 +19,7 @@
         </tr>
       </tbody>
     </table>
-    <table v-else-if="variant === 'complete_details'">
+    <table v-else-if="variant === 'complete_details'" selenium-id="scoreboard_complete_details">
       <thead>
         <tr>
           <th>Rank</th>

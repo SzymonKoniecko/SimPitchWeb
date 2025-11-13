@@ -226,14 +226,14 @@ watch(
       <hr></hr>
       <h3><strong> {{ simulationState.data.simulationParams.title }}</strong> </h3>
       <p v-if="simulationTeamStatsState?.data"><strong>Winners:</strong> {{ winnersData }}</p>
-      <p>
+      <p selenium-id="iterations">
         <strong>Completed iterations:</strong>
         {{ simulationState.data.state.lastCompletedIteration }} /
         {{ simulationState.data?.simulationParams.iterations }} ({{
           simulationState.data?.state.progressPercent
         }}%)
       </p>
-      <p>
+      <p selenium-id="state">
         <strong>State:</strong> {{ simulationState.data.state.state }} ---
         {{ new Date(simulationState.data.state.updatedAt).toLocaleString() }}
       </p>
@@ -312,7 +312,7 @@ watch(
           />
           <div class="scoreboards-list">
             <div
-              v-for="[scoreboardId, items] in groupedPreviewEntries"
+              v-for="([scoreboardId, items], index) in groupedPreviewEntries"
               :key="scoreboardId"
               class="scoreboard-block"
             >
@@ -336,6 +336,7 @@ watch(
                   }"
                   role="button"
                   class="button-secondary"
+                  :selenium-id="`iteration-${index}`"
                 >
                   → Check complete iteration details
                 </router-link>

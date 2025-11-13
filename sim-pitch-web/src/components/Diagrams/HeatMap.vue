@@ -10,15 +10,15 @@ defineOptions({ name: "HeatMap" });
 
 const props = defineProps<{
   simulationTeamStats: SimulationTeamStats[];
-  teams: Team[]
+  teams: Team[];
 }>();
 const emit = defineEmits<{
   (e: "update:winnersData", value: string): void;
 }>();
 const teamStats = computed(() => {
-  let sorted = sortTeamStats(props.simulationTeamStats)
-  changedWinnersData(sorted)
-  return sorted
+  let sorted = sortTeamStats(props.simulationTeamStats);
+  changedWinnersData(sorted);
+  return sorted;
 });
 const maxPositions = computed(() =>
   Math.max(
@@ -45,7 +45,6 @@ const changedWinnersData = (sortedTeamStats: SimulationTeamStats[]) => {
 
   emit("update:winnersData", winnersString.join(" "));
 };
-
 
 function getTeamNameById(id?: string): string {
   return props.teams.find((team) => team.id === id)?.name || "UNKNOWN";
@@ -83,7 +82,7 @@ const getColor = (prob: number) => {
 
 <template>
   <section>
-    <details close class="heatmap">
+    <details close class="heatmap" selenium-id="heatmap-details">
       <summary>Team Position Probbility - Heatmap</summary>
       <figure>
         <table role="grid" class="heatmap-table">
@@ -97,7 +96,7 @@ const getColor = (prob: number) => {
           </thead>
 
           <tbody>
-            <tr v-for="teamstat in teamStats">
+            <tr v-for="(teamstat, index) in teamStats">
               <th scope="row">
                 <TeamCard :id="teamstat.teamId" :variant="'mini'" />
               </th>
@@ -109,6 +108,7 @@ const getColor = (prob: number) => {
                   backgroundColor: getColor(prob),
                   color: prob > 0.6 ? '#fff' : 'var(--color-text-main)',
                 }"
+                :selenium-id="`cell-${index}-${idx}`"
               >
                 {{ (prob * 100).toFixed(3) }}%
               </td>
