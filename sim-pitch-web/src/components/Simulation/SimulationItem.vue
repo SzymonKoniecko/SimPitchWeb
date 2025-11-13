@@ -312,7 +312,7 @@ watch(
           />
           <div class="scoreboards-list">
             <div
-              v-for="[scoreboardId, items] in groupedPreviewEntries"
+              v-for="([scoreboardId, items], index) in groupedPreviewEntries"
               :key="scoreboardId"
               class="scoreboard-block"
             >
@@ -336,6 +336,7 @@ watch(
                   }"
                   role="button"
                   class="button-secondary"
+                  :selenium-id="`iteration-${index}`"
                 >
                   → Check complete iteration details
                 </router-link>

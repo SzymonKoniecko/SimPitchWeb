@@ -1,5 +1,5 @@
 <template>
-  <table class="match-body">
+  <table class="match-body" selenium-id="match">
   <colgroup>
     <col>
     <col>
