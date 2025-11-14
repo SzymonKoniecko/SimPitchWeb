@@ -7,4 +7,9 @@ export interface SimulationParams{
     iterations: number;
     leagueRoundId?: string;
     createScoreboardOnCompleteIteration?: Boolean;
+    seed: number;
+    gamesToReachTrust: number;
+    confidenceLevel: number;
+    homeAdvantage: number;
+    noiseFactor: number;
 }
