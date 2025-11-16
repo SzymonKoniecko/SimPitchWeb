@@ -5,7 +5,12 @@ import { useSportsDataStore } from "../../stores/SportsDataStore";
 import { fetchData } from "../../api/fetchData";
 import { engineAPI } from "../../api/engine.api";
 import ErrorEndpoint from "../Other/ErrorEndpoint.vue";
-import type { SimulationParams } from "../../models/Simulations/simulationParams";
+import {
+  randomInt,
+  type SimulationParams,
+} from "../../models/Simulations/simulationParams";
+import { SimulationParametersShortTooltips as TT } from "../../models/Consts/tooltipTexts";
+import Tooltip from "../Other/Tooltip.vue";
 
 defineOptions({ name: "PrepareSimulation" });
 
@@ -17,6 +22,8 @@ const error = computed(() => sportsDataStore.error);
 const leagues = computed(() => sportsDataStore.leagues);
 const leagueRounds = computed(() => sportsDataStore.leagueRounds);
 const simulationId = ref("");
+const scrollValErrors = ref<HTMLElement | null>(null)
+const scrollStartedSim = ref<HTMLElement | null>(null)
 
 const form = reactive({
   title: `Simulation - ${new Date().toISOString()}`,
@@ -25,6 +32,13 @@ const form = reactive({
   iterations: 1,
   league_round_id: null,
   createScoreboardOnCompleteIteration: true,
+
+  seed: randomInt(0, 999999),
+
+  gamesToReachTrust: 15, // 10–20
+  confidenceLevel: 1.05, // 0.90–1.10
+  noiseFactor: 0.12, // 0.10–0.15
+  homeAdvantage: 1.05, // 1.03–1.07
 });
 
 const ensureData = async () => {
@@ -57,18 +71,28 @@ function validateForm(): boolean {
   }
 
   validationErrors.value = newErrors;
-
   return newErrors.length === 0;
 }
 
+function scrollToValidationSection() {
+  scrollValErrors?.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function scrollToStartedSimulation() {
+  scrollStartedSim?.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 async function submitForm() {
-  const isValid = validateForm();
-  if (!isValid) return;
+  if (!validateForm()){
+    scrollToValidationSection();
+    return
+  };
 
   loadingSimulation.value = true;
   errorSimulation.value = null;
   status.value = "";
   simulationId.value = "";
+
   const payload: SimulationParams = {
     title: form.title,
     seasonYears: form.seasonYears,
@@ -77,16 +101,25 @@ async function submitForm() {
     leagueRoundId: form.league_round_id ?? undefined,
     createScoreboardOnCompleteIteration:
       form.createScoreboardOnCompleteIteration ?? false,
+
+    seed: form.seed,
+    gamesToReachTrust: form.gamesToReachTrust,
+    confidenceLevel: form.confidenceLevel,
+    noiseFactor: form.noiseFactor,
+    homeAdvantage: form.homeAdvantage,
   };
+
   try {
     const result = await fetchData<any>(() =>
       engineAPI.SimulationController.createSimulation(payload)
     );
+
     if (result.error) {
       errorSimulation.value = result.error;
     } else {
       simulationId.value = result.data ?? "";
       status.value = "Simulation has been sent!";
+      scrollToStartedSimulation();
     }
   } catch (err: any) {
     errorSimulation.value = err.message || "Unexpected error";
@@ -100,14 +133,23 @@ function resetForm() {
   form.league_id = "";
   form.iterations = 1;
   form.league_round_id = null;
+
+  // reset new fields
+  form.seed = randomInt(0, 999999);
+  form.gamesToReachTrust = 15;
+  form.confidenceLevel = 1.05;
+  form.noiseFactor = 0.12;
+  form.homeAdvantage = 1.05;
+
   status.value = "";
   errorSimulation.value = null;
   validationErrors.value = [];
 }
 </script>
+
 <template>
   <main>
-    <h2 style="text-align: center" selenium-id="title-prepare-simulation">
+    <h2 style="text-align: center" selenium-id="title-prepare-simulation"  ref="scrollStartedSim">
       Prepare a new simulation
     </h2>
     <section v-if="simulationId" class="simulation-result">
@@ -158,6 +200,7 @@ function resetForm() {
           v-if="validationErrors && validationErrors.length > 0"
           class="validation-error"
         >
+        <label ref="scrollValErrors"> Validation errors:</label>
           <ul v-for="valError in validationErrors">
             <li>{{ valError }}</li>
           </ul>
@@ -210,6 +253,100 @@ function resetForm() {
               {{ leagueRounds.round }}
             </option>
           </select>
+        </div>
+
+        <!-- SEED -->
+        <div class="field">
+          <Tooltip :text="TT.SEED_SHORT">
+            <label>Seed</label>
+          </Tooltip>
+          <input
+            type="number"
+            v-model.number="form.seed"
+            min="0"
+            max="999999"
+            selenium-id="seed"
+          />
+        </div>
+
+        <!-- gamesToReachTrust -->
+        <div class="field">
+          <Tooltip :text="TT.GAMES_TO_REACH_TRUST_SHORT">
+            <label
+              >Games To Reach Trust:
+              <label selenium-id="gamesToReachTrustLabel">{{
+                form.gamesToReachTrust
+              }}</label></label
+            >
+          </Tooltip>
+          <input
+            type="range"
+            min="10"
+            max="20"
+            step="1"
+            v-model.number="form.gamesToReachTrust"
+            selenium-id="gamesToReachTrust"
+          />
+        </div>
+
+        <!-- confidenceLevel -->
+        <div class="field">
+          <Tooltip :text="TT.CONFIDENCE_LEVEL_SHORT">
+            <label
+              >Confidence Level:
+              <label selenium-id="confidenceLevelLabel">{{
+                form.confidenceLevel
+              }}</label></label
+            >
+          </Tooltip>
+          <input
+            type="range"
+            min="0.90"
+            max="1.10"
+            step="0.01"
+            v-model.number="form.confidenceLevel"
+            selenium-id="confidenceLevel"
+          />
+        </div>
+
+        <!-- noiseFactor -->
+        <div class="field">
+          <Tooltip :text="TT.NOISE_FACTOR_SHORT">
+            <label
+              >Noise Factor:
+              <label selenium-id="noiseFactorLabel">{{
+                form.noiseFactor
+              }}</label></label
+            >
+          </Tooltip>
+          <input
+            type="range"
+            min="0.10"
+            max="0.15"
+            step="0.01"
+            v-model.number="form.noiseFactor"
+            selenium-id="noiseFactor"
+          />
+        </div>
+
+        <!-- homeAdvantage -->
+        <div class="field">
+          <Tooltip :text="TT.HOME_ADVANTAGE_SHORT">
+            <label
+              >Home Advantage:
+              <label selenium-id="homeAdvantageLabel">{{
+                form.homeAdvantage
+              }}</label></label
+            >
+          </Tooltip>
+          <input
+            type="range"
+            min="1.03"
+            max="1.07"
+            step="0.01"
+            v-model.number="form.homeAdvantage"
+            selenium-id="homeAdvantage"
+          />
         </div>
         <div class="field">
           <label for="leagueRoundId"
