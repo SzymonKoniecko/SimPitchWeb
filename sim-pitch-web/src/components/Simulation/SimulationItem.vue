@@ -264,6 +264,26 @@ watch(
               {{ simulationState.data.simulationParams.seasonYears.join(", ") }}
             </li>
             <li>
+              <strong>Seed:</strong>
+              {{ simulationState.data.simulationParams.seed}}
+            </li>
+            <li>
+              <strong>Games to reach trust:</strong>
+              {{ simulationState.data.simulationParams.gamesToReachTrust}}
+            </li>
+            <li>
+              <strong>Confidence level:</strong>
+              {{ simulationState.data.simulationParams.confidenceLevel}}
+            </li>
+            <li>
+              <strong>Noise factor:</strong>
+              {{ simulationState.data.simulationParams.noiseFactor}}
+            </li>
+            <li>
+              <strong>Home Advantage:</strong>
+              {{ simulationState.data.simulationParams.homeAdvantage}}
+            </li>
+            <li>
               <strong>Created scoreboards during the simulation? -></strong>
               {{
                 simulationState.data.simulationParams

@@ -191,6 +191,21 @@ const getLeagueName = (id: string) =>
               <strong>Iterations:</strong> {{ sim.simulationParams.iterations }}
             </article>
             <article class="details-article">
+              <strong>Seed:</strong> {{ sim.simulationParams.seed }}
+            </article>
+            <article class="details-article">
+              <strong>Games to reach trust:</strong> {{ sim.simulationParams.gamesToReachTrust }}
+            </article>
+            <article class="details-article">
+              <strong>Confidence level:</strong> {{ sim.simulationParams.confidenceLevel }}
+            </article>
+            <article class="details-article">
+              <strong>Noise factor:</strong> {{ sim.simulationParams.noiseFactor }}
+            </article>
+            <article class="details-article">
+              <strong>Home advantage:</strong> {{ sim.simulationParams.homeAdvantage }}
+            </article>
+            <article class="details-article">
               <strong>Season years used in simulation:</strong>
               <ul 
                 v-if="state.data && sim.simulationParams.seasonYears.length > 0"
