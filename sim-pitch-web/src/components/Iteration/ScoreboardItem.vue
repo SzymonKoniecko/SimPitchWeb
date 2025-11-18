@@ -39,13 +39,13 @@
           <td>{{ s.rank }}</td>
           <td><TeamCard :id="s.teamId" :variant="'mini'" /></td>
           <td>{{ s.matchPlayed }}</td>
-          <td>{{ s.wins }}</td>
-          <td>{{ s.losses }}</td>
-          <td>{{ s.draws }}</td>
-          <td>{{ s.goalsFor }}</td>
-          <td>{{ s.goalsAgainst }}</td>
+          <td>{{ s.wins }} <p v-if="teamStats">({{ GetTeamStatsById(s.teamId)?.averangeWins.toFixed(1) }})</p></td>
+          <td>{{ s.losses }} <p v-if="teamStats">({{ GetTeamStatsById(s.teamId)?.averangeLosses.toFixed(1)  }})</p></td>
+          <td>{{ s.draws }} <p v-if="teamStats">({{ GetTeamStatsById(s.teamId)?.averangeDraws.toFixed(1)  }})</p></td>
+          <td>{{ s.goalsFor }} <p v-if="teamStats">({{ GetTeamStatsById(s.teamId)?.averangeGoalsFor.toFixed(1)  }})</p></td>
+          <td>{{ s.goalsAgainst }} <p v-if="teamStats">({{ GetTeamStatsById(s.teamId)?.averangeGoalsAgainst.toFixed(1)  }})</p></td>
           <td>{{ s.goalsFor - s.goalsAgainst }}</td>
-          <td>{{ s.points }}</td>
+          <td>{{ s.points }} <p v-if="teamStats">({{ GetTeamStatsById(s.teamId)?.averangePoints.toFixed(1)  }})</p></td>
         </tr>
       </tbody>
     </table>
@@ -108,4 +108,8 @@ const props = defineProps<Props>();
 const variant = computed(() => props.variant ?? "preview");
 
 const teamStats = computed(() => sortTeamStats(props.simulationTeamStats ?? []));
+
+const GetTeamStatsById = (Id: string) => {
+  return teamStats.value.find(x => x.teamId === Id);
+}
 </script>
