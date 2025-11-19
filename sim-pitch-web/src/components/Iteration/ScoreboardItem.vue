@@ -39,13 +39,13 @@
           <td>{{ s.rank }}</td>
           <td><TeamCard :id="s.teamId" :variant="'mini'" /></td>
           <td>{{ s.matchPlayed }}</td>
-          <td>{{ s.wins }}</td>
-          <td>{{ s.losses }}</td>
-          <td>{{ s.draws }}</td>
-          <td>{{ s.goalsFor }}</td>
-          <td>{{ s.goalsAgainst }}</td>
+          <td>{{ s.wins }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangeWins.toFixed(2) }})</p></td>
+          <td>{{ s.losses }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangeLosses.toFixed(2)  }})</p></td>
+          <td>{{ s.draws }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangeDraws.toFixed(2)  }})</p></td>
+          <td>{{ s.goalsFor }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangeGoalsFor.toFixed(2)  }})</p></td>
+          <td>{{ s.goalsAgainst }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangeGoalsAgainst.toFixed(2)  }})</p></td>
           <td>{{ s.goalsFor - s.goalsAgainst }}</td>
-          <td>{{ s.points }}</td>
+          <td>{{ s.points }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangePoints.toFixed(2)  }})</p></td>
         </tr>
       </tbody>
     </table>
@@ -87,6 +87,9 @@
     width: 100%;
     text-align: center;
 }
+.avg-value{
+  color: var(--color-text-third)
+}
 </style>
 <script setup lang="ts">
 import { computed } from "vue";
@@ -101,11 +104,14 @@ defineOptions({ name: "ScoreboardItem" });
 type Props = {
   iteration_preview?: IterationPreview[];
   scoreboard?: Scoreboard | undefined;
-  simulationTeamStats?: SimulationTeamStats[];
+  simulationTeamStats?: SimulationTeamStats[] | null;
   variant?: "preview" | "complete_details" | "simulation_averange";
 };
 const props = defineProps<Props>();
 const variant = computed(() => props.variant ?? "preview");
-
 const teamStats = computed(() => sortTeamStats(props.simulationTeamStats ?? []));
+
+const GetTeamStatsById = (Id: string) => {
+  return teamStats.value.find(x => x.teamId === Id);
+}
 </script>

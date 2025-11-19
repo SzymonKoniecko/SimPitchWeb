@@ -353,6 +353,9 @@ watch(
                       simulation_id: props.id,
                       id: items[0]?.iterationId,
                     },
+                    query: {
+                      simulationState: simulationState.data?.state.state
+                    },
                   }"
                   role="button"
                   class="button-secondary"
