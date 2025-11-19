@@ -1,4 +1,13 @@
 <template>
+  <div class="button-list">
+    <router-link
+      :to="{ name: 'SimulationItem', params: { id: props.simulation_id } }"
+      role="button"
+      class="button-primary"
+    >
+      -> Go back to simulation summary
+    </router-link>
+  </div>
   <div>
     <div v-if="scoreboardState.loading" class="info">
       Loading scoreboard..., please wait…
@@ -155,9 +164,13 @@ const loadIterationResult = async () => {
   iterationResultState.value = await fetchData<IterationResult>(() =>
     engineAPI.IterationResultController.getIterationResult(props.id)
   );
-  if(state.value === "Completed"){
-    simulationTeamStatsState.value = await fetchData<SimulationTeamStats[]>(() =>
-      engineAPI.SimulationStatsController.getSimulationTeamStats(props.simulation_id));
+  if (state.value === "Completed") {
+    simulationTeamStatsState.value = await fetchData<SimulationTeamStats[]>(
+      () =>
+        engineAPI.SimulationStatsController.getSimulationTeamStats(
+          props.simulation_id
+        )
+    );
   }
 };
 const simulationTeamStatsState = ref<ApiState<SimulationTeamStats[]>>({
