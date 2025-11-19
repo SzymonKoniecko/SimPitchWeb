@@ -56,6 +56,7 @@
       variant="complete_details"
       :teams="teams"
       :scoreboard="scoreboardState.data?.[0]"
+      :simulation-team-stats="simulationTeamStatsState.data"
     />
   </div>
   <section>
@@ -121,13 +122,16 @@ import { engineAPI } from "../../api/engine.api";
 import ScoreboardItem from "./ScoreboardItem.vue";
 import type { IterationResult } from "../../models/Iterations/iterationResult";
 import MatchResultItem from "./MatchResultItem.vue";
+import { useRoute } from "vue-router";
+import type { SimulationTeamStats } from "../../models/Simulations/simulationTeamStats";
 defineOptions({ name: "IterationItem" });
 type Props = {
   id: string; // iteration_id
   simulation_id: string;
 };
 const props = defineProps<Props>();
-
+const route = useRoute();
+const state = computed(() => route.query.simulationState);
 const scoreboardState = ref<ApiState<Scoreboard[]>>({
   loading: true,
   error: null,
@@ -151,7 +155,17 @@ const loadIterationResult = async () => {
   iterationResultState.value = await fetchData<IterationResult>(() =>
     engineAPI.IterationResultController.getIterationResult(props.id)
   );
+  if(state.value === "Completed"){
+    simulationTeamStatsState.value = await fetchData<SimulationTeamStats[]>(() =>
+      engineAPI.SimulationStatsController.getSimulationTeamStats(props.simulation_id));
+  }
 };
+const simulationTeamStatsState = ref<ApiState<SimulationTeamStats[]>>({
+  loading: true,
+  error: null,
+  data: null,
+});
+
 //const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name ?? id
 const ensureData = async () => {
   if (!props.simulation_id || !props.id) return;

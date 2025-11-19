@@ -15,6 +15,7 @@
 
   --color-text-main: #e8edf5;
   --color-text-secondary: #a0aec0;
+  --color-text-third: #56b9bd;
 
   --color-button: #00bfa6;
   --color-hover: #00897b;
@@ -71,8 +72,9 @@
 
     --color-text-main: #1a1f2c;
     --color-text-secondary: #5a6b87;
+    --color-text-third: #07b8c5;
 
-    --color-button: #009688;
+    --color-button: #121414;
     --color-hover: #00796b;
 
     --color-home-team: #1976d2;
