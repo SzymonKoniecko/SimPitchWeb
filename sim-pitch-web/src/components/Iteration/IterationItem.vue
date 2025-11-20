@@ -27,18 +27,6 @@
   <section>
     <article v-if="iterationResultState.data" class="iteration-info-article">
       <ul class="iteration-info">
-        <li>
-          <p>
-            <strong>League strength: </strong
-            >{{ iterationResultState.data.leagueStrength }}
-          </p>
-        </li>
-        <li>
-          <p>
-            <strong>Prior league strength: </strong
-            >{{ iterationResultState.data.priorLeagueStrength }}
-          </p>
-        </li>
         <li selenium-id="number-simulated-matches">
           <p>
             <strong>Number of simulated matches: </strong
