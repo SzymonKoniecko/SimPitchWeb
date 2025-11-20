@@ -9,6 +9,4 @@ export interface IterationResult {
   executionTime: string; // TimeSpan → string or number (e.g. milliseconds)
   teamStrengths: TeamStrength[];
   simulatedMatchRounds: MatchRound[];
-  leagueStrength: number;
-  priorLeagueStrength: number;
 }

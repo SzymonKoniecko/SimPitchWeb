@@ -117,11 +117,7 @@ const getLeagueName = (id: string) =>
       style="display: flex; justify-content: space-between; align-items: center"
     ></header>
     <div class="button-list">
-      <button
-        @click="loadSimulations"
-        :aria-busy="state.loading"
-        class="button-primary"
-      >
+      <button @click="loadSimulations" :aria-busy="state.loading" class="button-primary">
         Reload
       </button>
     </div>
@@ -136,18 +132,12 @@ const getLeagueName = (id: string) =>
         @update:filter-by="setFilteringByLeague"
       />
     </section>
-    <div v-if="state.loading" class="info">
-      Loading simulations..., please wait…
-    </div>
+    <div v-if="state.loading" class="info">Loading simulations..., please wait…</div>
     <ErrorEndpoint v-else-if="state.error" :error="state.error" />
 
-    <section v-else-if="state.error" class="error">
-      Error: {{ state.error }}
-    </section>
+    <section v-else-if="state.error" class="error">Error: {{ state.error }}</section>
     <ul
-      v-else-if="
-        state.data && simulationOverviews && simulationOverviews.length > 0
-      "
+      v-else-if="state.data && simulationOverviews && simulationOverviews.length > 0"
       class="simulation-list"
     >
       <Pagination
@@ -163,14 +153,9 @@ const getLeagueName = (id: string) =>
           <header class="title-details" :selenium-id="`title-details-${index}`">
             <h2 style="text-align: center">{{ sim.simulationParams.title }}</h2>
             <small>State: {{ sim.state.state }}</small> <br />
-            <small
-              >League: {{ getLeagueName(sim.simulationParams.leagueId) }}</small
-            >
+            <small>League: {{ getLeagueName(sim.simulationParams.leagueId) }}</small>
             <br />
-            <small
-              >Created:
-              {{ new Date(sim.createdDate).toLocaleDateString() }}</small
-            >
+            <small>Created: {{ new Date(sim.createdDate).toLocaleDateString() }}</small>
             <br />
             <small
               >Completed iterations: {{ sim.state.lastCompletedIteration }} /
@@ -194,10 +179,12 @@ const getLeagueName = (id: string) =>
               <strong>Seed:</strong> {{ sim.simulationParams.seed }}
             </article>
             <article class="details-article">
-              <strong>Games to reach trust:</strong> {{ sim.simulationParams.gamesToReachTrust }}
+              <strong>Games to reach trust:</strong>
+              {{ sim.simulationParams.gamesToReachTrust }}
             </article>
             <article class="details-article">
-              <strong>Confidence level:</strong> {{ sim.simulationParams.confidenceLevel }}
+              <strong>Confidence level:</strong>
+              {{ sim.simulationParams.confidenceLevel }}
             </article>
             <article class="details-article">
               <strong>Noise factor:</strong> {{ sim.simulationParams.noiseFactor }}
@@ -207,12 +194,18 @@ const getLeagueName = (id: string) =>
             </article>
             <article class="details-article">
               <strong>Season years used in simulation:</strong>
-              <ul 
+              <ul
                 v-if="state.data && sim.simulationParams.seasonYears.length > 0"
                 class="season-years-list"
               >
                 <li v-for="seasonYear in sim.simulationParams.seasonYears">
-                  <small>{{ seasonYear }}</small>
+                  <small
+                    >{{ seasonYear }} -- Used strength (avg goals in season):
+                    {{
+                      sim.leagueStrengths.find((x) => x.seasonYear == seasonYear)
+                        ?.strength
+                    }}</small
+                  >
                 </li>
               </ul>
             </article>
