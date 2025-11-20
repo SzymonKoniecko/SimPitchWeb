@@ -7,8 +7,7 @@ export interface League {
 }
 export interface LeagueStrength {
   id: string;
-  name: string;
-  countryId: string;
-  maxRound: number;
+  leagueId: string;
+  seasonYear: string;
   strength: number;
 }

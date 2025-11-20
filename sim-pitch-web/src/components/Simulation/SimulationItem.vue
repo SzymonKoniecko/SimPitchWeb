@@ -241,6 +241,11 @@ watch(
         <strong>Simulated matches:</strong>
         {{ simulationState.data.simulatedMatches }}
       </p>
+      <p ><strong>Strengths per each season:</strong>
+        <ul v-for="strength in simulationState.data.leagueStrengths" >
+        <li>{{ strength.seasonYear }} with strength {{ strength.strength }}</li>
+        </ul>
+      </p>
       <p>
         <strong>Prior league strength:</strong>
         {{ simulationState.data.priorLeagueStrength }}
