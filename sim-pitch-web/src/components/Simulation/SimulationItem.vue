@@ -243,7 +243,7 @@ watch(
       </p>
       <p ><strong>Strengths per each season:</strong>
         <ul v-for="strength in simulationState.data.leagueStrengths" >
-        <li>{{ strength.seasonYear }} with strength {{ strength.strength }}</li>
+        <li>{{ strength.seasonYear }} with strength {{ strength.strength }} (avg goals in season)</li>
         </ul>
       </p>
       <p>

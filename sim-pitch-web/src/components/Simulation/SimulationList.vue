@@ -200,7 +200,7 @@ const getLeagueName = (id: string) =>
               >
                 <li v-for="seasonYear in sim.simulationParams.seasonYears">
                   <small
-                    >{{ seasonYear }} -- Used strength:
+                    >{{ seasonYear }} -- Used strength (avg goals in season):
                     {{
                       sim.leagueStrengths.find((x) => x.seasonYear == seasonYear)
                         ?.strength
