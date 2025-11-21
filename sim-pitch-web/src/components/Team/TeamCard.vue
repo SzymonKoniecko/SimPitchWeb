@@ -92,20 +92,33 @@ section {
 
 /*  MINI  */
 .team-card__mini {
+  position: relative;
+  width: 100%;
+
   display: flex;
-  flex-direction: row;
   align-items: center;
-  gap: 0.6rem;
+  justify-content: center;
+  padding: 0.4rem 0.7rem;
 
   background: var(--color-surface-sections);
-  padding: 0.4rem 0.7rem;
   border-radius: 0.5rem;
 }
 
 .team-img_mini {
+  position: absolute;
+  left: 0.6rem;
   width: 42px;
   height: 42px;
   object-fit: contain;
+
+  pointer-events: none;
+}
+
+.team-card__mini span,
+.team-card__mini p,
+.team-card__mini {
+  text-align: center;
+  width: 100%;
 }
 
 /* NORMAL & LARGE */
@@ -113,16 +126,14 @@ section {
 .team-card__large {
   position: relative;
   width: 100%;
+  min-height: 220px;
 
   background-size: cover;
-  background-position: center center;
+  background-position: center;
   background-repeat: no-repeat;
 
   border-radius: 1rem;
   overflow: hidden;
-
-  min-height: 220px;
-
   padding: 1.5rem 1rem;
 }
 
@@ -131,10 +142,9 @@ section {
   content: "";
   position: absolute;
   inset: 0;
-
-  background: rgba(0, 0, 0, 0.55);
-
-  backdrop-filter: blur(2px);
+  background: var(--teamcard-overlay);
+  backdrop-filter: blur(4px);
+  z-index: 1;
 }
 
 .team-card__normal > *,
@@ -148,7 +158,22 @@ section {
   display: none;
 }
 
-/* ─────────────────────────── SHARED ─────────────────────────── */
+/* 
+   TEKST + OBRAMOWANIE
+ */
+.team-card__title,
+.team-card__normal p,
+.team-card__large p,
+.team-name {
+  color: var(--teamcard-text);
+  text-shadow:
+    -1px -1px 0 var(--teamcard-outline),
+     1px -1px 0 var(--teamcard-outline),
+    -1px  1px 0 var(--teamcard-outline),
+     1px  1px 0 var(--teamcard-outline);
+}
+
+/*  SHARED  */
 .team-card__header,
 .team-card__header_mini {
   text-align: center;
