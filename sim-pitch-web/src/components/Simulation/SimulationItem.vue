@@ -261,6 +261,10 @@ watch(
               }}
             </li>
             <li>
+              <strong>Model:</strong>
+              {{ simulationState.data.simulationParams.modelType }}
+            </li>
+            <li>
               <strong>Iterations:</strong>
               {{ simulationState.data.simulationParams.iterations }}
             </li>
