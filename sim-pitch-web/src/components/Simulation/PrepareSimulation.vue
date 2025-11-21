@@ -11,6 +11,9 @@ import {
 } from "../../models/Simulations/simulationParams";
 import { SimulationParametersShortTooltips as TT } from "../../models/Consts/tooltipTexts";
 import Tooltip from "../Other/Tooltip.vue";
+import {
+  SimulationModelsOptions,
+} from "../../models/Consts/simulationModel";
 
 defineOptions({ name: "PrepareSimulation" });
 
@@ -22,8 +25,8 @@ const error = computed(() => sportsDataStore.error);
 const leagues = computed(() => sportsDataStore.leagues);
 const leagueRounds = computed(() => sportsDataStore.leagueRounds);
 const simulationId = ref("");
-const scrollValErrors = ref<HTMLElement | null>(null)
-const scrollStartedSim = ref<HTMLElement | null>(null)
+const scrollValErrors = ref<HTMLElement | null>(null);
+const scrollStartedSim = ref<HTMLElement | null>(null);
 
 const form = reactive({
   title: `Simulation - ${new Date().toISOString()}`,
@@ -39,6 +42,8 @@ const form = reactive({
   confidenceLevel: 1.05, // 0.90–1.10
   noiseFactor: 0.12, // 0.10–0.15
   homeAdvantage: 1.05, // 1.03–1.07
+
+  model: SimulationModelsOptions[0],
 });
 
 const ensureData = async () => {
@@ -75,18 +80,24 @@ function validateForm(): boolean {
 }
 
 function scrollToValidationSection() {
-  scrollValErrors?.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  scrollValErrors?.value?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
 }
 
 function scrollToStartedSimulation() {
-  scrollStartedSim?.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  scrollStartedSim?.value?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
 }
 
 async function submitForm() {
-  if (!validateForm()){
+  if (!validateForm()) {
     scrollToValidationSection();
-    return
-  };
+    return;
+  }
 
   loadingSimulation.value = true;
   errorSimulation.value = null;
@@ -101,12 +112,12 @@ async function submitForm() {
     leagueRoundId: form.league_round_id ?? undefined,
     createScoreboardOnCompleteIteration:
       form.createScoreboardOnCompleteIteration ?? false,
-
     seed: form.seed,
     gamesToReachTrust: form.gamesToReachTrust,
     confidenceLevel: form.confidenceLevel,
     noiseFactor: form.noiseFactor,
     homeAdvantage: form.homeAdvantage,
+    modelType: form.model?.toString(),
   };
 
   try {
@@ -149,22 +160,20 @@ function resetForm() {
 
 <template>
   <main>
-    <h2 style="text-align: center" selenium-id="title-prepare-simulation"  ref="scrollStartedSim">
+    <h2
+      style="text-align: center"
+      selenium-id="title-prepare-simulation"
+      ref="scrollStartedSim"
+    >
       Prepare a new simulation
     </h2>
     <section v-if="simulationId" class="simulation-result">
-      <h5 selenium-id="simulation-id-text">
-        Simulation ID: {{ simulationId }}
-      </h5>
+      <h5 selenium-id="simulation-id-text">Simulation ID: {{ simulationId }}</h5>
       <router-link
         :to="{ name: 'SimulationItem', params: { id: simulationId } }"
         class="button-link"
       >
-        <button
-          type="submit"
-          class="button-primary"
-          selenium-id="simulation-result"
-        >
+        <button type="submit" class="button-primary" selenium-id="simulation-result">
           Check the simulation results
         </button>
       </router-link>
@@ -173,9 +182,7 @@ function resetForm() {
     <section>
       <div v-if="loading" class="info">⏳ Loading...</div>
       <ErrorEndpoint v-else-if="error" :error="error" />
-      <div v-if="loadingSimulation" class="info">
-        Working simulation, please wait…
-      </div>
+      <div v-if="loadingSimulation" class="info">Working simulation, please wait…</div>
       <ErrorEndpoint v-else-if="errorSimulation" :error="errorSimulation" />
 
       <form class="form" @submit.prevent="submitForm">
@@ -187,11 +194,7 @@ function resetForm() {
               :key="season"
               class="checkbox-item"
             >
-              <input
-                type="checkbox"
-                :value="season"
-                v-model="form.seasonYears"
-              />
+              <input type="checkbox" :value="season" v-model="form.seasonYears" />
               {{ season }}
             </label>
           </div>
@@ -200,7 +203,7 @@ function resetForm() {
           v-if="validationErrors && validationErrors.length > 0"
           class="validation-error"
         >
-        <label ref="scrollValErrors"> Validation errors:</label>
+          <label ref="scrollValErrors"> Validation errors:</label>
           <ul v-for="valError in validationErrors">
             <li>{{ valError }}</li>
           </ul>
@@ -227,7 +230,19 @@ function resetForm() {
             </option>
           </select>
         </div>
-
+        <div class="field">
+          <label>Choose simulation model</label>
+          <div class="checkbox-list">
+            <label
+              v-for="model in SimulationModelsOptions"
+              :key="model"
+              class="checkbox-item"
+            >
+              <input type="radio" :value="model" v-model="form.model" :selenium-id="`model-${model}`"/>
+              {{ model }}
+            </label>
+          </div>
+        </div>
         <div class="field">
           <label for="iterations">Number of iterations</label>
           <input
@@ -241,9 +256,7 @@ function resetForm() {
         </div>
 
         <div class="field">
-          <label for="leagueRoundId"
-            >Optional: With specified round of league</label
-          >
+          <label for="leagueRoundId">Optional: With specified round of league</label>
           <select id="leagueRoundId" v-model="form.league_round_id">
             <option
               v-for="leagueRounds in leagueRounds"
@@ -314,9 +327,7 @@ function resetForm() {
           <Tooltip :text="TT.NOISE_FACTOR_SHORT">
             <label
               >Noise Factor:
-              <label selenium-id="noiseFactorLabel">{{
-                form.noiseFactor
-              }}</label></label
+              <label selenium-id="noiseFactorLabel">{{ form.noiseFactor }}</label></label
             >
           </Tooltip>
           <input
@@ -350,8 +361,7 @@ function resetForm() {
         </div>
         <div class="field">
           <label for="leagueRoundId"
-            >Optional: Simulation should create scoreboards during the
-            simulation?</label
+            >Optional: Simulation should create scoreboards during the simulation?</label
           >
           <input
             type="checkbox"
@@ -362,9 +372,7 @@ function resetForm() {
         </div>
         <div class="actions">
           <button type="submit" class="button-primary">Simulate</button>
-          <button type="button" class="button-secondary" @click="resetForm">
-            Reset
-          </button>
+          <button type="button" class="button-secondary" @click="resetForm">Reset</button>
         </div>
       </form>
     </section>

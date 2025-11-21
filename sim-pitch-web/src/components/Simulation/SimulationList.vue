@@ -155,6 +155,8 @@ const getLeagueName = (id: string) =>
             <small>State: {{ sim.state.state }}</small> <br />
             <small>League: {{ getLeagueName(sim.simulationParams.leagueId) }}</small>
             <br />
+            <small>Model: {{ sim.simulationParams.modelType }}</small>
+            <br />
             <small>Created: {{ new Date(sim.createdDate).toLocaleDateString() }}</small>
             <br />
             <small
