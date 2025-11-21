@@ -55,6 +55,10 @@
 
   --color-button-text: #ffffff;
   --color-button-disabled: rgba(255, 255, 255, 0.4);
+
+  --teamcard-overlay: rgba(0, 0, 0, 0.55);
+  --teamcard-text: #fff;
+  --teamcard-outline: #000;
 }
 
 @media (prefers-color-scheme: light) {
@@ -96,7 +100,7 @@
 
     --color-heatmap-max: #e64a19;
 
-        --color-button-primary: var(--color-button);
+    --color-button-primary: var(--color-button);
     --color-button-primary-hover: var(--color-hover);
 
     --color-button-secondary-bg: var(--color-surface-sections);
@@ -111,6 +115,10 @@
 
     --color-button-text: #ffffff;
     --color-button-disabled: rgba(0, 0, 0, 0.3);
+
+    --teamcard-overlay: rgba(255, 255, 255, 0.55);
+    --teamcard-text: #000;
+    --teamcard-outline: #fff;
   }
 }
 
@@ -157,6 +165,7 @@ section {
   box-shadow: 0 0 20px var(--color-shadow-app);
   color: var(--color-text-main);
 }
+
 a {
   color: var(--color-accent-green);
   text-decoration: none;
@@ -180,11 +189,9 @@ a:hover {
   border-radius: 40px;
   border: 2px solid transparent;
   padding: 0.6rem 1.4rem;
-  background: linear-gradient(
-    135deg,
-    var(--color-button-primary) 0%,
-    var(--color-accent-blue) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-button-primary) 0%,
+      var(--color-accent-blue) 100%);
   box-shadow: 0 4px 10px var(--color-shadow-button);
   transition: all 0.25s ease-in-out;
   position: relative;
@@ -193,11 +200,9 @@ a:hover {
 }
 
 .button:hover {
-  background: linear-gradient(
-    135deg,
-    var(--color-accent-blue) 0%,
-    var(--color-button-primary-hover) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-accent-blue) 0%,
+      var(--color-button-primary-hover) 100%);
   box-shadow: 0 6px 16px var(--color-shadow-button_second);
   transform: translateY(-2px);
 }
@@ -213,21 +218,17 @@ a:hover {
 }
 
 .button-primary {
-  background: linear-gradient(
-    135deg,
-    var(--color-button-primary),
-    var(--color-accent-blue)
-  );
+  background: linear-gradient(135deg,
+      var(--color-button-primary),
+      var(--color-accent-blue));
   color: var(--color-button-text);
   border-color: var(--color-accent-blue);
 }
 
 .button-primary:hover {
-  background: linear-gradient(
-    135deg,
-    var(--color-accent-blue),
-    var(--color-button-primary-hover)
-  );
+  background: linear-gradient(135deg,
+      var(--color-accent-blue),
+      var(--color-button-primary-hover));
 }
 
 .button-secondary {
@@ -267,11 +268,9 @@ a:hover {
   left: 50%;
   width: 0;
   height: 0;
-  background: radial-gradient(
-    circle,
-    var(--color-focus-outline) 10%,
-    transparent 10.01%
-  );
+  background: radial-gradient(circle,
+      var(--color-focus-outline) 10%,
+      transparent 10.01%);
   opacity: 0.5;
   transform: translate(-50%, -50%) scale(1);
   border-radius: 50%;
@@ -365,6 +364,7 @@ button:disabled,
     opacity: 0;
     transform: translateY(-4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -385,10 +385,11 @@ h5 {
   font-style: italic;
 }
 
-details{
+details {
   height: min-content;
   width: 100%;
 }
+
 summary {
   text-align: center;
   font-size: 1rem;

@@ -1,43 +1,45 @@
 <template>
-    <RouterLink class="team-card__link" :to="{ name: 'Team', params: { id } }">
-      <section v-if="variant === 'mini'" class="team-card__mini">
-      {{ team?.name ?? 'Unknown Team' }}
-      </section>
+  <RouterLink class="team-card__link" :to="{ name: 'Team', params: { id } }">
+    <section v-if="variant === 'mini'" class="team-card__mini">
+      <img :src="getLogo(team?.shortName)" class="team-img_mini" />
+      {{ team?.name ?? "Unknown Team" }}
+    </section>
 
-      <section v-else-if="variant === 'normal'" class="team-card__normal">
-        <header class="team-card__header">
-          <h3 class="team-card__title">
-            {{ team?.name ?? 'Unknown Team' }}
-          </h3>
-        </header>
-        <p class="team-name">{{ team?.shortName ?? 'N/A' }}</p>
-          <strong>Country:</strong> <p>{{ team?.country?.code ?? 'N/A' }}</p>
-      </section>
+    <section v-else-if="variant === 'normal'" class="team-card__normal" :style="{ backgroundImage: `url(${getLogo(team?.shortName)})` }">
+      <header class="team-card__header">
+        <h3 class="team-card__title">
+          {{ team?.name ?? "Unknown Team" }}
+        </h3>
+      </header>
+      <p class="team-name">{{ team?.shortName ?? "N/A" }}</p>
+      <strong>Country:</strong>
+      <p>{{ team?.country?.code ?? "N/A" }}</p>
+    </section>
 
-      <section v-else class="team-card__large">
-        <header class="team-card__header">
-          <h3 class="team-card__title">
-            {{ team?.name ?? 'Unknown Team' }}
-          </h3>
-        </header>
-        <p class="team-name">{{ team?.shortName ?? 'N/A' }}</p>
-        <p><strong>Abbr:</strong> ({{ team?.shortName ?? 'N/A' }})</p>
-        <p><strong>League:</strong> {{ team?.league?.name ?? 'N/A' }}</p>
-        <slot />
-      </section>
-    </RouterLink>
+    <section v-else class="team-card__large" :style="{ backgroundImage: `url(${getLogo(team?.shortName)})` }">
+      <header class="team-card__header">
+        <h3 class="team-card__title">
+          {{ team?.name ?? "Unknown Team" }}
+        </h3>
+      </header>
+      <p class="team-name">{{ team?.shortName ?? "N/A" }}</p>
+      <p><strong>Abbr:</strong> ({{ team?.shortName ?? "N/A" }})</p>
+      <p><strong>League:</strong> {{ team?.league?.name ?? "N/A" }}</p>
+      <slot />
+    </section>
+  </RouterLink>
 
-    <footer v-if="loading || error" class="team-card__footer">
-      <span v-if="loading" class="loading">Loading...</span>
-      <span v-else class="error">{{ error }}</span>
-    </footer>
+  <footer v-if="loading || error" class="team-card__footer">
+    <span v-if="loading" class="loading">Loading...</span>
+    <span v-else class="error">{{ error }}</span>
+  </footer>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, watch } from "vue";
 import { RouterLink } from "vue-router";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
-
+import { getLogo } from "../../utils/logos";
 type Props = {
   id: string;
   variant?: "mini" | "normal" | "large";
@@ -51,7 +53,7 @@ const loading = computed(() => store.loading);
 const error = computed(() => store.error);
 
 const team = computed(() => {
-  return store.teams.find(t => t.id === props.id);
+  return store.teams.find((t) => t.id === props.id);
 });
 
 const ensureData = async () => {
@@ -63,14 +65,15 @@ watch(() => props.id, ensureData);
 </script>
 
 <style scoped>
-section{
+section {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
   text-align: center;
 }
+
 .team-card {
   background: var(--color-surface-sections);
   color: var(--color-text-main);
@@ -87,56 +90,90 @@ section{
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.45);
 }
 
-/* --- MINI VARIANT --- */
-.team-card.mini {
-  font-size: 0.85rem;
-  width: 300px;
-  padding-top: 0rem;
-  padding-left: 0rem;
-  padding-right: 0rem;
-  padding-bottom: 0rem;
-  box-shadow: none;
-  background: transparent;
-}
-
+/*  MINI  */
 .team-card__mini {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-/* --- NORMAL VARIANT --- */
-.team-card.normal {
-  font-size: 0.9rem;
+  position: relative;
   width: 100%;
-  padding: 1rem;
-  margin: 0.25rem 0;
-  box-sizing: border-box;
 
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 0.4rem 0.7rem;
+
+  background: var(--color-surface-sections);
+  border-radius: 0.5rem;
 }
 
-/* --- LARGE VARIANT --- */
-.team-card.large {
-  font-size: 1rem;
+.team-img_mini {
+  position: absolute;
+  left: 0.6rem;
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+
+  pointer-events: none;
+}
+
+.team-card__mini span,
+.team-card__mini p,
+.team-card__mini {
+  text-align: center;
   width: 100%;
-  padding: 1.25rem;
-  margin: 0.5rem 0;
-  box-sizing: border-box;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
-/* --- SHARED ELEMENTS --- */
+/* NORMAL & LARGE */
+.team-card__normal,
+.team-card__large {
+  position: relative;
+  width: 100%;
+  min-height: 220px;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border-radius: 1rem;
+  overflow: hidden;
+  padding: 1.5rem 1rem;
+}
+
+.team-card__normal::before,
+.team-card__large::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--teamcard-overlay);
+  backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+.team-card__normal > *,
+.team-card__large > * {
+  position: relative;
+  z-index: 2;
+}
+
+.team-img_normal,
+.team-img_large {
+  display: none;
+}
+
+/* 
+   TEKST + OBRAMOWANIE
+ */
+.team-card__title,
+.team-card__normal p,
+.team-card__large p,
+.team-name {
+  color: var(--teamcard-text);
+  text-shadow:
+    -1px -1px 0 var(--teamcard-outline),
+     1px -1px 0 var(--teamcard-outline),
+    -1px  1px 0 var(--teamcard-outline),
+     1px  1px 0 var(--teamcard-outline);
+}
+
+/*  SHARED  */
 .team-card__header,
 .team-card__header_mini {
   text-align: center;
