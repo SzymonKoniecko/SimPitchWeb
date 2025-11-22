@@ -12,7 +12,60 @@
         selenium-id="prepareSimulation"
       >
         Prepare a new simulation
-      </router-link>
+      </router-link><h2>🎛️ Simulation Parameters</h2>
+      <p class="intro-text">
+        Configuration defaults and valid ranges based on current engine tuning:
+      </p>
+
+      <div class="params-grid-container">
+        <div class="param-box">
+          <div class="param-header">
+            <h4>Noise Factor</h4>
+          </div>
+          <p class="param-range">Range: 0.10 – 0.15</p>
+          <p class="param-desc">
+            Determines the randomness of the outcome. A factor of 0.12
+            introduces realistic unpredictability without total chaos.
+          </p>
+          <br/>
+        </div>
+
+        <div class="param-box">
+          <div class="param-header">
+            <h4>Home Advantage</h4>
+          </div>
+          <p class="param-range">Range: 1.03 – 1.07</p>
+          <p class="param-desc">
+            The multiplier applied to the home team's expected goals (Lambda).
+            Default simulates a ~5% scoring boost.
+          </p>
+          <br/>
+        </div>
+
+        <div class="param-box">
+          <div class="param-header">
+            <h4>Confidence Level</h4>
+          </div>
+          <p class="param-range">Range: 0.90 – 1.10</p>
+          <p class="param-desc">
+            Scales the impact of historical data. Values > 1.0 give more weight
+            to established team strength metrics.
+          </p>
+          <br/>
+        </div>
+
+        <div>
+          <div class="param-header">
+            <h4>Games to Reach Trust</h4>
+          </div>
+          <p class="param-range">Range: 10 – 20</p>
+          <p class="param-desc">
+            The "burn-in" period. Number of historical matches required before
+            the system fully trusts a team's calculated strength.
+          </p>
+        </div>
+          <br/>
+      </div>
     </section>
 
     <section class="models-grid" selenium-id="simulation-models">
@@ -71,78 +124,14 @@
       </div>
     </section>
 
-    <section
-      class="text parameters-section"
-      selenium-id="simulation-parameters"
-    >
-      <h2>🎛️ Simulation Parameters</h2>
-      <p class="intro-text">
-        Configuration defaults and valid ranges based on current engine tuning:
-      </p>
-
-      <div class="params-grid-container">
-        <div class="param-box">
-          <div class="param-header">
-            <h4>Noise Factor</h4>
-          </div>
-          <p class="param-range">Range: 0.10 – 0.15</p>
-          <p class="param-desc">
-            Determines the randomness of the outcome. A factor of 0.12
-            introduces realistic unpredictability without total chaos.
-          </p>
-          <br/>
-        </div>
-
-        <div class="param-box">
-          <div class="param-header">
-            <h4>Home Advantage</h4>
-          </div>
-          <p class="param-range">Range: 1.03 – 1.07</p>
-          <p class="param-desc">
-            The multiplier applied to the home team's expected goals (Lambda).
-            Default simulates a ~5% scoring boost.
-          </p>
-          <br/>
-        </div>
-
-        <div class="param-box">
-          <div class="param-header">
-            <h4>Confidence Level</h4>
-          </div>
-          <p class="param-range">Range: 0.90 – 1.10</p>
-          <p class="param-desc">
-            Scales the impact of historical data. Values > 1.0 give more weight
-            to established team strength metrics.
-          </p>
-          <br/>
-        </div>
-
-        <div class="param-box">
-          <div class="param-header">
-            <h4>Games to Reach Trust</h4>
-          </div>
-          <p class="param-range">Range: 10 – 20</p>
-          <p class="param-desc">
-            The "burn-in" period. Number of historical matches required before
-            the system fully trusts a team's calculated strength.
-          </p>
-        </div>
-          <br/>
-      </div>
-
-      <div class="technical-footer">
-        <small>
-          Additional settings: <strong>Iterations</strong> (Any value),
-          <strong>Seed</strong> (Randomized 0-999999 but editable).
-        </small>
-      </div>
-    </section>
-
     <section class="visualizations-grid" selenium-id="visualizations">
       <div class="viz-item">
         <h3>Heat Map</h3>
         <img :src="monteCarlo" alt="Monte Carlo Heat Map" />
       </div>
+    </section>
+
+    <section class="visualizations-grid" selenium-id="visualizations">
       <div class="viz-item">
         <h3>Posterior (Gamma)</h3>
         <img :src="posterior" alt="Posterior Distribution" />
