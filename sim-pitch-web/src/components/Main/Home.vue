@@ -40,6 +40,11 @@
           <p class="param-range">Range: 10 – 20</p>
           <p class="param-desc">Burn-in period...</p>
         </div>
+        <div class="param-box">
+          <div class="param-header"><h4>Seed</h4></div>
+          <p class="param-range">Any value</p>
+          <p class="param-desc">Results will be almost the same...</p>
+        </div>
       </div>
     </section>
 
