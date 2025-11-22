@@ -43,7 +43,7 @@ const form = reactive({
   noiseFactor: 0.12, // 0.10–0.15
   homeAdvantage: 1.05, // 1.03–1.07
 
-  model: SimulationModelsOptions[0],
+  model: SimulationModelsOptions[1],
 });
 
 const ensureData = async () => {
