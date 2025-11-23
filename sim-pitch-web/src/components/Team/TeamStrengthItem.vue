@@ -1,6 +1,6 @@
 <template>
   <details>
-  <summary><span>Teams strengths</span></summary>
+    <summary><span>Teams strengths</span></summary>
     <section class="team-strengths">
       <!-- HOME -->
       <article class="team-strength ts-home" v-if="homeTeamStrength">
@@ -9,9 +9,11 @@
           {{ homeTeamStrength.expectedGoals.toFixed(2) }}
         </p>
         <p class="ts-likelihood">
-          <strong>Off:</strong> {{ homeTeamStrength.posterior.offensive.toFixed(3) }}
+          <strong>Off:</strong>
+          {{ homeTeamStrength.posterior.offensive.toFixed(3) }}
           |
-          <strong>Def:</strong> {{ homeTeamStrength.posterior.defensive.toFixed(3) }}
+          <strong>Def:</strong>
+          {{ homeTeamStrength.posterior.defensive.toFixed(3) }}
         </p>
         <RadarChart v-if="homeTeamStrength" :team-strength="homeTeamStrength" />
       </article>
@@ -34,7 +36,8 @@
           <div class="metric-item">
             <span class="metric-label">📈 Form</span>
             <span class="metric-desc"
-              >Momentum. >50 means team performs better than expected recently.</span
+              >Momentum. >50 means team performs better than expected
+              recently.</span
             >
           </div>
           <div class="metric-item">
@@ -58,9 +61,11 @@
           {{ awayTeamStrength.expectedGoals.toFixed(2) }}
         </p>
         <p class="ts-likelihood">
-          <strong>Off:</strong> {{ awayTeamStrength.posterior.offensive.toFixed(3) }}
+          <strong>Off:</strong>
+          {{ awayTeamStrength.posterior.offensive.toFixed(3) }}
           |
-          <strong>Def:</strong> {{ awayTeamStrength.posterior.defensive.toFixed(3) }}
+          <strong>Def:</strong>
+          {{ awayTeamStrength.posterior.defensive.toFixed(3) }}
         </p>
         <RadarChart v-if="awayTeamStrength" :team-strength="awayTeamStrength" />
       </article>
