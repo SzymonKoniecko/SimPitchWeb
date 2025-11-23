@@ -87,8 +87,8 @@
             <img :src="monteCarlo" alt="Monte Carlo Heat Map" />
           </div>
           <div class="viz-item">
-            <h3>Posterior (Gamma)</h3>
-            <img :src="posterior" alt="Posterior Distribution" />
+            <h3>Teams strengths by each simulated rounds</h3>
+            <img :src="teamStrength" alt="Team Strength" />
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@
 
 <script setup lang="ts">
 import monteCarlo from "@/assets/monte_carlo_example.png";
-import posterior from "@/assets/posterior_example.png";
+import teamStrength from "@/assets/team_strength.png";
 </script>
 
 <style scoped>
@@ -169,7 +169,7 @@ section {
   grid-template-columns: repeat(
     auto-fit,
     minmax(250px, 1fr)
-  ); /* Mniejsze kafle */
+  );
   gap: 1rem;
 }
 
@@ -193,7 +193,7 @@ section {
   padding: 1rem;
   border-radius: 12px;
   border: 1px solid var(--color-grid);
-  max-width: 500px;
+  max-width: 100%;
 }
 .viz-item img {
   width: 100%;
