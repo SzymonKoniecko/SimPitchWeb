@@ -443,3 +443,58 @@ td:hover {
     transform: rotate(360deg);
   }
 }
+/* details etc */
+.chart-section {
+  width: 100%;
+  padding: 1rem;
+}
+.custom-chart-details {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-grid);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px var(--color-shadow-app);
+}
+.custom-chart-details[open] .chevron {
+  transform: rotate(180deg);
+}
+.custom-chart-summary {
+  cursor: pointer;
+  padding: 1rem;
+  background-color: var(--color-surface-sections);
+  border-bottom: 1px solid var(--color-grid);
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+  list-style: none; /* Ukrywa domyślny trójkąt w niektórych przeglądarkach */
+}
+
+.custom-chart-summary:hover {
+  background-color: var(--color-button-secondary-hover-bg);
+}
+
+.custom-chart-summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.summary-title {
+  font-weight: bold;
+  font-size: 1.125rem;
+  color: var(--color-text-main);
+}
+.summary-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-weight: normal;
+}
+.chart-wrapper {
+  padding: 1rem;
+}
+

@@ -1,58 +1,54 @@
 <template>
-  <section class="chart-section">
-    <details open class="custom-details" selenium-id="scatter-details">
-      <summary class="custom-summary">
-        <div class="summary-content">
-          <span class="summary-title"
-            >📊 Map Team Strength (Bayesian Posterior)</span
-          >
-          <span class="summary-subtitle">Offensive vs Defensive</span>
-        </div>
-        <svg
-          class="chevron"
-          viewBox="0 0 24 24"
-          width="20"
-          height="20"
-          stroke="currentColor"
-          stroke-width="2"
-          fill="none"
-        >
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-      </summary>
-
-      <div class="chart-wrapper">
-        <div class="button-list">
-          <button
-            class="button-secondary"
-            @click="resetZoom"
-            title="Reset Zoom"
-            selenium-id="reset-scatter-button"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              stroke="currentColor"
-              stroke-width="2"
-              fill="none"
-            >
-              <polyline points="23 4 23 10 17 10"></polyline>
-              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-            </svg>
-            Reset View
-          </button>
-        </div>
-        <apexchart
-          ref="chartRef"
-          type="scatter"
-          height="500"
-          :options="chartOptions"
-          :series="series"
-        ></apexchart>
+  <details close class="custom-chart-details" selenium-id="scatter-details">
+    <summary class="custom-chart-summary">
+      <div class="summary-content">
+        <span class="summary-title">📊 Map Team Strength (Bayesian Posterior)</span>
+        <span class="summary-subtitle">Offensive vs Defensive</span>
       </div>
-    </details>
-  </section>
+      <svg
+        class="chevron"
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        stroke="currentColor"
+        stroke-width="2"
+        fill="none"
+      >
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </summary>
+
+    <div class="chart-wrapper">
+      <div class="button-list">
+        <button
+          class="button-secondary"
+          @click="resetZoom"
+          title="Reset Zoom"
+          selenium-id="reset-scatter-button"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            stroke="currentColor"
+            stroke-width="2"
+            fill="none"
+          >
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
+          Reset View
+        </button>
+      </div>
+      <apexchart
+        ref="chartRef"
+        type="scatter"
+        height="500"
+        :options="chartOptions"
+        :series="series"
+      ></apexchart>
+    </div>
+  </details>
 </template>
 
 <script setup lang="ts">
@@ -111,21 +107,14 @@ const chartOptions = computed(() => ({
     background: "transparent",
     foreColor: "var(--color-text-secondary)",
     events: {
-      dataPointSelection: function (
-        event: any,
-        chartContext: any,
-        config: any
-      ) {
+      dataPointSelection: function (event: any, chartContext: any, config: any) {
         const seriesIndex = config.seriesIndex;
         const dataPointIndex = config.dataPointIndex;
-        const pointData =
-          config.w.config.series[seriesIndex].data[dataPointIndex];
+        const pointData = config.w.config.series[seriesIndex].data[dataPointIndex];
 
         if (pointData && pointData.roundIdTeamId) {
           emit("point-clicked", pointData.roundIdTeamId);
-          const targetElement = document.getElementById(
-            pointData.roundIdTeamId
-          );
+          const targetElement = document.getElementById(pointData.roundIdTeamId);
 
           if (targetElement) {
             targetElement.scrollIntoView({
@@ -229,69 +218,9 @@ const chartOptions = computed(() => ({
 </script>
 
 <style scoped>
-.chart-section {
-  width: 100%;
-  padding: 1rem;
-}
-
-.custom-details {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-grid);
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px var(--color-shadow-app);
-}
-
-.custom-summary {
-  cursor: pointer;
-  padding: 1rem;
-  background-color: var(--color-surface-sections);
-  border-bottom: 1px solid var(--color-grid);
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background-color 0.2s ease;
-  list-style: none; /* Ukrywa domyślny trójkąt w niektórych przeglądarkach */
-}
-
-.custom-summary:hover {
-  background-color: var(--color-button-secondary-hover-bg);
-}
-
-.custom-summary::-webkit-details-marker {
-  display: none;
-}
-
-.summary-content {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.summary-title {
-  font-weight: bold;
-  font-size: 1.125rem;
-  color: var(--color-text-main);
-}
-
-.summary-subtitle {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  font-weight: normal;
-}
-
 .chevron {
   color: var(--color-text-secondary);
   transition: transform 0.3s;
-}
-
-.custom-details[open] .chevron {
-  transform: rotate(180deg);
-}
-
-.chart-wrapper {
-  padding: 1rem;
 }
 
 :deep(.custom-tooltip) {
@@ -326,7 +255,7 @@ const chartOptions = computed(() => ({
   color: var(--color-heatmap-max);
 }
 
-.custom-details[open] .chart-wrapper {
+.custom-chart-details[open] .chart-wrapper {
   animation: sweep 0.3s ease-in-out;
 }
 

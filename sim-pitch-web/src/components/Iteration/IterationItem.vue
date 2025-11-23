@@ -26,7 +26,19 @@
   </div>
   <section>
     <article v-if="iterationResultState.data" class="iteration-info-article">
-    <CustomScatterPlot v-if="teamStrengths && teams" :team-strengths="teamStrengths.filter(t => t.roundId !== null)" :teams="teams"/>
+      <section class="chart-section">
+        <CustomScatterPlot
+          v-if="teamStrengths && teams"
+          :team-strengths="teamStrengths.filter((t) => t.roundId !== null)"
+          :teams="teams"
+        />
+        <TeamFormChart
+          v-if="teamStrengths && teams"
+          :team-strengths="teamStrengths.filter((t) => t.roundId !== null)"
+          :teams="teams"
+        />
+      </section>
+      <hr/>
       <ul class="iteration-info">
         <li selenium-id="number-simulated-matches">
           <p>
@@ -123,6 +135,7 @@ import MatchResultItem from "./MatchResultItem.vue";
 import { useRoute } from "vue-router";
 import type { SimulationTeamStats } from "../../models/Simulations/simulationTeamStats";
 import CustomScatterPlot from "../Diagrams/CustomScatterPlot.vue";
+import TeamFormChart from "../Diagrams/TeamFormChart.vue";
 defineOptions({ name: "IterationItem" });
 type Props = {
   id: string; // iteration_id
@@ -144,7 +157,9 @@ const iterationResultState = ref<ApiState<IterationResult>>({
 const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
-const teamStrengths = computed(() => iterationResultState.value.data?.teamStrengths);
+const teamStrengths = computed(
+  () => iterationResultState.value.data?.teamStrengths
+);
 
 const loadScoreboard = async () => {
   scoreboardState.value = await fetchData<Scoreboard[]>(() =>
