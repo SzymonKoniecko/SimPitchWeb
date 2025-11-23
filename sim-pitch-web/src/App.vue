@@ -4,7 +4,6 @@
     <router-view />
   </div>
 
-  <!-- Przycisk Scroll to Top -->
   <transition name="fade">
     <button 
       v-show="showScrollButton" 
@@ -20,12 +19,10 @@
   </transition>
 </template>
 
-<!-- Używamy <script setup> - to kluczowa zmiana -->
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import NavBar from "./components/Main/NavBar.vue";
 
-// Zmienne i funkcje są teraz automatycznie dostępne w template
 const showScrollButton = ref(false);
 
 const handleScroll = () => {
@@ -49,14 +46,13 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Style dla przycisku */
 .scroll-to-top {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
   z-index: 9999;
   
-  background-color: var(--color-accent-blue); /* Upewnij się, że masz tę zmienną lub wpisz kolor np. #007bff */
+  background-color: var(--color-accent-blue);
   color: white;
   border: none;
   border-radius: 50%;
@@ -73,10 +69,9 @@ onUnmounted(() => {
 .scroll-to-top:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-  background-color: var(--color-button-primary-hover-bg); /* Opcjonalnie */
+  background-color: var(--color-button-primary-hover-bg);
 }
 
-/* Animacja pojawiania się */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease, transform 0.3s ease;
