@@ -96,6 +96,7 @@
               t.roundId === matchRound.roundId
           )
         "
+        :league-rounds="leagueRounds"
       />
     </div>
   </section>
