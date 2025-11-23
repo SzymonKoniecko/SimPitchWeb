@@ -26,7 +26,8 @@
   </div>
   <section>
     <article v-if="iterationResultState.data" class="iteration-info-article">
-      <section class="chart-section">
+      <LegendInfo />
+      <div>
         <CustomScatterPlot
           v-if="teamStrengths && teams"
           :team-strengths="teamStrengths.filter((t) => t.roundId !== null)"
@@ -34,10 +35,10 @@
         />
         <TeamFormChart
           v-if="teamStrengths && teams"
-          :team-strengths="teamStrengths.filter((t) => t.roundId !== null)"
+          :team-strengths="teamStrengths"
           :teams="teams"
         />
-      </section>
+      </div>
       <hr/>
       <ul class="iteration-info">
         <li selenium-id="number-simulated-matches">
@@ -136,6 +137,7 @@ import { useRoute } from "vue-router";
 import type { SimulationTeamStats } from "../../models/Simulations/simulationTeamStats";
 import CustomScatterPlot from "../Diagrams/CustomScatterPlot.vue";
 import TeamFormChart from "../Diagrams/TeamFormChart.vue";
+import LegendInfo from "../Other/LegendInfo.vue";
 defineOptions({ name: "IterationItem" });
 type Props = {
   id: string; // iteration_id

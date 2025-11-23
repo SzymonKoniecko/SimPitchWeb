@@ -1,19 +1,52 @@
 <template>
-  <details close class="custom-chart-details" selenium-id="teamForm-details">
+  <details open class="custom-chart-details" selenium-id="teamForm-details">
     <summary class="custom-chart-summary">
       <div class="summary-content">
         <span>📈 Evolution of team form</span>
         <span class="summary-subtitle"> (Posterior vs Likelihood)</span>
       </div>
     </summary>
-    <div class="button-list">
-      <button @click="metricMode = 'offensive'" class="button-secondary">
-        ⚔️ Attack
-      </button>
-      <button @click="metricMode = 'defensive'" class="button-secondary">
-        🛡️ Defense
-      </button>
+    
+    <div class="p-4 flex flex-wrap gap-4 items-center border-b border-[color:var(--color-grid)] bg-[color:var(--color-surface-sections)]">
+      
+      <div class="button-list" style="margin: 0; padding: 0.5rem; box-shadow: none; background: transparent; border: none;">
+        <button 
+          @click="metricMode = 'offensive'" 
+          :class="metricMode === 'offensive' ? 'button button-primary' : 'button button-secondary'"
+          style="padding: 0.4rem 1rem; font-size: 0.9rem;"
+        >
+          ⚔️ Attack
+        </button>
+        <button 
+          @click="metricMode = 'defensive'" 
+          :class="metricMode === 'defensive' ? 'button button-primary' : 'button button-secondary'"
+          style="padding: 0.4rem 1rem; font-size: 0.9rem;"
+        >
+          🛡️ Defense
+        </button>
+      </div>
+
+      <div v-if="props.teamStrengths && props.teams && presentedTeams.length > 0" class="flex items-center gap-2">
+        <label for="team-select" style="font-weight: 600;">Select team:</label>
+        <select 
+          id="team-select"
+          :value="selectedTeamId" 
+          @change="filterBy" 
+          selenium-id="teamform-select"
+          style="padding: 0.4rem 2rem 0.4rem 1rem; border-radius: 0.5rem; background-color: var(--color-surface); color: var(--color-text-main); border: 1px solid var(--color-grid);"
+        >
+          <option 
+            v-for="team in presentedTeams" 
+            :key="team.id" 
+            :value="team.id" 
+            :selenium-id="`${team.name.replace(/\s+/g, '-').toLowerCase()}`"
+          >
+            {{ team.name }}
+          </option>
+        </select>
+      </div>
     </div>
+
     <div v-if="hasData" class="chart-wrapper">
       <apexchart
         type="line"
@@ -22,41 +55,67 @@
         :series="series"
       ></apexchart>
     </div>
-    <div v-else>No historical data for given team</div>
+    <div v-else class="p-4 text-center">No historical data for given team</div>
   </details>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import type { TeamStrength } from "../../models/Iterations/teamStrength"; // Dostosuj ścieżkę
-import type { Team } from "../../models/SportsDataModels/team";
+import { ref, computed, watch } from "vue";
+import type { TeamStrength } from "../../models/Iterations/teamStrength";
+import { getPresentedTeams, type Team } from "../../models/SportsDataModels/team";
 
 const props = defineProps<{
-  teamStrengths: TeamStrength[]; // Tablica historycznych stanów JEDNEJ drużyny
+  teamStrengths: TeamStrength[];
   teams: Team[];
 }>();
 
-// Stan widoku: 'offensive' lub 'defensive'
 const metricMode = ref<"offensive" | "defensive">("offensive");
 
 const hasData = computed(
   () => props.teamStrengths && props.teamStrengths.length > 0
 );
 
-// --- PRZYGOTOWANIE DANYCH ---
+const presentedTeams = computed(() => 
+  getPresentedTeams(props.teams, props.teamStrengths)
+);
+
+const selectedTeamId = ref<string | undefined>(
+  presentedTeams.value?.[0]?.id
+);
+
+const filterBy = (event: Event) => {
+  const target = event.target as HTMLSelectElement;
+  selectedTeamId.value = target.value;
+};
+
+watch(presentedTeams, (newVal) => {
+  if (newVal.length > 0 && !selectedTeamId.value) {
+    selectedTeamId.value = newVal[0]?.id;
+  }
+});
 
 const sortedHistory = computed(() => {
-  // Sortujemy chronologicznie (jeśli backend tego nie gwarantuje)
-  // Zakładamy, że lastUpdate lub roundId określa kolejność
-  return [...props.teamStrengths].sort(
-    (a, b) =>
-      new Date(a.lastUpdate).getTime() - new Date(b.lastUpdate).getTime()
-  );
+  if (!selectedTeamId.value) return [];
+  
+  return [...props.teamStrengths]
+    .filter(x => x.teamId === selectedTeamId.value)
+    .sort((a, b) => {
+      const dateA = a.lastUpdate ? new Date(a.lastUpdate).getTime() : 0;
+      const dateB = b.lastUpdate ? new Date(b.lastUpdate).getTime() : 0;
+      
+      if (dateA === dateB) {
+         if (!a.roundId) return -1; 
+         if (!b.roundId) return 1;
+         return 0; 
+      }
+      
+      return dateA - dateB;
+    });
 });
 
 const series = computed(() => [
   {
-    name: "Posterior (Długi termin)",
+    name: "Posterior (Long term)",
     data: sortedHistory.value.map((h) => {
       const val =
         metricMode.value === "offensive"
@@ -66,7 +125,7 @@ const series = computed(() => [
     }),
   },
   {
-    name: "Likelihood (Krótka forma)",
+    name: "Likelihood (Short term)",
     data: sortedHistory.value.map((h) => {
       const val =
         metricMode.value === "offensive"
@@ -77,71 +136,82 @@ const series = computed(() => [
   },
 ]);
 
-// --- KONFIGURACJA WYKRESU ---
-
 const chartOptions = computed(() => ({
   chart: {
     type: "line",
     zoom: { enabled: false },
     toolbar: { show: false },
     fontFamily: "inherit",
+    background: 'transparent'
   },
-  colors: ["#3b82f6", "#f59e0b"], // Niebieski (Posterior), Pomarańczowy (Likelihood)
+  theme: {
+    mode: 'dark' // Opcjonalne: jeśli Twoja aplikacja jest ciemna
+  },
+  colors: ["#3b82f6", "#f59e0b"],
   stroke: {
     curve: "smooth",
-    width: [3, 2], // Posterior grubszy, Likelihood cieńszy
-    dashArray: [0, 5], // Likelihood przerywaną linią
+    width: [3, 2],
+    dashArray: [0, 5],
   },
   xaxis: {
     categories: sortedHistory.value.map((h) =>
-      h.roundId ? `Runda ${h.roundId.substring(0, 4)}` : "Start"
-    ), // Oś X: Rundy
-    title: { text: "Kolejka (Round)" },
+      h.roundId === null || h.roundId === undefined
+        ? "Start"
+        : `Round ${h.roundId.substring(0, 4)}` // Skrócone dla czytelności
+    ),
+    title: { 
+      text: "Timeline",
+      style: { color: 'var(--color-text-secondary)' } 
+    },
     labels: {
       rotate: -45,
-      style: { fontSize: "10px" },
+      style: { fontSize: "10px", colors: 'var(--color-text-secondary)' },
     },
   },
   yaxis: {
     title: {
-      text: metricMode.value === "offensive" ? "Siła Ataku" : "Słabość Obrony",
+      text: metricMode.value === "offensive" ? "Attack Strength" : "Defense Weakness",
+      style: { color: 'var(--color-text-secondary)' }
     },
-    labels: { formatter: (val: number) => val.toFixed(2) },
-    reversed: metricMode.value === "defensive", // Obrona: niżej = lepiej, więc odwracamy oś Y
+    labels: { 
+      formatter: (val: number) => val.toFixed(2),
+      style: { colors: 'var(--color-text-secondary)' }
+    },
+    reversed: metricMode.value === "defensive", // Niższa obrona = lepiej
   },
   legend: {
     position: "top",
     horizontalAlign: "right",
-  },
-  markers: {
-    size: 4,
-    hover: { size: 6 },
+    labels: { colors: 'var(--color-text-main)' }
   },
   tooltip: {
+    theme: 'dark', // Dopasowanie do stylu
     y: {
       formatter: (val: number) => val.toFixed(3),
     },
   },
-  annotations: {
-    // Opcjonalnie: Linia średniej ligowej (np. 1.0 lub inna wartość jeśli masz dostęp)
-    yaxis: [
-      {
-        y: 1.0, // Przykład: Średnia ligowa znormalizowana
-        borderColor: "#9ca3af",
-        strokeDashArray: 2,
-        opacity: 0.5,
-        label: {
-          text: "Średnia ligowa",
-          style: { color: "#fff", background: "#9ca3af" },
-        },
-      },
-    ],
-  },
+  grid: {
+    borderColor: 'var(--color-grid)'
+  }
 }));
 </script>
 
 <style scoped>
-.chart-wrapper {
-  min-height: 350px;
+/* Stylizacja przycisków zgodna z Twoim systemem stylów */
+.button-primary {
+  background-color: var(--color-button);
+  color: #fff;
+  border: 1px solid var(--color-button);
+}
+
+.button-secondary {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-grid);
+}
+
+.button-secondary:hover {
+  background-color: var(--color-surface-sections);
+  color: var(--color-text-main);
 }
 </style>

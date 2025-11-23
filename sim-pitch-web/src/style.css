@@ -496,5 +496,5 @@ td:hover {
 }
 .chart-wrapper {
   padding: 1rem;
+  min-height: 350px;
 }
-
