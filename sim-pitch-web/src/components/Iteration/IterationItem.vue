@@ -32,14 +32,16 @@
           v-if="teamStrengths && teams"
           :team-strengths="teamStrengths.filter((t) => t.roundId !== null)"
           :teams="teams"
+          :league-rounds="leagueRounds"
         />
         <TeamFormChart
           v-if="teamStrengths && teams"
           :team-strengths="teamStrengths"
           :teams="teams"
+          :league-rounds="leagueRounds"
         />
       </div>
-      <hr/>
+      <hr />
       <ul class="iteration-info">
         <li selenium-id="number-simulated-matches">
           <p>
@@ -138,7 +140,6 @@ import type { SimulationTeamStats } from "../../models/Simulations/simulationTea
 import CustomScatterPlot from "../Diagrams/CustomScatterPlot.vue";
 import TeamFormChart from "../Diagrams/TeamFormChart.vue";
 import LegendInfo from "../Other/LegendInfo.vue";
-import RadarChart from "../Diagrams/RadarChart.vue";
 defineOptions({ name: "IterationItem" });
 type Props = {
   id: string; // iteration_id
@@ -160,8 +161,12 @@ const iterationResultState = ref<ApiState<IterationResult>>({
 const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
+const leagueRounds = computed(() => store.leagueRounds);
 const teamStrengths = computed(
   () => iterationResultState.value.data?.teamStrengths
+);
+const leagueId = computed(
+  () => teamStrengths.value?.[0]?.seasonStats?.leagueId
 );
 
 const loadScoreboard = async () => {
@@ -187,18 +192,26 @@ const simulationTeamStatsState = ref<ApiState<SimulationTeamStats[]>>({
   error: null,
   data: null,
 });
-//const getLeagueName = (id: string) => leagues.value.find(t => t.id === id)?.name ?? id
 const ensureData = async () => {
   if (!props.simulation_id || !props.id) return;
-  if (!leagues.value || leagues.value.length === 0) {
+
+  await loadScoreboard();
+  await loadIterationResult();
+
+  if (!leagues.value?.length) {
     await store.loadLeagues();
   }
-  if (!teams.value || teams.value.length === 0) {
+
+  if (!teams.value?.length) {
     await store.loadTeams();
   }
-  if (props.id || props.simulation_id != undefined) {
-    await loadScoreboard();
-    await loadIterationResult();
+
+  // Jeśli leagueId jest znane → dopiero wtedy ładuj rundy
+  if (
+    leagueId.value &&
+    (!leagueRounds.value || leagueRounds.value.length === 0)
+  ) {
+    await store.loadLeagueRounds("2025/2026", leagueId.value);
   }
 };
 

@@ -83,11 +83,19 @@ import {
   getPresentedTeams,
   type Team,
 } from "../../models/SportsDataModels/team";
+import type { LeagueRound } from "../../models/SportsDataModels/leagueRound";
 
 const props = defineProps<{
   teamStrengths: TeamStrength[];
   teams: Team[];
+  leagueRounds: LeagueRound[];
 }>();
+function getRoundNameById(id? :string): string {
+  if (id === null) {
+    return "Start"
+  }
+  return `Round of ${props.leagueRounds.find((lr) => lr.id === id)?.round}`
+}
 
 const metricMode = ref<"offensive" | "defensive">("offensive");
 
@@ -163,7 +171,7 @@ const chartOptions = computed(() => ({
     background: "transparent",
   },
   theme: {
-    mode: "dark", // Opcjonalne: jeśli Twoja aplikacja jest ciemna
+    mode: "dark",
   },
   colors: ["#3b82f6", "#f59e0b"],
   stroke: {
@@ -176,7 +184,7 @@ const chartOptions = computed(() => ({
       (h) =>
         h.roundId === null || h.roundId === undefined
           ? "Start"
-          : `Round ${h.roundId.substring(0, 4)}` // Skrócone dla czytelności
+          : getRoundNameById(h.roundId)
     ),
     title: {
       text: "Timeline",
@@ -199,7 +207,7 @@ const chartOptions = computed(() => ({
       formatter: (val: number) => val.toFixed(2),
       style: { colors: "var(--color-text-secondary)" },
     },
-    reversed: metricMode.value === "defensive", // Niższa obrona = lepiej
+    reversed: metricMode.value === "defensive",
   },
   legend: {
     position: "top",
@@ -207,7 +215,7 @@ const chartOptions = computed(() => ({
     labels: { colors: "var(--color-text-main)" },
   },
   tooltip: {
-    theme: "dark", // Dopasowanie do stylu
+    theme: "dark",
     y: {
       formatter: (val: number) => val.toFixed(3),
     },
@@ -219,7 +227,6 @@ const chartOptions = computed(() => ({
 </script>
 
 <style scoped>
-/* Stylizacja przycisków zgodna z Twoim systemem stylów */
 .button-primary {
   background-color: var(--color-button);
   color: #fff;
