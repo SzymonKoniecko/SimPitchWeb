@@ -27,6 +27,7 @@
             class="button-secondary"
             @click="resetZoom"
             title="Reset Zoom"
+            selenium-id="reset-scatter-button"
           >
             <svg
               viewBox="0 0 24 24"
