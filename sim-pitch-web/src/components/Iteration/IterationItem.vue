@@ -26,7 +26,7 @@
   </div>
   <section>
     <article v-if="iterationResultState.data" class="iteration-info-article">
-    <CustomScatterPlot v-if="teamStrengths && teams" :team-strengths="teamStrengths" :teams="teams"/>
+    <CustomScatterPlot v-if="teamStrengths && teams" :team-strengths="teamStrengths.filter(t => t.roundId !== null)" :teams="teams"/>
       <ul class="iteration-info">
         <li selenium-id="number-simulated-matches">
           <p>

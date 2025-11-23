@@ -1,57 +1,60 @@
 <template>
   <table class="match-body" selenium-id="match">
-  <colgroup>
-    <col>
-    <col>
-    <col>
-  </colgroup>
-    <tr>
-      <td rowspan="5" class="team">
-        <TeamCard :id="matchRound.homeTeamId" variant="normal" />
-      </td>
-      <td class="match-status"
-        :class="{ played: matchRound.isPlayed, draw: matchRound.isDraw }"
-      >
-        {{
-          matchRound.isPlayed
-            ? matchRound.isDraw
-              ? "Draw"
-              : "Played"
-            : "Upcoming"
-        }}
-      </td>
-      <td rowspan="5">
-        <TeamCard :id="matchRound.awayTeamId" variant="normal" />
-      </td>
-    </tr>
-    <tr>
-      <td></td>
-    </tr>
-    <tr>
-      <td class="score">
-        <span class="home-goals">{{ matchRound.homeGoals }}</span>
-        <span class="separator">:</span>
-        <span class="away-goals">{{ matchRound.awayGoals }}</span>
-      </td>
-    </tr>
-    <tr>
-      <td></td>
-    </tr>
-    <tr>
-      <td></td>
-    </tr>
-    <tr>
-      <td colspan="3" class="strengths-grid" v-if="matchRound.isPlayed">
-        <TeamStrengthItem
-          v-if="homeTeamStrength && awayTeamStrength"
-          :homeTeamStrengthData="homeTeamStrength"
-          :awayTeamStrengthData="awayTeamStrength"
-        />
-      </td>
-    </tr>
+    <colgroup>
+      <col>
+      <col>
+      <col>
+    </colgroup>
+    <tbody>
+      <tr>
+        <td rowspan="5" class="team" :id="`round:${matchRound.roundId}^^team:${matchRound.homeTeamId}`">
+          <TeamCard :id="matchRound.homeTeamId" variant="normal" />
+        </td>
+        <td class="match-status"
+          :class="{ played: matchRound.isPlayed, draw: matchRound.isDraw }"
+        >
+          {{
+            matchRound.isPlayed
+              ? matchRound.isDraw
+                ? "Draw"
+                : ""
+              : "Upcoming"
+          }}
+        </td>
+        <td rowspan="5" :id="`round:${matchRound.roundId}^^team:${matchRound.awayTeamId}`">
+          <TeamCard :id="matchRound.awayTeamId" variant="normal" />
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="score">
+          <span class="home-goals">{{ matchRound.homeGoals }}</span>
+          <span class="separator">:</span>
+          <span class="away-goals">{{ matchRound.awayGoals }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="3" class="strengths-grid" v-if="matchRound.isPlayed">
+          <TeamStrengthItem
+            v-if="homeTeamStrength && awayTeamStrength"
+            :homeTeamStrengthData="homeTeamStrength"
+            :awayTeamStrengthData="awayTeamStrength"
+          />
+        </td>
+      </tr>
+    </tbody>
   </table>
-  <hr></hr>
+  <hr />
 </template>
+
 
 <script setup lang="ts">
 import { computed } from "vue";
@@ -139,5 +142,4 @@ table {
   margin-top: 1rem;
   gap: 1.5rem;
 }
-
 </style>
