@@ -138,6 +138,7 @@ import type { SimulationTeamStats } from "../../models/Simulations/simulationTea
 import CustomScatterPlot from "../Diagrams/CustomScatterPlot.vue";
 import TeamFormChart from "../Diagrams/TeamFormChart.vue";
 import LegendInfo from "../Other/LegendInfo.vue";
+import RadarChart from "../Diagrams/RadarChart.vue";
 defineOptions({ name: "IterationItem" });
 type Props = {
   id: string; // iteration_id
