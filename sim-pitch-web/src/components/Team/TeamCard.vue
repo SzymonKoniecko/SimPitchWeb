@@ -94,31 +94,30 @@ section {
 .team-card__mini {
   position: relative;
   width: 100%;
-
   display: flex;
+  flex-direction: row; 
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; 
   padding: 0.4rem 0.7rem;
+  gap: 0.75rem;
 
   background: var(--color-surface-sections);
   border-radius: 0.5rem;
+  text-align: left;
 }
 
 .team-img_mini {
-  position: absolute;
-  left: 0.6rem;
   width: 42px;
   height: 42px;
   object-fit: contain;
-
+  
+  flex-shrink: 0; 
   pointer-events: none;
 }
 
-.team-card__mini span,
-.team-card__mini p,
-.team-card__mini {
-  text-align: center;
-  width: 100%;
+.team-name_mini-text {
+  font-weight: 500;
+  line-height: 1.2;
 }
 
 /* NORMAL & LARGE */
