@@ -55,10 +55,12 @@
 import { computed, ref } from "vue";
 import type { TeamStrength } from "../../models/Iterations/teamStrength";
 import type { Team } from "../../models/SportsDataModels/team";
+import type { LeagueRound } from "../../models/SportsDataModels/leagueRound";
 
 const props = defineProps<{
   teamStrengths: TeamStrength[];
   teams: Team[];
+  leagueRounds: LeagueRound[];
 }>();
 const chartRef = ref<any>(null);
 
@@ -77,6 +79,13 @@ const emit = defineEmits<{
 function getTeamNameById(id?: string): string {
   return props.teams.find((team) => team.id === id)?.name || "UNKNOWN";
 }
+function getRoundNameById(id? :string): string {
+  if (id === null) {
+    return "Start"
+  }
+  return `Round of ${props.leagueRounds.find((lr) => lr.id === id)?.round}`
+}
+
 const leagueAvg = computed(() => {
   if (!props.teamStrengths.length) return 1.5;
   const totalOffensive = props.teamStrengths.reduce(
@@ -92,7 +101,7 @@ const series = computed(() => [
     data: props.teamStrengths.map((t) => ({
       x: parseFloat(t.posterior.offensive.toFixed(2)),
       y: parseFloat(t.posterior.defensive.toFixed(2)),
-      teamName: getTeamNameById(t.teamId),
+      teamName: getTeamNameById(t.teamId) + " - " + getRoundNameById(t.roundId ?? undefined),
       roundIdTeamId: "round:" + t.roundId + "^^team:" + t.teamId,
     })),
   },

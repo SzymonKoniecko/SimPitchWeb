@@ -16,16 +16,28 @@
       <p>{{ team?.country?.code ?? "N/A" }}</p>
     </section>
 
-    <section v-else class="team-card__large" :style="{ backgroundImage: `url(${getLogo(team?.shortName)})` }">
-      <header class="team-card__header">
-        <h3 class="team-card__title">
-          {{ team?.name ?? "Unknown Team" }}
-        </h3>
-      </header>
-      <p class="team-name">{{ team?.shortName ?? "N/A" }}</p>
-      <p><strong>Abbr:</strong> ({{ team?.shortName ?? "N/A" }})</p>
-      <p><strong>League:</strong> {{ team?.league?.name ?? "N/A" }}</p>
-      <slot />
+    <section v-else class="team-card__large">
+      <div class="team-card__large-logo-wrapper">
+        <img :src="getLogo(team?.shortName)" class="team-img_large" />
+      </div>
+      
+      <div class="team-card__large-content">
+        <header class="team-card__header_large">
+          <h3 class="team-card__title_large">
+            {{ team?.name ?? "Unknown Team" }}
+          </h3>
+        </header>
+        
+        <div class="team-card__details-grid">
+          <p class="team-name_large">{{ team?.shortName ?? "N/A" }}</p>
+          <p><strong>League:</strong> {{ team?.league?.name ?? "N/A" }}</p>
+        </div>
+        
+        <!-- Slot na dodatkowe przyciski/wykresy -->
+        <div class="team-card__slot-wrapper">
+          <slot />
+        </div>
+      </div>
     </section>
   </RouterLink>
 
@@ -119,13 +131,10 @@ section {
   font-weight: 500;
   line-height: 1.2;
 }
-
-/* NORMAL & LARGE */
-.team-card__normal,
-.team-card__large {
+.team-card__normal {
   position: relative;
   width: 100%;
-  min-height: 220px;
+  min-height: 180px;
 
   background-size: cover;
   background-position: center;
@@ -133,18 +142,91 @@ section {
 
   border-radius: 1rem;
   overflow: hidden;
-  padding: 1.5rem 1rem;
+  padding: 1rem;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.team-card__normal::before,
-.team-card__large::before {
+.team-card__normal::before {
   content: "";
   position: absolute;
   inset: 0;
   background: var(--teamcard-overlay);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(2px);
   z-index: 1;
 }
+/* LARGE */
+.team-card__large {
+  position: relative;
+  width: 100%;
+  min-width: 500px;
+  min-height: 160px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rem;
+
+  background: var(--color-surface-sections);
+  color: var(--color-text-main);
+  
+  border-radius: 1rem;
+  padding: 1.5rem 2rem;
+  border: 1px solid var(--color-grid);
+  box-shadow: 0 4px 15px var(--color-shadow-app);
+}
+
+.team-card__large-logo-wrapper {
+  flex: 0 0 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.team-img_large {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+}
+
+.team-card__large-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.team-card__title_large {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--color-text-main);
+}
+
+.team-name_large {
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.team-card__details-grid p {
+  margin: 0.25rem 0;
+  color: var(--color-text-main);
+  font-size: 1rem;
+}
+
+.team-card__slot-wrapper {
+  margin-top: 1rem;
+  width: 100%;
+}
+
 
 .team-card__normal > *,
 .team-card__large > * {
