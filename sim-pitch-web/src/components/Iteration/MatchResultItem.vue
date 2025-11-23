@@ -26,7 +26,7 @@
         </td>
       </tr>
       <tr>
-        <td></td>
+        <td>{{ getStadiumNameByTeamId(matchRound.homeTeamId) }}</td>
       </tr>
       <tr>
         <td class="score">
@@ -76,6 +76,11 @@ const props = defineProps<Props>();
 const matchRound = computed(() => props.matchRound);
 const homeTeamStrength = computed(() => props.homeTeamStrength);
 const awayTeamStrength = computed(() => props.awayTeamStrength);
+const getStadiumNameByTeamId = (id: string) => {
+  const stadiumName = props.teams.find((t) => t.id === id)?.stadium?.name;
+  return stadiumName ? `${stadiumName}` : "Stadium";
+}
+  
 </script>
 
 <style scoped>
