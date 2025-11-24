@@ -141,6 +141,7 @@ import type { SimulationTeamStats } from "../../models/Simulations/simulationTea
 import CustomScatterPlot from "../Diagrams/CustomScatterPlot.vue";
 import TeamFormChart from "../Diagrams/TeamFormChart.vue";
 import LegendInfo from "../Other/LegendInfo.vue";
+import { CURRENT_SEASON } from "../../models/Consts/seasonYear";
 defineOptions({ name: "IterationItem" });
 type Props = {
   id: string; // iteration_id
@@ -212,7 +213,7 @@ const ensureData = async () => {
     leagueId.value &&
     (!leagueRounds.value || leagueRounds.value.length === 0)
   ) {
-    await store.loadLeagueRounds("2025/2026", leagueId.value);
+    await store.loadLeagueRounds(CURRENT_SEASON, leagueId.value);
   }
 };
 

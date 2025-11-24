@@ -1,5 +1,5 @@
 <template>
-  <details open class="custom-chart-details" selenium-id="teamForm-details">
+  <details close class="custom-chart-details" selenium-id="teamForm-details">
     <summary class="custom-chart-summary">
       <div class="summary-content">
         <span class="summary-title">📈 Evolution of team form</span>

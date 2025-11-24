@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from "vue";
-import { SeasonYear, seasonYearsOptions } from "../../models/Consts/seasonYear";
+import { ref, reactive, computed, onMounted, watch, nextTick } from "vue";
+import { CURRENT_SEASON, SeasonYear, seasonYearsOptions } from "../../models/Consts/seasonYear";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
 import { fetchData } from "../../api/fetchData";
 import { engineAPI } from "../../api/engine.api";
@@ -28,7 +28,7 @@ const scrollStartedSim = ref<HTMLElement | null>(null);
 
 const form = reactive({
   title: `Simulation - ${new Date().toISOString()}`,
-  seasonYears: [] as SeasonYear[],
+  seasonYears: [CURRENT_SEASON] as SeasonYear[],
   league_id: "",
   iterations: 1,
   league_round_id: null,
@@ -50,7 +50,7 @@ const ensureData = async () => {
   }
   if (!leagueRounds.value || leagueRounds.value.length === 0) {
     if (form.league_id !== null && form.league_id !== "") {
-      await sportsDataStore.loadLeagueRounds("2025/2026", form.league_id);
+      await sportsDataStore.loadLeagueRounds(CURRENT_SEASON, form.league_id);
     }
   }
 };
@@ -58,8 +58,30 @@ const ensureData = async () => {
 onMounted(async () => {
   await ensureData();
 });
-watch(() => form.league_id, ensureData);
+watch(
+  () => form.seasonYears,
+  async (val) => {
+    if (!val.includes(CURRENT_SEASON)) {
+      await nextTick();
+      if (!form.seasonYears.includes(CURRENT_SEASON)) {
+        form.seasonYears.push(CURRENT_SEASON);
+      }
+    }
+  },
+  { deep: true }
+);
 
+watch(
+  () => form.league_id,
+  async () => {
+    ensureData();
+
+    await nextTick();
+    if (!form.seasonYears.includes(CURRENT_SEASON)) {
+      form.seasonYears.push(CURRENT_SEASON);
+    }
+  }
+);
 const status = ref("");
 const validationErrors = ref<string[]>([]);
 
@@ -144,7 +166,7 @@ async function submitForm() {
 }
 
 function resetForm() {
-  form.seasonYears = [];
+  form.seasonYears = [CURRENT_SEASON];
   form.league_id = "";
   form.iterations = 1;
   form.league_round_id = null;
@@ -199,7 +221,8 @@ function resetForm() {
 
       <form class="form" @submit.prevent="submitForm">
         <div class="field">
-          <label>Choose seasons</label>
+          <label>Seasons used for team strength calculation</label>
+          <h6>(Training Data Seasons)</h6>
           <div class="checkbox-list">
             <label
               v-for="season in seasonYearsOptions"
