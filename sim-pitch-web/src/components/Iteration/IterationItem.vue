@@ -43,6 +43,18 @@
       </div>
       <hr />
       <ul class="iteration-info">
+        <li selenium-id="league-round">
+          <p>
+            <strong
+              >Simulation started by round of
+              {{
+                getLeagueRoundNameById(
+                  simulationOverviewState.data?.simulationParams.leagueRoundId
+                )
+              }}</strong
+            >
+          </p>
+        </li>
         <li selenium-id="number-simulated-matches">
           <p>
             <strong>Number of simulated matches: </strong
@@ -142,6 +154,7 @@ import CustomScatterPlot from "../Diagrams/CustomScatterPlot.vue";
 import TeamFormChart from "../Diagrams/TeamFormChart.vue";
 import LegendInfo from "../Other/LegendInfo.vue";
 import { CURRENT_SEASON } from "../../models/Consts/seasonYear";
+import type { SimulationOverview } from "../../models/Simulations/simulationOverview";
 defineOptions({ name: "IterationItem" });
 type Props = {
   id: string; // iteration_id
@@ -150,12 +163,22 @@ type Props = {
 const props = defineProps<Props>();
 const route = useRoute();
 const state = computed(() => route.query.simulationState);
+const simulationOverviewState = ref<ApiState<SimulationOverview>>({
+  loading: true,
+  error: null,
+  data: null,
+});
 const scoreboardState = ref<ApiState<Scoreboard[]>>({
   loading: true,
   error: null,
   data: null,
 });
 const iterationResultState = ref<ApiState<IterationResult>>({
+  loading: true,
+  error: null,
+  data: null,
+});
+const simulationTeamStatsState = ref<ApiState<SimulationTeamStats[]>>({
   loading: true,
   error: null,
   data: null,
@@ -167,10 +190,11 @@ const leagueRounds = computed(() => store.leagueRounds);
 const teamStrengths = computed(
   () => iterationResultState.value.data?.teamStrengths
 );
-const leagueId = computed(
-  () => teamStrengths.value?.[0]?.seasonStats?.leagueId
-);
-
+const loadSimulationOverview = async () => {
+  simulationOverviewState.value = await fetchData<SimulationOverview>(() =>
+    engineAPI.SimulationController.getSimulationOverview(props.simulation_id)
+  );
+};
 const loadScoreboard = async () => {
   scoreboardState.value = await fetchData<Scoreboard[]>(() =>
     engineAPI.ScoreboardController.getScoreboard(props.simulation_id, props.id)
@@ -189,17 +213,19 @@ const loadIterationResult = async () => {
     );
   }
 };
-const simulationTeamStatsState = ref<ApiState<SimulationTeamStats[]>>({
-  loading: true,
-  error: null,
-  data: null,
-});
+const leagueId = computed(
+  () => simulationOverviewState.value.data?.simulationParams.leagueId
+);
+const getLeagueRoundNameById = (id?: string) => {
+  if (id === undefined || id === null) return `last not played matches`;
+  return store.leagueRounds.find((x) => x.id === id)?.round;
+};
 const ensureData = async () => {
   if (!props.simulation_id || !props.id) return;
 
+  await loadSimulationOverview();
   await loadScoreboard();
   await loadIterationResult();
-
   if (!leagues.value?.length) {
     await store.loadLeagues();
   }

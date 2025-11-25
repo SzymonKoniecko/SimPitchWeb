@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch, nextTick } from "vue";
-import { CURRENT_SEASON, SeasonYear, seasonYearsOptions } from "../../models/Consts/seasonYear";
+import {
+  CURRENT_SEASON,
+  SeasonYear,
+  seasonYearsOptions,
+} from "../../models/Consts/seasonYear";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
 import { fetchData } from "../../api/fetchData";
 import { engineAPI } from "../../api/engine.api";
@@ -234,7 +238,12 @@ function resetForm() {
                 :value="season"
                 v-model="form.seasonYears"
               />
-              {{ season }}
+              <span v-if="season === CURRENT_SEASON">
+                {{ season }} (Current season)
+              </span>
+              <span v-else>
+                {{ season }}
+              </span>
             </label>
           </div>
         </div>
@@ -274,14 +283,17 @@ function resetForm() {
           <label for="leagueRoundId"
             >Optional: Start from specified round of league</label
           >
-          <select id="leagueRoundId" v-model="form.league_round_id">
+          <select
+            id="leagueRoundId"
+            v-model="form.league_round_id"
+          >
             <option
-              v-for="leagueRounds in leagueRounds"
+              v-for="leagueRounds in leagueRounds.sort((a,b) => a.round - b.round)"
               :key="leagueRounds.round"
               :value="leagueRounds.id"
               :selenium-id="`round:${leagueRounds.round}`"
             >
-              {{ leagueRounds.round }}
+             Round of {{ leagueRounds.round }}
             </option>
           </select>
         </div>

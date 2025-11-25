@@ -14,12 +14,15 @@
           :key="p.teamId + '-' + p.iterationIndex"
         >
           <td>{{ p.rank }}</td>
-          <td><TeamCard :id="p.teamId" :variant="'mini'" /></td>
+          <td><TeamCard :id="p.teamId" :variant="'mini'" :team="GetTeamById(p.teamId)"/></td>
           <td>{{ p.points }}</td>
         </tr>
       </tbody>
     </table>
-    <table v-else-if="variant === 'complete_details'" selenium-id="scoreboard_complete_details">
+    <table
+      v-else-if="variant === 'complete_details'"
+      selenium-id="scoreboard_complete_details"
+    >
       <thead>
         <tr>
           <th>Rank</th>
@@ -37,15 +40,47 @@
       <tbody>
         <tr v-for="s in scoreboard?.scoreboardTeams">
           <td>{{ s.rank }}</td>
-          <td><TeamCard :id="s.teamId" :variant="'mini'" /></td>
+          <td><TeamCard :id="s.teamId" :variant="'mini'"  :team="GetTeamById(s.teamId)"/></td>
           <td>{{ s.matchPlayed }}</td>
-          <td>{{ s.wins }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangeWins.toFixed(2) }})</p></td>
-          <td>{{ s.losses }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangeLosses.toFixed(2)  }})</p></td>
-          <td>{{ s.draws }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangeDraws.toFixed(2)  }})</p></td>
-          <td>{{ s.goalsFor }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangeGoalsFor.toFixed(2)  }})</p></td>
-          <td>{{ s.goalsAgainst }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangeGoalsAgainst.toFixed(2)  }})</p></td>
+          <td>
+            {{ s.wins }}
+            <p class="avg-value" v-if="teamStats && teamStats.length > 0">
+              ({{ GetTeamStatsById(s.teamId)?.averangeWins.toFixed(2) }})
+            </p>
+          </td>
+          <td>
+            {{ s.losses }}
+            <p class="avg-value" v-if="teamStats && teamStats.length > 0">
+              ({{ GetTeamStatsById(s.teamId)?.averangeLosses.toFixed(2) }})
+            </p>
+          </td>
+          <td>
+            {{ s.draws }}
+            <p class="avg-value" v-if="teamStats && teamStats.length > 0">
+              ({{ GetTeamStatsById(s.teamId)?.averangeDraws.toFixed(2) }})
+            </p>
+          </td>
+          <td>
+            {{ s.goalsFor }}
+            <p class="avg-value" v-if="teamStats && teamStats.length > 0">
+              ({{ GetTeamStatsById(s.teamId)?.averangeGoalsFor.toFixed(2) }})
+            </p>
+          </td>
+          <td>
+            {{ s.goalsAgainst }}
+            <p class="avg-value" v-if="teamStats && teamStats.length > 0">
+              ({{
+                GetTeamStatsById(s.teamId)?.averangeGoalsAgainst.toFixed(2)
+              }})
+            </p>
+          </td>
           <td>{{ s.goalsFor - s.goalsAgainst }}</td>
-          <td>{{ s.points }} <p class="avg-value" v-if="teamStats && teamStats.length > 0">({{ GetTeamStatsById(s.teamId)?.averangePoints.toFixed(2)  }})</p></td>
+          <td>
+            {{ s.points }}
+            <p class="avg-value" v-if="teamStats && teamStats.length > 0">
+              ({{ GetTeamStatsById(s.teamId)?.averangePoints.toFixed(2) }})
+            </p>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -68,7 +103,7 @@
         </thead>
         <tbody>
           <tr v-for="stat in teamStats">
-            <td><TeamCard :id="stat.teamId" :variant="'mini'" /></td>
+            <td><TeamCard :id="stat.teamId" :variant="'mini'" :team="GetTeamById(stat.teamId)"/></td>
             <td>{{ stat.averangePoints.toFixed(3) }}</td>
             <td>{{ stat.averangeWins.toFixed(3) }}</td>
             <td>{{ stat.averangeLosses.toFixed(3) }}</td>
@@ -83,12 +118,12 @@
 </template>
 
 <style lang="css" scoped>
-.preview-table{
-    width: 100%;
-    text-align: center;
+.preview-table {
+  width: 100%;
+  text-align: center;
 }
-.avg-value{
-  color: var(--color-text-third)
+.avg-value {
+  color: var(--color-text-third);
 }
 </style>
 <script setup lang="ts">
@@ -100,8 +135,10 @@ import {
   type SimulationTeamStats,
 } from "../../models/Simulations/simulationTeamStats";
 import TeamCard from "../Team/TeamCard.vue";
+import type { Team } from "../../models/SportsDataModels/team";
 defineOptions({ name: "ScoreboardItem" });
 type Props = {
+  teams: Team[];
   iteration_preview?: IterationPreview[];
   scoreboard?: Scoreboard | undefined;
   simulationTeamStats?: SimulationTeamStats[] | null;
@@ -109,9 +146,14 @@ type Props = {
 };
 const props = defineProps<Props>();
 const variant = computed(() => props.variant ?? "preview");
-const teamStats = computed(() => sortTeamStats(props.simulationTeamStats ?? []));
-
+const teamStats = computed(() =>
+  sortTeamStats(props.simulationTeamStats ?? [])
+);
+const teams = computed(() => props.teams);
+const GetTeamById = (Id: string) => {
+  return teams.value.find((x) => x.id === Id);
+};
 const GetTeamStatsById = (Id: string) => {
-  return teamStats.value.find(x => x.teamId === Id);
-}
+  return teamStats.value.find((x) => x.teamId === Id);
+};
 </script>

@@ -52,9 +52,11 @@ import { computed, onMounted, watch } from "vue";
 import { RouterLink } from "vue-router";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
 import { getLogo } from "../../utils/logos";
+import type { Team } from "../../models/SportsDataModels/team";
 type Props = {
   id: string;
   variant?: "mini" | "normal" | "large";
+  team?: Team | undefined;
 };
 
 const props = defineProps<Props>();
@@ -65,7 +67,10 @@ const loading = computed(() => store.loading);
 const error = computed(() => store.error);
 
 const team = computed(() => {
-  return store.teams.find((t) => t.id === props.id);
+  if (props.team === undefined) {
+     return store.teams.find((t) => t.id === props.id);
+  }
+  return props.team
 });
 
 const ensureData = async () => {
