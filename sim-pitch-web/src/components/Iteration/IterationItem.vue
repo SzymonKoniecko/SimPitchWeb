@@ -222,11 +222,9 @@ const ensureData = async () => {
   if (!leagues.value?.length) {
     await store.loadLeagues();
   }
-
   if (!teams.value?.length) {
     await store.loadTeams();
   }
-
   if (
     leagueId.value &&
     (!leagueRounds.value || leagueRounds.value.length === 0)
@@ -239,23 +237,17 @@ onMounted(async () => {
   await ensureData();
 });
 
-watch(
-  [() => props.id, () => props.simulation_id],
-  async (newIds, oldIds) => {
-    // only if the ID is reaaly changed
-    if (
-      oldIds &&
-      (newIds[0] !== oldIds[0] || newIds[1] !== oldIds[1])
-    ) {
-      console.log("🔄 Props changed - reloading");
-      // clearing cache simulation-specific data
-      simulationOverviewState.value = { loading: true, error: null, data: null };
-      scoreboardState.value = { loading: true, error: null, data: null };
-      iterationResultState.value = { loading: true, error: null, data: null };
-      simulationTeamStatsState.value = { loading: true, error: null, data: null };
-      
-      await ensureData();
-    }
+watch([() => props.id, () => props.simulation_id], async (newIds, oldIds) => {
+  // only if the ID is reaaly changed
+  if (oldIds && (newIds[0] !== oldIds[0] || newIds[1] !== oldIds[1])) {
+    console.log("🔄 Props changed - reloading");
+    // clearing cache simulation-specific data
+    simulationOverviewState.value = { loading: true, error: null, data: null };
+    scoreboardState.value = { loading: true, error: null, data: null };
+    iterationResultState.value = { loading: true, error: null, data: null };
+    simulationTeamStatsState.value = { loading: true, error: null, data: null };
+
+    await ensureData();
   }
-);
+});
 </script>
