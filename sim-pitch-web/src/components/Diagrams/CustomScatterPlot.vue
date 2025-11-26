@@ -72,18 +72,15 @@ const resetZoom = () => {
     });
   }
 };
-const emit = defineEmits<{
-  (e: "point-clicked", roundIdTeamId: string): void;
-}>();
 
 function getTeamNameById(id?: string): string {
   return props.teams.find((team) => team.id === id)?.name || "UNKNOWN";
 }
-function getRoundNameById(id? :string): string {
+function getRoundNameById(id?: string): string {
   if (id === null) {
-    return "Start"
+    return "Start";
   }
-  return `Round of ${props.leagueRounds.find((lr) => lr.id === id)?.round}`
+  return `Round of ${props.leagueRounds.find((lr) => lr.id === id)?.round}`;
 }
 
 const leagueAvg = computed(() => {
@@ -101,7 +98,9 @@ const series = computed(() => [
     data: props.teamStrengths.map((t) => ({
       x: parseFloat(t.posterior.offensive.toFixed(2)),
       y: parseFloat(t.posterior.defensive.toFixed(2)),
-      teamName: getTeamNameById(t.teamId) + " - " + getRoundNameById(t.roundId ?? undefined),
+      teamName:
+        getTeamNameById(t.teamId) + " - " + getRoundNameById(t.roundId ?? undefined),
+      roundId: "round:" + t.roundId,
       roundIdTeamId: "round:" + t.roundId + "^^team:" + t.teamId,
     })),
   },
@@ -122,15 +121,33 @@ const chartOptions = computed(() => ({
         const pointData = config.w.config.series[seriesIndex].data[dataPointIndex];
 
         if (pointData && pointData.roundIdTeamId) {
-          emit("point-clicked", pointData.roundIdTeamId);
-          const targetElement = document.getElementById(pointData.roundIdTeamId);
 
-          if (targetElement) {
-            targetElement.scrollIntoView({
-              behavior: "auto",
-              block: "center",
-              inline: "nearest",
-            });
+          const detailsElement = document.getElementById(
+            pointData.roundId
+          ) as HTMLDetailsElement | null;
+
+          if (detailsElement) {
+            detailsElement.open = true;
+
+            setTimeout(() => {
+              const targetElement = document.getElementById(pointData.roundIdTeamId);
+
+              if (targetElement) {
+                targetElement.scrollIntoView({
+                  behavior: "smooth", 
+                  block: "center",
+                  inline: "nearest",
+                });
+
+                targetElement.style.transition = "background-color 0.5s";
+                const originalBg = targetElement.style.backgroundColor;
+                targetElement.style.backgroundColor = "rgba(255, 255, 0, 0.3)";
+
+                setTimeout(() => {
+                  targetElement.style.backgroundColor = originalBg;
+                }, 1500);
+              }
+            }, 100); // DOM render
           }
         }
       },
