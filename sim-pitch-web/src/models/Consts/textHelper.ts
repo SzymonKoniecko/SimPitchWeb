@@ -14,3 +14,8 @@ const mapping = [
 export function MapNumberToText(n: number) {
   return mapping[n] ?? "unknown";
 }
+export function MapNumberToTextUpper(n: number): string {
+  const text = mapping[n] ?? "unknown";
+  
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}

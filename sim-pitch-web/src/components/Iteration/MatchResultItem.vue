@@ -1,6 +1,5 @@
 <template>
   <table class="match-body" selenium-id="match">
-    <h3>{{ getRoundNameById(matchRound.roundId) }}</h3>
     <colgroup>
       <col />
       <col />
@@ -67,14 +66,12 @@ import TeamStrengthItem from "../Team/TeamStrengthItem.vue";
 import type { MatchRound } from "../../models/SportsDataModels/matchRound";
 import type { Team } from "../../models/SportsDataModels/team";
 import type { TeamStrength } from "../../models/Iterations/teamStrength";
-import type { LeagueRound } from "../../models/SportsDataModels/leagueRound";
 
 type Props = {
   matchRound: MatchRound;
   teams: Team[];
   homeTeamStrength?: TeamStrength | null;
   awayTeamStrength?: TeamStrength | null;
-  leagueRounds: LeagueRound[];
 };
 
 const props = defineProps<Props>();
@@ -86,12 +83,6 @@ const getStadiumNameByTeamId = (id: string) => {
   const stadiumName = props.teams.find((t) => t.id === id)?.stadium?.name;
   return stadiumName ? `${stadiumName}` : "Stadium";
 };
-function getRoundNameById(id?: string): string {
-  if (id === null) {
-    return "Start";
-  }
-  return `Round of ${props.leagueRounds.find((lr) => lr.id === id)?.round}`;
-}
 </script>
 
 <style scoped>

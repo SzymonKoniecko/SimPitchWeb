@@ -263,8 +263,8 @@ watch(
         </ul>
       </p>
       <p>
-        <strong>Prior league strength:</strong>
-        {{ simulationState.data.priorLeagueStrength }}
+        <strong>League strength:</strong>
+        {{ simulationState.data.priorLeagueStrength }} (based on averange goals calculations)
       </p>
       <section>
         <details close class="details" selenium-id="sim-params-details">

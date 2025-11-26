@@ -25,6 +25,10 @@
     />
   </div>
   <section>
+    <h2>
+      Iteration number:
+      <strong> #{{ iterationResultState.data?.iterationIndex }}</strong>
+    </h2>
     <article v-if="iterationResultState.data" class="iteration-info-article">
       <LegendInfo />
       <div>
@@ -90,27 +94,16 @@
     </article>
   </section>
   <section>
-    <div v-for="matchRound in iterationResultState.data?.simulatedMatchRounds">
-      <MatchResultItem
-        :match-round="matchRound"
-        :teams="teams"
-        :home-team-strength="
-          iterationResultState.data?.teamStrengths?.find(
-            (t) =>
-              t.teamId === matchRound.homeTeamId &&
-              t.roundId === matchRound.roundId
-          )
-        "
-        :away-team-strength="
-          iterationResultState.data?.teamStrengths?.find(
-            (t) =>
-              t.teamId === matchRound.awayTeamId &&
-              t.roundId === matchRound.roundId
-          )
-        "
-        :league-rounds="leagueRounds"
-      />
-    </div>
+    <MatchResultItemList
+      v-if="
+        iterationResultState.data?.simulatedMatchRounds &&
+        iterationResultState.data?.teamStrengths
+      "
+      :simulated-match-rounds="iterationResultState.data?.simulatedMatchRounds"
+      :teams="teams"
+      :team-strengths="iterationResultState.data?.teamStrengths"
+      :league-rounds="leagueRounds"
+    />
   </section>
 </template>
 <style scoped>
@@ -147,7 +140,7 @@ import { useSportsDataStore } from "../../stores/SportsDataStore";
 import { engineAPI } from "../../api/engine.api";
 import ScoreboardItem from "./ScoreboardItem.vue";
 import type { IterationResult } from "../../models/Iterations/iterationResult";
-import MatchResultItem from "./MatchResultItem.vue";
+import MatchResultItemList from "./MatchResultItemList.vue";
 import { useRoute } from "vue-router";
 import type { SimulationTeamStats } from "../../models/Simulations/simulationTeamStats";
 import CustomScatterPlot from "../Diagrams/CustomScatterPlot.vue";
