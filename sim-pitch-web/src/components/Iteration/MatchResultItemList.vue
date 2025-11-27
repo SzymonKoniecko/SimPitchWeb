@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import MatchResultItemRound from "./MatchResultItemRound.vue"; // 👈 Import nowego komponentu
+import MatchResultItemRound from "./MatchResultItemRound.vue";
 import { computed, onMounted, watch } from "vue";
 import type { MatchRound } from "../../models/SportsDataModels/matchRound";
 import type { Team } from "../../models/SportsDataModels/team";

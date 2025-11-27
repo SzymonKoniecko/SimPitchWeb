@@ -33,7 +33,6 @@
           <p><strong>League:</strong> {{ team?.league?.name ?? "N/A" }}</p>
         </div>
         
-        <!-- Slot na dodatkowe przyciski/wykresy -->
         <div class="team-card__slot-wrapper">
           <slot />
         </div>
@@ -136,10 +135,12 @@ section {
   font-weight: 500;
   line-height: 1.2;
 }
+
+/*  Normal  */
 .team-card__normal {
   position: relative;
   width: 100%;
-  min-height: 180px;
+  min-height: 150px;
 
   background-size: cover;
   background-position: center;

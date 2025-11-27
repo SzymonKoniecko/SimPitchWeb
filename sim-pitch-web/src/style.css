@@ -17,8 +17,8 @@
   --color-text-secondary: #a0aec0;
   --color-text-third: #56b9bd;
 
-  --color-button: #00bfa6;
-  --color-hover: #00897b;
+  --color-button: #920c0c;
+  --color-hover: #d99f34;
 
   --color-home-team: #42a5f5;
   --color-away-team: #ff7043;
@@ -73,6 +73,7 @@
     --color-pastel-darkgreen: #1e4e1d;
     --color-accent-blue: #2962ff;
     --color-accent-yellow: #ffb300;
+    --color-accent-orange: #e38e25;
 
     --color-text-main: #1a1f2c;
     --color-text-secondary: #5a6b87;
@@ -191,7 +192,7 @@ a:hover {
   padding: 0.6rem 1.4rem;
   background: linear-gradient(135deg,
       var(--color-button-primary) 0%,
-      var(--color-accent-blue) 100%);
+      var(--color-accent-orange) 100%);
   box-shadow: 0 4px 10px var(--color-shadow-button);
   transition: all 0.25s ease-in-out;
   position: relative;
@@ -201,7 +202,7 @@ a:hover {
 
 .button:hover {
   background: linear-gradient(135deg,
-      var(--color-accent-blue) 0%,
+      var(--color-accent-orange) 0%,
       var(--color-button-primary-hover) 100%);
   box-shadow: 0 6px 16px var(--color-shadow-button_second);
   transform: translateY(-2px);
@@ -220,14 +221,14 @@ a:hover {
 .button-primary {
   background: linear-gradient(135deg,
       var(--color-button-primary),
-      var(--color-accent-blue));
+      var(--color-accent-orange));
   color: var(--color-button-text);
-  border-color: var(--color-accent-blue);
+  border-color: var(--color-accent-orange);
 }
 
 .button-primary:hover {
   background: linear-gradient(135deg,
-      var(--color-accent-blue),
+      var(--color-accent-orange),
       var(--color-button-primary-hover));
 }
 
