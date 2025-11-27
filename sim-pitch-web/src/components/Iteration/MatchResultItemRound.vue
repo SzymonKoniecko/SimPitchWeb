@@ -1,7 +1,7 @@
 <template>
   <details
     class="custom-chart-details"
-    close
+    open
     :id="`round:${roundData.roundNumber}`"
   >
     <summary class="custom-chart-summary">

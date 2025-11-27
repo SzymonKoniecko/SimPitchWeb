@@ -7,11 +7,11 @@
   --color-surface-sections: #151822;
   --color-grid: #2b3558;
 
-  --color-accent-green: #00e676;
   --color-pastel-green: #66ffa6;
   --color-pastel-darkgreen: #1e4e1d;
   --color-accent-blue: #2979ff;
   --color-accent-yellow: #ffd54f;
+  --color-accent-orange: #cb9a2e;
 
   --color-text-main: #e8edf5;
   --color-text-secondary: #a0aec0;
@@ -47,7 +47,7 @@
   --color-button-secondary-border: var(--color-grid);
   --color-button-secondary-hover-bg: var(--color-surface-contrast);
 
-  --color-button-tertiary-bg: var(--color-accent-green);
+  --color-button-tertiary-bg: var(--color-accent-orange);
   --color-button-tertiary-hover-bg: var(--color-pastel-green);
 
   --color-button-quaternary-bg: var(--color-accent-blue);
@@ -68,7 +68,7 @@
     --color-surface-sections: #f0f3f9;
     --color-grid: #d6deeb;
 
-    --color-accent-green: #00c853;
+    --color-accent-orange: #00c853;
     --color-pastel-green: #80e27e;
     --color-pastel-darkgreen: #1e4e1d;
     --color-accent-blue: #2962ff;
@@ -108,7 +108,7 @@
     --color-button-secondary-border: var(--color-grid);
     --color-button-secondary-hover-bg: #e3e8f1;
 
-    --color-button-tertiary-bg: var(--color-accent-green);
+    --color-button-tertiary-bg: var(--color-accent-orange);
     --color-button-tertiary-hover-bg: var(--color-pastel-green);
 
     --color-button-quaternary-bg: var(--color-accent-blue);
@@ -168,7 +168,7 @@ section {
 }
 
 a {
-  color: var(--color-accent-green);
+  color: var(--color-accent-orange);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
@@ -434,7 +434,7 @@ td:hover {
   width: 2rem;
   height: 2rem;
   border: 3px solid var(--color-border);
-  border-top-color: var(--color-accent-green);
+  border-top-color: var(--color-accent-orange);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
