@@ -19,7 +19,7 @@
           :class="{ played: matchRound.isPlayed, draw: matchRound.isDraw }"
         >
           {{
-            matchRound.isPlayed ? (matchRound.isDraw ? "Draw" : "") : "Upcoming"
+            (matchRound.isDraw ? "Draw" : "")
           }}
         </td>
         <td
@@ -43,7 +43,14 @@
         <td></td>
       </tr>
       <tr>
-        <td></td>
+        <td
+          class="match-status"
+          :class="{ played: matchRound.isPlayed, draw: matchRound.isDraw }"
+        >
+          {{
+            (isReal ? "< Real result >" : "< Simulated result >")
+          }}
+        </td>
       </tr>
       <tr>
         <td colspan="3" class="strengths-grid" v-if="matchRound.isPlayed">
@@ -70,6 +77,7 @@ import type { TeamStrength } from "../../models/Iterations/teamStrength";
 type Props = {
   matchRound: MatchRound;
   teams: Team[];
+  isReal: boolean;
   homeTeamStrength?: TeamStrength | null;
   awayTeamStrength?: TeamStrength | null;
 };
@@ -83,6 +91,7 @@ const getStadiumNameByTeamId = (id: string) => {
   const stadiumName = props.teams.find((t) => t.id === id)?.stadium?.name;
   return stadiumName ? `${stadiumName}` : "Stadium";
 };
+const isReal = computed(() => props.isReal)
 </script>
 
 <style scoped>

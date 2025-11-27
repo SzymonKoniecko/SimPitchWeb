@@ -90,7 +90,7 @@
   </div>
   <section>
     <article v-if="scoreboardState.data">
-      <h2>Simulated matches:</h2>
+      <h2>Simulated rounds 0/0:</h2>
     </article>
   </section>
   <section>
