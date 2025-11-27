@@ -89,11 +89,6 @@
     />
   </div>
   <section>
-    <article v-if="scoreboardState.data">
-      <h2>Simulated rounds 0/0:</h2>
-    </article>
-  </section>
-  <section>
     <MatchResultItemList
       v-if="
         iterationResultState.data?.simulatedMatchRounds &&

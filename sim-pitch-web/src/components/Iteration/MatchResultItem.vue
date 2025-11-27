@@ -18,12 +18,11 @@
           class="match-status"
           :class="{ played: matchRound.isPlayed, draw: matchRound.isDraw }"
         >
-          {{
-            (matchRound.isDraw ? "Draw" : "")
-          }}
+          {{ matchRound.isDraw ? "Draw" : "" }}
         </td>
         <td
           rowspan="5"
+          class="team"
           :id="`round:${matchRound.roundId}^^team:${matchRound.awayTeamId}`"
         >
           <TeamCard :id="matchRound.awayTeamId" variant="normal" />
@@ -40,17 +39,15 @@
         </td>
       </tr>
       <tr>
-        <td></td>
-      </tr>
-      <tr>
         <td
           class="match-status"
-          :class="{ played: matchRound.isPlayed, draw: matchRound.isDraw }"
+          :class="{ isReal }"
         >
-          {{
-            (isReal ? "< Real result >" : "< Simulated result >")
-          }}
+          {{ isReal ? "< Real result >" : "< Simulated result >" }}
         </td>
+      </tr>
+      <tr>
+        <td></td>
       </tr>
       <tr>
         <td colspan="3" class="strengths-grid" v-if="matchRound.isPlayed">
@@ -63,6 +60,7 @@
       </tr>
     </tbody>
   </table>
+  <hr />
   <hr />
 </template>
 
@@ -91,7 +89,7 @@ const getStadiumNameByTeamId = (id: string) => {
   const stadiumName = props.teams.find((t) => t.id === id)?.stadium?.name;
   return stadiumName ? `${stadiumName}` : "Stadium";
 };
-const isReal = computed(() => props.isReal)
+const isReal = computed(() => props.isReal);
 </script>
 
 <style scoped>
@@ -118,9 +116,12 @@ col:nth-child(2) {
   letter-spacing: 0.5px;
   text-align: center;
 }
-
 .match-status.draw {
   color: var(--color-accent-blue);
+}
+.match-status.isReal {
+  color: var(--color-text-secondary);
+  font-weight: 500;
 }
 
 .match-body {

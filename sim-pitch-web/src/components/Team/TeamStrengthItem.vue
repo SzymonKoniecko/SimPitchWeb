@@ -1,6 +1,6 @@
 <template>
-  <details>
-    <summary><span>Teams strengths</span></summary>
+  <details class="custom-chart-details">
+    <summary class="custom-chart-summary"><span>Teams strengths</span></summary>
     <section class="team-strengths">
       <!-- HOME -->
       <article class="team-strength ts-home" v-if="homeTeamStrength">
