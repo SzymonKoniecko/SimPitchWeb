@@ -76,7 +76,6 @@ import TeamStrengthItem from "../Team/TeamStrengthItem.vue";
 import type { MatchRound } from "../../models/SportsDataModels/matchRound";
 import type { Team } from "../../models/SportsDataModels/team";
 import type { TeamStrength } from "../../models/Iterations/teamStrength";
-import type { LeagueRound } from "../../models/SportsDataModels/leagueRound";
 
 type Props = {
   matchRound: MatchRound;
@@ -84,7 +83,6 @@ type Props = {
   isReal: boolean;
   homeTeamStrength?: TeamStrength | null;
   awayTeamStrength?: TeamStrength | null;
-  leagueRounds: LeagueRound[];
 };
 
 const props = defineProps<Props>();
