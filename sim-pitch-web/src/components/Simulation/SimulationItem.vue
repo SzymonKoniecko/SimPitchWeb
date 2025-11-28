@@ -14,6 +14,8 @@ import type { Team } from "../../models/SportsDataModels/team";
 import { SortingOption } from "../../models/Consts/sortingOption";
 import type { SimulationTeamStats } from "../../models/Simulations/simulationTeamStats";
 import HeatMap from "../Diagrams/HeatMap.vue";
+import { CURRENT_SEASON } from "../../models/Consts/seasonYear";
+import { MapNumberToText } from "../../models/Consts/textHelper";
 
 defineOptions({ name: "SimulationItem" });
 type Props = { id: string };
@@ -22,6 +24,7 @@ const props = defineProps<Props>();
 const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
+const leagueRounds = computed(() => store.leagueRounds);
 const presentedTeams = ref<Team[]>([]);
 const filterValue = ref("Any");
 
@@ -53,6 +56,7 @@ const totalPages = computed(
 const ensureSportsData = async () => {
   if (!leagues.value.length) await store.loadLeagues();
   if (!teams.value.length) await store.loadTeams();
+  if (!leagueRounds.value.length && simulationState.value.data?.simulationParams.leagueId !== undefined) await store.loadLeagueRounds(CURRENT_SEASON, simulationState.value.data?.simulationParams.leagueId);
 };
 
 function scrollToSection() {
@@ -125,11 +129,13 @@ const mapOrder = (newOrder: "Descending" | "Ascending"): "DESC" | "ASC" => {
 
 const getLeagueName = (id: string) =>
   leagues.value.find((l) => l.id === id)?.name ?? id;
-
+const getLeagueRoundNameById = (id?: string) => {
+  if (id === undefined || id === null) return `last not played matches`;
+  return MapNumberToText(leagueRounds.value.find((x) => x.id === id)?.round ?? 0) + " round"
+};
 function getTeamById(id: string): boolean {
   return presentedTeams.value.some((team) => team.id === id);
 }
-
 function addTeamIfNotPresented(teamId: string) {
   if (!getTeamById(teamId)) {
     const teamToAdd = teams.value.find((team) => team.id === teamId);
@@ -185,6 +191,13 @@ watch(
   () => props.id,
   async () => {
     await loadSimulation();
+    await ensureSportsData();
+  }
+);
+watch(
+  () => simulationState.value.data?.simulationParams.leagueId,
+  async () => {
+    await ensureSportsData();
   }
 );
 </script>
@@ -236,6 +249,9 @@ watch(
       <p selenium-id="state">
         <strong>State:</strong> {{ simulationState.data.state.state }} ---
         {{ new Date(simulationState.data.state.updatedAt).toLocaleString() }}
+      </p> 
+      <p selenium-id="league-round">
+        <strong>Started simulation by {{ getLeagueRoundNameById(simulationState.data.simulationParams.leagueRoundId) }}</strong>
       </p>
       <p>
         <strong>Simulated matches:</strong>
@@ -247,8 +263,8 @@ watch(
         </ul>
       </p>
       <p>
-        <strong>Prior league strength:</strong>
-        {{ simulationState.data.priorLeagueStrength }}
+        <strong>League strength:</strong>
+        {{ simulationState.data.priorLeagueStrength }} (based on averange goals calculations)
       </p>
       <section>
         <details close class="details" selenium-id="sim-params-details">

@@ -8,3 +8,4 @@ export const SeasonYear = {
 export type SeasonYear = typeof SeasonYear[keyof typeof SeasonYear];
 
 export const seasonYearsOptions: SeasonYear[] = Object.values(SeasonYear);
+export const CURRENT_SEASON = SeasonYear.S2025_2026;

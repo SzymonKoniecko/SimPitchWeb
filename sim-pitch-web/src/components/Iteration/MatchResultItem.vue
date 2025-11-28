@@ -1,6 +1,9 @@
 <template>
-  <table class="match-body" selenium-id="match">
-    <h3>{{ getRoundNameById(matchRound.roundId) }}</h3>
+  <table 
+    class="match-body" 
+    :class="{ 'simulation-mode': !isReal, 'real-mode': isReal }"
+    selenium-id="match"
+  >
     <colgroup>
       <col />
       <col />
@@ -19,19 +22,18 @@
           class="match-status"
           :class="{ played: matchRound.isPlayed, draw: matchRound.isDraw }"
         >
-          {{
-            matchRound.isPlayed ? (matchRound.isDraw ? "Draw" : "") : "Upcoming"
-          }}
+          {{ matchRound.isDraw ? "Draw" : "" }}
         </td>
         <td
           rowspan="5"
+          class="team"
           :id="`round:${matchRound.roundId}^^team:${matchRound.awayTeamId}`"
         >
           <TeamCard :id="matchRound.awayTeamId" variant="normal" />
         </td>
       </tr>
       <tr>
-        <td>{{ getStadiumNameByTeamId(matchRound.homeTeamId) }}</td>
+        <td class="stadium-name">{{ getStadiumNameByTeamId(matchRound.homeTeamId) }}</td>
       </tr>
       <tr>
         <td class="score">
@@ -41,7 +43,14 @@
         </td>
       </tr>
       <tr>
-        <td></td>
+        <td class="result-type-cell">
+          <span v-if="isReal" class="real-result-label">
+            <i class="icon-check"></i> Official Result
+          </span>
+          <span v-else class="sim-result-label">
+            <i class="icon-cpu"></i> Simulated
+          </span>
+        </td>
       </tr>
       <tr>
         <td></td>
@@ -57,7 +66,7 @@
       </tr>
     </tbody>
   </table>
-  <hr />
+  <hr class="divider" />
 </template>
 
 <script setup lang="ts">
@@ -72,6 +81,7 @@ import type { LeagueRound } from "../../models/SportsDataModels/leagueRound";
 type Props = {
   matchRound: MatchRound;
   teams: Team[];
+  isReal: boolean;
   homeTeamStrength?: TeamStrength | null;
   awayTeamStrength?: TeamStrength | null;
   leagueRounds: LeagueRound[];
@@ -86,12 +96,7 @@ const getStadiumNameByTeamId = (id: string) => {
   const stadiumName = props.teams.find((t) => t.id === id)?.stadium?.name;
   return stadiumName ? `${stadiumName}` : "Stadium";
 };
-function getRoundNameById(id?: string): string {
-  if (id === null) {
-    return "Start";
-  }
-  return `Round of ${props.leagueRounds.find((lr) => lr.id === id)?.round}`;
-}
+const isReal = computed(() => props.isReal);
 </script>
 
 <style scoped>
@@ -100,11 +105,13 @@ table {
   border: none;
   width: 100%;
 }
-td,
-th {
+
+td, th {
   border: none;
   padding: 8px;
+  text-align: center;
 }
+
 col:nth-child(1),
 col:nth-child(3) {
   width: 40%;
@@ -112,11 +119,11 @@ col:nth-child(3) {
 col:nth-child(2) {
   width: 20%;
 }
+
 .match-status {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  text-align: center;
 }
 
 .match-status.draw {
@@ -128,27 +135,72 @@ col:nth-child(2) {
   gap: 1.5rem;
 }
 
+.result-type-cell {
+  padding-top: 0;
+  padding-bottom: 1rem;
+}
+
+.real-result-label {
+  font-size: 0.85rem;
+  color: var(--color-accent-green);
+  background-color: rgba(0, 255, 0, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--color-accent-green);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sim-result-label {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  background-color: rgba(128, 128, 128, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--color-text-secondary);
+  font-style: italic;
+}
+
+.stadium-name {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
 .team {
   width: 40%;
   max-width: 40%;
+  transition: transform 0.2s;
 }
+
 .team:hover,
 .score:hover {
   transform: scale(1.05);
 }
+
 .score {
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2.4rem;
   font-weight: bold;
-  color: var(--color-accent-green);
+  color: var(--color-text-primary);
   min-width: 6rem;
 }
+
+.simulation-mode .score {
+  color: var(--color-accent-blue); 
+}
+
+.real-mode .score {
+  color: var(--color-accent-green);
+}
+
 .home-goals,
 .away-goals {
   font-size: large;
 }
+
 .separator {
   color: var(--color-text-secondary);
   margin: 0 0.5rem;
@@ -158,5 +210,12 @@ col:nth-child(2) {
   width: 100%;
   margin-top: 1rem;
   gap: 1.5rem;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  margin: 1rem 0;
+  opacity: 0.3;
 }
 </style>

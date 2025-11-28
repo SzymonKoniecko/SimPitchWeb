@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from "vue";
-import { SeasonYear, seasonYearsOptions } from "../../models/Consts/seasonYear";
+import { ref, reactive, computed, onMounted, watch, nextTick } from "vue";
+import {
+  CURRENT_SEASON,
+  SeasonYear,
+  seasonYearsOptions,
+} from "../../models/Consts/seasonYear";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
 import { fetchData } from "../../api/fetchData";
 import { engineAPI } from "../../api/engine.api";
@@ -11,9 +15,7 @@ import {
 } from "../../models/Simulations/simulationParams";
 import { SimulationParametersShortTooltips as TT } from "../../models/Consts/tooltipTexts";
 import Tooltip from "../Other/Tooltip.vue";
-import {
-  SimulationModelsOptions,
-} from "../../models/Consts/simulationModel";
+import { SimulationModelsOptions } from "../../models/Consts/simulationModel";
 
 defineOptions({ name: "PrepareSimulation" });
 
@@ -30,7 +32,7 @@ const scrollStartedSim = ref<HTMLElement | null>(null);
 
 const form = reactive({
   title: `Simulation - ${new Date().toISOString()}`,
-  seasonYears: [] as SeasonYear[],
+  seasonYears: [CURRENT_SEASON] as SeasonYear[],
   league_id: "",
   iterations: 1,
   league_round_id: null,
@@ -50,12 +52,40 @@ const ensureData = async () => {
   if (!leagues.value || leagues.value.length === 0) {
     await sportsDataStore.loadLeagues();
   }
+  if (!leagueRounds.value || leagueRounds.value.length === 0) {
+    if (form.league_id !== null && form.league_id !== "") {
+      await sportsDataStore.loadLeagueRounds(CURRENT_SEASON, form.league_id);
+    }
+  }
 };
 
 onMounted(async () => {
   await ensureData();
 });
+watch(
+  () => form.seasonYears,
+  async (val) => {
+    if (!val.includes(CURRENT_SEASON)) {
+      await nextTick();
+      if (!form.seasonYears.includes(CURRENT_SEASON)) {
+        form.seasonYears.push(CURRENT_SEASON);
+      }
+    }
+  },
+  { deep: true }
+);
 
+watch(
+  () => form.league_id,
+  async () => {
+    ensureData();
+
+    await nextTick();
+    if (!form.seasonYears.includes(CURRENT_SEASON)) {
+      form.seasonYears.push(CURRENT_SEASON);
+    }
+  }
+);
 const status = ref("");
 const validationErrors = ref<string[]>([]);
 
@@ -140,7 +170,7 @@ async function submitForm() {
 }
 
 function resetForm() {
-  form.seasonYears = [];
+  form.seasonYears = [CURRENT_SEASON];
   form.league_id = "";
   form.iterations = 1;
   form.league_round_id = null;
@@ -168,12 +198,18 @@ function resetForm() {
       Prepare a new simulation
     </h2>
     <section v-if="simulationId" class="simulation-result">
-      <h5 selenium-id="simulation-id-text">Simulation ID: {{ simulationId }}</h5>
+      <h5 selenium-id="simulation-id-text">
+        Simulation ID: {{ simulationId }}
+      </h5>
       <router-link
         :to="{ name: 'SimulationItem', params: { id: simulationId } }"
         class="button-link"
       >
-        <button type="submit" class="button-primary" selenium-id="simulation-result">
+        <button
+          type="submit"
+          class="button-primary"
+          selenium-id="simulation-result"
+        >
           Check the simulation results
         </button>
       </router-link>
@@ -182,20 +218,32 @@ function resetForm() {
     <section>
       <div v-if="loading" class="info">⏳ Loading...</div>
       <ErrorEndpoint v-else-if="error" :error="error" />
-      <div v-if="loadingSimulation" class="info">Working simulation, please wait…</div>
+      <div v-if="loadingSimulation" class="info">
+        Working simulation, please wait…
+      </div>
       <ErrorEndpoint v-else-if="errorSimulation" :error="errorSimulation" />
 
       <form class="form" @submit.prevent="submitForm">
         <div class="field">
-          <label>Choose seasons</label>
+          <label>Seasons used for team strength calculation</label>
+          <h6>(Training Data Seasons)</h6>
           <div class="checkbox-list">
             <label
               v-for="season in seasonYearsOptions"
               :key="season"
               class="checkbox-item"
             >
-              <input type="checkbox" :value="season" v-model="form.seasonYears" />
-              {{ season }}
+              <input
+                type="checkbox"
+                :value="season"
+                v-model="form.seasonYears"
+              />
+              <span v-if="season === CURRENT_SEASON">
+                {{ season }} (Current season)
+              </span>
+              <span v-else>
+                {{ season }}
+              </span>
             </label>
           </div>
         </div>
@@ -230,6 +278,26 @@ function resetForm() {
             </option>
           </select>
         </div>
+
+        <div class="field" v-if="form.league_id !== ''">
+          <label for="leagueRoundId"
+            >Optional: Start from specified round of league</label
+          >
+          <select
+            id="leagueRoundId"
+            v-model="form.league_round_id"
+          >
+            <option
+              v-for="leagueRounds in leagueRounds.sort((a,b) => a.round - b.round)"
+              :key="leagueRounds.round"
+              :value="leagueRounds.id"
+              :selenium-id="`round:${leagueRounds.round}`"
+            >
+             Round of {{ leagueRounds.round }}
+            </option>
+          </select>
+        </div>
+
         <div class="field">
           <label>Choose simulation model</label>
           <div class="checkbox-list">
@@ -238,7 +306,12 @@ function resetForm() {
               :key="model"
               class="checkbox-item"
             >
-              <input type="radio" :value="model" v-model="form.model" :selenium-id="`model-${model}`"/>
+              <input
+                type="radio"
+                :value="model"
+                v-model="form.model"
+                :selenium-id="`model-${model}`"
+              />
               {{ model }}
             </label>
           </div>
@@ -253,19 +326,6 @@ function resetForm() {
             required
             selenium-id="input-iterations"
           />
-        </div>
-
-        <div class="field">
-          <label for="leagueRoundId">Optional: With specified round of league</label>
-          <select id="leagueRoundId" v-model="form.league_round_id">
-            <option
-              v-for="leagueRounds in leagueRounds"
-              :key="leagueRounds.round"
-              :value="leagueRounds.id"
-            >
-              {{ leagueRounds.round }}
-            </option>
-          </select>
         </div>
 
         <!-- SEED -->
@@ -327,7 +387,9 @@ function resetForm() {
           <Tooltip :text="TT.NOISE_FACTOR_SHORT">
             <label
               >Noise Factor:
-              <label selenium-id="noiseFactorLabel">{{ form.noiseFactor }}</label></label
+              <label selenium-id="noiseFactorLabel">{{
+                form.noiseFactor
+              }}</label></label
             >
           </Tooltip>
           <input
@@ -361,7 +423,8 @@ function resetForm() {
         </div>
         <div class="field">
           <label for="leagueRoundId"
-            >Optional: Simulation should create scoreboards during the simulation?</label
+            >Optional: Simulation should create scoreboards during the
+            simulation?</label
           >
           <input
             type="checkbox"
@@ -372,7 +435,9 @@ function resetForm() {
         </div>
         <div class="actions">
           <button type="submit" class="button-primary">Simulate</button>
-          <button type="button" class="button-secondary" @click="resetForm">Reset</button>
+          <button type="button" class="button-secondary" @click="resetForm">
+            Reset
+          </button>
         </div>
       </form>
     </section>

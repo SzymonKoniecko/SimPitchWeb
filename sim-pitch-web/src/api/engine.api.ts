@@ -29,7 +29,9 @@ apiClient.interceptors.response.use(
 
 class EngineAPI {
   SimulationController: InstanceType<typeof EngineAPI.SimulationController>;
-  SimulationStatsController: InstanceType<typeof EngineAPI.SimulationStatsController>;
+  SimulationStatsController: InstanceType<
+    typeof EngineAPI.SimulationStatsController
+  >;
   ScoreboardController: InstanceType<typeof EngineAPI.ScoreboardController>;
   IterationResultController: InstanceType<
     typeof EngineAPI.IterationResultController
@@ -51,11 +53,18 @@ class EngineAPI {
       order: string
     ) {
       const { data } = await apiClient.get(
-        `${SimulationController.PrefixUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}&order=${order}`
+        `${SimulationController.PrefixUrl}/overviews?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}&order=${order}`
       );
       return data;
     }
-
+    async getSimulationOverview(
+      id: string
+    ) {
+      const { data } = await apiClient.get(
+        `${SimulationController.PrefixUrl}/overview/${id}`
+      );
+      return data;
+    }
     async getSimulationOverviews(
       id: string,
       pageNumber: number,

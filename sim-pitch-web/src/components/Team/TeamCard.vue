@@ -33,7 +33,6 @@
           <p><strong>League:</strong> {{ team?.league?.name ?? "N/A" }}</p>
         </div>
         
-        <!-- Slot na dodatkowe przyciski/wykresy -->
         <div class="team-card__slot-wrapper">
           <slot />
         </div>
@@ -52,9 +51,11 @@ import { computed, onMounted, watch } from "vue";
 import { RouterLink } from "vue-router";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
 import { getLogo } from "../../utils/logos";
+import type { Team } from "../../models/SportsDataModels/team";
 type Props = {
   id: string;
   variant?: "mini" | "normal" | "large";
+  team?: Team | undefined;
 };
 
 const props = defineProps<Props>();
@@ -65,7 +66,10 @@ const loading = computed(() => store.loading);
 const error = computed(() => store.error);
 
 const team = computed(() => {
-  return store.teams.find((t) => t.id === props.id);
+  if (props.team === undefined) {
+     return store.teams.find((t) => t.id === props.id);
+  }
+  return props.team
 });
 
 const ensureData = async () => {
@@ -131,10 +135,12 @@ section {
   font-weight: 500;
   line-height: 1.2;
 }
+
+/*  Normal  */
 .team-card__normal {
   position: relative;
   width: 100%;
-  min-height: 180px;
+  min-height: 150px;
 
   background-size: cover;
   background-position: center;

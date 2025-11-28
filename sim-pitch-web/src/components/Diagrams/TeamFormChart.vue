@@ -1,5 +1,5 @@
 <template>
-  <details open class="custom-chart-details" selenium-id="teamForm-details">
+  <details close class="custom-chart-details" selenium-id="teamForm-details">
     <summary class="custom-chart-summary">
       <div class="summary-content">
         <span class="summary-title">📈 Evolution of team form</span>
@@ -90,11 +90,11 @@ const props = defineProps<{
   teams: Team[];
   leagueRounds: LeagueRound[];
 }>();
-function getRoundNameById(id? :string): string {
+function getRoundNameById(id?: string): string {
   if (id === null) {
-    return "Start"
+    return "Start";
   }
-  return `Round of ${props.leagueRounds.find((lr) => lr.id === id)?.round}`
+  return `Round of ${props.leagueRounds.find((lr) => lr.id === id)?.round}`;
 }
 
 const metricMode = ref<"offensive" | "defensive">("offensive");
@@ -161,7 +161,6 @@ const series = computed(() => [
     }),
   },
 ]);
-
 const chartOptions = computed(() => ({
   chart: {
     type: "line",
@@ -180,11 +179,10 @@ const chartOptions = computed(() => ({
     dashArray: [0, 5],
   },
   xaxis: {
-    categories: sortedHistory.value.map(
-      (h) =>
-        h.roundId === null || h.roundId === undefined
-          ? "Start"
-          : getRoundNameById(h.roundId)
+    categories: sortedHistory.value.map((h) =>
+      h.roundId === null || h.roundId === undefined
+        ? "Start"
+        : getRoundNameById(h.roundId)
     ),
     title: {
       text: "Timeline",
