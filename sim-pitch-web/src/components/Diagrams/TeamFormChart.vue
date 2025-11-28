@@ -1,9 +1,9 @@
 <template>
-  <details close class="custom-chart-details" selenium-id="teamForm-details">
-    <summary class="custom-chart-summary">
-      <div class="summary-content">
-        <span class="summary-title">📈 Evolution of team form</span>
-        <span class="summary-subtitle"> (Posterior vs Likelihood)</span>
+  <details close class="chart-details" selenium-id="teamForm-details">
+    <summary class="chart-summary">
+      <div class="chart-summary-content">
+        <span class="chart-summary-title">📈 Evolution of team form</span>
+        <span class="chart-summary-subtitle"> (Posterior vs Likelihood)</span>
       </div>
     </summary>
 
@@ -225,20 +225,4 @@ const chartOptions = computed(() => ({
 </script>
 
 <style scoped>
-.button-primary {
-  background-color: var(--color-button);
-  color: #fff;
-  border: 1px solid var(--color-button);
-}
-
-.button-secondary {
-  background-color: transparent;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-grid);
-}
-
-.button-secondary:hover {
-  background-color: var(--color-surface-sections);
-  color: var(--color-text-main);
-}
 </style>

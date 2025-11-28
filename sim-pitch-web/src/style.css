@@ -444,58 +444,189 @@ td:hover {
     transform: rotate(360deg);
   }
 }
-/* details etc */
-.chart-section {
-  width: 100%;
-  padding: 1rem;
+
+.chart-summary::-webkit-details-marker,
+.match-summary::-webkit-details-marker,
+.default-summary::-webkit-details-marker {
+  display: none;
 }
-.custom-chart-details {
+
+.chart-summary,
+.match-summary,
+.default-summary {
+  list-style: none;
+}
+
+.chart-details {
   background-color: var(--color-surface);
   border: 1px solid var(--color-grid);
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px var(--color-shadow-app);
+  margin-bottom: 1rem;
+  overflow: hidden;
 }
-.custom-chart-details[open] .chevron {
-  transform: rotate(180deg);
-}
-.custom-chart-summary {
+
+.chart-summary {
   cursor: pointer;
   padding: 1rem;
   background-color: var(--color-surface-sections);
   border-bottom: 1px solid var(--color-grid);
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: background-color 0.2s ease;
-  list-style: none; /* Ukrywa domyślny trójkąt w niektórych przeglądarkach */
 }
 
-.custom-chart-summary:hover {
+.chart-summary:hover {
   background-color: var(--color-button-secondary-hover-bg);
 }
 
-.custom-chart-summary::-webkit-details-marker {
-  display: none;
-}
-
-.summary-content {
+.chart-summary-content {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  width: 100%;
 }
-.summary-title {
+
+.chart-summary-title {
   font-weight: bold;
   font-size: 1.125rem;
   color: var(--color-text-main);
 }
-.summary-subtitle {
+
+.chart-summary-subtitle {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
   font-weight: normal;
 }
+
+.chart-details[open] .chart-summary-content::after {
+  transform: rotate(225deg);
+  border-color: var(--color-text-main);
+}
+
 .chart-wrapper {
   padding: 1rem;
   min-height: 350px;
+}
+
+.match-details {
+  background-color: var(--color-bg, #ffffff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  overflow: visible;
+}
+
+.match-details[open] {
+  border-color: var(--color-accent-blue, #3b82f6);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.match-summary {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  background-color: var(--color-bg-secondary, #f9fafb);
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.match-details[open] .match-summary {
+  background-color: var(--color-bg, #ffffff);
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.match-summary:hover {
+  background-color: var(--color-bg-hover, #f3f4f6);
+}
+
+.match-summary-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.match-summary-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text-main, #111827);
+}
+
+.match-summary-subtitle {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #6b7280);
+  margin-right: 0.5rem;
+}
+
+.match-details[open] .match-summary-content::after {
+  transform: rotate(225deg);
+  border-color: var(--color-accent-blue, #3b82f6);
+}
+
+.default-details {
+  background-color: transparent;
+  border-bottom: 1px solid var(--color-grid);
+  margin-bottom: 0.5rem;
+}
+
+.default-details[open] {
+  padding-bottom: 1rem;
+}
+
+.default-summary {
+  cursor: pointer;
+  padding: 0.75rem 0;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  transition: opacity 0.2s;
+}
+
+.default-summary:hover {
+  opacity: 0.8;
+}
+
+.default-summary-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+  text-align: center;
+}
+
+.default-summary-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-text-main);
+}
+
+.default-summary-subtitle {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.default-summary-content::before {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 0.5em;
+  border-right: 2px solid var(--color-text-main);
+  border-bottom: 2px solid var(--color-text-main);
+  transform: rotate(-45deg);
+  transition: transform 0.2s ease;
+  margin-right: 0.5rem;
+}
+
+.default-details[open] .default-summary-content::before {
+  transform: rotate(45deg);
 }

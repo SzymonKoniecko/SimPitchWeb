@@ -1,16 +1,16 @@
 <template>
   <details
-    class="custom-chart-details"
+    class="match-details"
     open
     :id="`round:${roundData.roundNumber}`"
   >
-    <summary class="custom-chart-summary">
-      <div class="summary-content">
-        <span class="summary-title">
+    <summary class="match-summary">
+      <div class="match-summary-content">
+        <span class="match-summary-title">
           {{ getTitle(roundData.roundId) }}
         </span>
 
-        <span class="summary-subtitle">
+        <span class="match-summary-subtitle">
           {{
             getSubTitle(
               roundData.simulatedMatches.length,

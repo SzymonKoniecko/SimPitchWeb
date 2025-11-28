@@ -1,21 +1,10 @@
 <template>
-  <details close class="custom-chart-details" selenium-id="scatter-details">
-    <summary class="custom-chart-summary">
-      <div class="summary-content">
-        <span class="summary-title">📊 Map Team Strength (Bayesian Posterior)</span>
-        <span class="summary-subtitle">Offensive vs Defensive</span>
+  <details close class="chart-details" selenium-id="scatter-details">
+    <summary class="chart-summary">
+      <div class="chart-summary-content">
+        <span class="chart-summary-title">📊 Map Team Strength (Bayesian Posterior)</span>
+        <span class="chart-summary-subtitle">Offensive vs Defensive</span>
       </div>
-      <svg
-        class="chevron"
-        viewBox="0 0 24 24"
-        width="20"
-        height="20"
-        stroke="currentColor"
-        stroke-width="2"
-        fill="none"
-      >
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
     </summary>
 
     <div class="chart-wrapper">
@@ -26,17 +15,6 @@
           title="Reset Zoom"
           selenium-id="reset-scatter-button"
         >
-          <svg
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            stroke="currentColor"
-            stroke-width="2"
-            fill="none"
-          >
-            <polyline points="23 4 23 10 17 10"></polyline>
-            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-          </svg>
           Reset View
         </button>
       </div>
@@ -248,10 +226,6 @@ const chartOptions = computed(() => ({
 </script>
 
 <style scoped>
-.chevron {
-  color: var(--color-text-secondary);
-  transition: transform 0.3s;
-}
 
 :deep(.custom-tooltip) {
   padding: 0.75rem;

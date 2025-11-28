@@ -6,7 +6,6 @@
           <span class="summary-title">📚 Legend & Parameters Guide</span>
           <span class="summary-subtitle">Understanding Simulation Metrics</span>
         </div>
-        <span class="chevron">▼</span>
       </summary>
 
       <div class="chart-wrapper">
@@ -315,7 +314,7 @@ const tabs = [
   box-shadow: 0 2px 4px var(--color-shadow-app);
 }
 
-.custom-chart-details[open] .chevron {
+.custom-chart-details[open] {
   transform: rotate(180deg);
 }
 
@@ -354,12 +353,6 @@ const tabs = [
   color: var(--color-text-secondary);
   font-weight: normal;
 }
-
-.chevron {
-  transition: transform 0.3s ease;
-  font-size: 1rem;
-}
-
 .chart-wrapper {
   padding: 1.5rem;
   min-height: 400px;

@@ -82,8 +82,12 @@ const getColor = (prob: number) => {
 
 <template>
   <section>
-    <details close class="heatmap" selenium-id="heatmap-details">
-      <summary>Team Position Probbility - Heatmap</summary>
+    <details close class="default-details" selenium-id="heatmap-details">
+      <summary class="default-summary">
+       <div class="default-summary-content">
+        <span class="default-summary-title">Team Position Probbility. </span>
+        <span class="default-summary-subtitle"> HeatMap</span></div>
+      </summary>
       <figure>
         <table role="grid" class="heatmap-table">
           <thead>
