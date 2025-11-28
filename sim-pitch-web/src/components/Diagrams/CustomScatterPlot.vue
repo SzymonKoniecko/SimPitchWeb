@@ -82,7 +82,12 @@ function getRoundNameById(id?: string): string {
   }
   return `Round of ${props.leagueRounds.find((lr) => lr.id === id)?.round}`;
 }
-
+function getRoundNumberById(id?: string): string {
+  if (id === null) {
+    return "Start";
+  }
+  return `${props.leagueRounds.find((lr) => lr.id === id)?.round}`;
+}
 const leagueAvg = computed(() => {
   if (!props.teamStrengths.length) return 1.5;
   const totalOffensive = props.teamStrengths.reduce(
@@ -100,7 +105,7 @@ const series = computed(() => [
       y: parseFloat(t.posterior.defensive.toFixed(2)),
       teamName:
         getTeamNameById(t.teamId) + " - " + getRoundNameById(t.roundId ?? undefined),
-      roundId: "round:" + t.roundId,
+      roundId: "round:" + getRoundNumberById(t.roundId ?? undefined),
       roundIdTeamId: "round:" + t.roundId + "^^team:" + t.teamId,
     })),
   },
@@ -125,7 +130,6 @@ const chartOptions = computed(() => ({
           const detailsElement = document.getElementById(
             pointData.roundId
           ) as HTMLDetailsElement | null;
-
           if (detailsElement) {
             detailsElement.open = true;
 
@@ -139,7 +143,7 @@ const chartOptions = computed(() => ({
                   inline: "nearest",
                 });
 
-                targetElement.style.transition = "background-color 0.5s";
+                targetElement.style.transition = "background-color 2s";
                 const originalBg = targetElement.style.backgroundColor;
                 targetElement.style.backgroundColor = "rgba(255, 255, 0, 0.3)";
 
