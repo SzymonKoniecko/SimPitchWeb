@@ -44,10 +44,10 @@
       </tr>
       <tr>
         <td class="result-type-cell">
-          <span v-if="isReal" class="real-result-label">
+          <span v-if="isReal" class="real-result-label" selenium-id="official">
             <i class="icon-check"></i> Official Result
           </span>
-          <span v-else class="sim-result-label">
+          <span v-else class="sim-result-label" selenium-id="simulated">
             <i class="icon-cpu"></i> Simulated
           </span>
         </td>
