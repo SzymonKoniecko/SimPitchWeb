@@ -1,8 +1,7 @@
 <template>
-  <details class="custom-chart-details">
-    <summary class="custom-chart-summary"><span>Teams strengths</span></summary>
-    <section class="team-strengths">
-      <!-- HOME -->
+  <details>
+    <summary><span class="default-summary-title">Teams strengths</span></summary>
+    <div class="team-strengths">
       <article class="team-strength ts-home" v-if="homeTeamStrength">
         <p>
           <strong>Expected Goals:</strong>
@@ -17,9 +16,9 @@
         </p>
         <RadarChart v-if="homeTeamStrength" :team-strength="homeTeamStrength" />
       </article>
-
+      <hr/>
       <details close>
-        <summary><span>Metric legend</span></summary>
+        <summary class="default-summary"><span class="default-summary-title">Metric legend</span></summary>
         <div class="metrics-legend">
           <div class="metric-item">
             <span class="metric-label">⚔️ Attack</span>
@@ -69,7 +68,7 @@
         </p>
         <RadarChart v-if="awayTeamStrength" :team-strength="awayTeamStrength" />
       </article>
-    </section>
+    </div>
 
     <footer>
       <small v-if="homeTeamStrength.roundId && awayTeamStrength.roundId">

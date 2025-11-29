@@ -1,16 +1,12 @@
 <template>
-  <details
-    class="custom-chart-details"
-    open
-    :id="`round:${roundData.roundNumber}`"
-  >
-    <summary class="custom-chart-summary">
-      <div class="summary-content">
-        <span class="summary-title">
+  <details class="match-details" close :id="`round:${roundData.roundNumber}`">
+    <summary class="match-summary">
+      <div class="match-summary-content">
+        <span class="match-summary-title">
           {{ getTitle(roundData.roundId) }}
         </span>
 
-        <span class="summary-subtitle">
+        <span class="match-summary-subtitle">
           {{
             getSubTitle(
               roundData.simulatedMatches.length,
@@ -42,12 +38,8 @@
       <MatchResultItem
         :match-round="realMatchRound"
         :teams="teams"
-        :home-team-strength="
-          getTeamStrength(realMatchRound.homeTeamId, realMatchRound.roundId)
-        "
-        :away-team-strength="
-          getTeamStrength(realMatchRound.awayTeamId, realMatchRound.roundId)
-        "
+        :home-team-strength="null"
+        :away-team-strength="null"
         :is-real="true"
       />
     </div>
@@ -67,6 +59,7 @@ type Props = {
   teams: Team[];
   teamStrengths: TeamStrength[];
   leagueRounds: LeagueRound[];
+  onlyPlayedMatches: boolean;
 };
 
 const props = defineProps<Props>();
@@ -79,11 +72,14 @@ function getTitle(id?: string): string {
 }
 
 function getSubTitle(lengthSimulated: number, lengthReal: number): string {
+  console.log(props.onlyPlayedMatches)
+  if (!props.onlyPlayedMatches) {
+    return `${lengthReal + lengthSimulated} matches`;
+  }
   return `${lengthSimulated} of ${
     lengthReal + lengthSimulated
   } simulated matches`;
 }
-
 function getTeamStrength(teamId: string, roundId: string | null | undefined) {
   if (!roundId) return undefined;
   return props.teamStrengths.find(

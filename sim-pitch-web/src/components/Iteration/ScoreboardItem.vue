@@ -14,7 +14,13 @@
           :key="p.teamId + '-' + p.iterationIndex"
         >
           <td>{{ p.rank }}</td>
-          <td><TeamCard :id="p.teamId" :variant="'mini'" :team="GetTeamById(p.teamId)"/></td>
+          <td>
+            <TeamCard
+              :id="p.teamId"
+              :variant="'mini'"
+              :team="GetTeamById(p.teamId)"
+            />
+          </td>
           <td>{{ p.points }}</td>
         </tr>
       </tbody>
@@ -40,7 +46,13 @@
       <tbody>
         <tr v-for="s in scoreboard?.scoreboardTeams">
           <td>{{ s.rank }}</td>
-          <td><TeamCard :id="s.teamId" :variant="'mini'"  :team="GetTeamById(s.teamId)"/></td>
+          <td>
+            <TeamCard
+              :id="s.teamId"
+              :variant="'mini'"
+              :team="GetTeamById(s.teamId)"
+            />
+          </td>
           <td>{{ s.matchPlayed }}</td>
           <td>
             {{ s.wins }}
@@ -85,10 +97,16 @@
       </tbody>
     </table>
     <details
+      class="default-details"
       close
       v-else-if="variant === 'simulation_averange' && simulationTeamStats"
     >
-      <summary>Teams averange statistics</summary>
+      <summary class="default-summary">
+        <div class="default-summary-content">
+          <span class="default-summary-title">Teams averange statistics.</span>
+          <span class="default-summary-subtitle"> Based on all iterations</span>
+        </div>
+      </summary>
       <table>
         <thead>
           <tr>
@@ -103,7 +121,13 @@
         </thead>
         <tbody>
           <tr v-for="stat in teamStats">
-            <td><TeamCard :id="stat.teamId" :variant="'mini'" :team="GetTeamById(stat.teamId)"/></td>
+            <td>
+              <TeamCard
+                :id="stat.teamId"
+                :variant="'mini'"
+                :team="GetTeamById(stat.teamId)"
+              />
+            </td>
             <td>{{ stat.averangePoints.toFixed(3) }}</td>
             <td>{{ stat.averangeWins.toFixed(3) }}</td>
             <td>{{ stat.averangeLosses.toFixed(3) }}</td>

@@ -5,10 +5,12 @@
       :teams="teams"
       :team-strengths="teamStrengths"
       :league-rounds="leagueRounds"
+      :only-played-matches="onlyPlayedMatches"
     />
   </div>
   <hr />
 </template>
+
 
 <script setup lang="ts">
 import MatchResultItemRound from "./MatchResultItemRound.vue";
@@ -20,33 +22,42 @@ import type { LeagueRound } from "../../models/SportsDataModels/leagueRound";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
 import type { RoundData } from "../../models/Iterations/roundData";
 
+
 defineOptions({ name: "MatchResultItemList" });
+
 
 type Props = {
   simulatedMatchRounds: MatchRound[];
   teams: Team[];
   teamStrengths: TeamStrength[];
   leagueRounds: LeagueRound[];
+  onlyPlayedMatches: boolean;
 };
+
 
 const props = defineProps<Props>();
 const store = useSportsDataStore();
 
+
 const teamStrengths = computed(() => props.teamStrengths);
 const teams = computed(() => props.teams);
 const leagueRounds = computed(() => props.leagueRounds);
+
 
 function getLeagueRoundNumber(roundId: string): number {
   if (!roundId) return 0;
   return leagueRounds.value.find((t) => t.id === roundId)?.round ?? 0;
 }
 
+
 const allRoundsEntries = computed<RoundData[]>(() => {
   const mergedRounds: Record<number, RoundData> = {};
+
 
   for (const match of props.simulatedMatchRounds) {
     if (!match.roundId) continue;
     const roundNum = getLeagueRoundNumber(match.roundId);
+
 
     if (!mergedRounds[roundNum]) {
       mergedRounds[roundNum] = {
@@ -59,32 +70,42 @@ const allRoundsEntries = computed<RoundData[]>(() => {
     mergedRounds[roundNum].simulatedMatches.push(match);
   }
 
+
   const simulatedMatchIds = new Set(
+    
     props.simulatedMatchRounds.map((m) => m.id)
   );
 
+
   if (store.matchRounds) {
     for (const match of store.matchRounds) {
-      if (match.roundId && match.isPlayed && !simulatedMatchIds.has(match.id)) {
-        const roundNum = getLeagueRoundNumber(match.roundId);
+      if (match.roundId && !simulatedMatchIds.has(match.id)) {
+        const shouldIncludeMatch = props.onlyPlayedMatches
+          ? match.isPlayed === true
+          : true;
 
-        if (!mergedRounds[roundNum]) {
-          mergedRounds[roundNum] = {
-            roundNumber: roundNum,
-            roundId: match.roundId,
-            simulatedMatches: [],
-            realMatches: [],
-          };
+        if (shouldIncludeMatch) {
+          const roundNum = getLeagueRoundNumber(match.roundId);
+          if (!mergedRounds[roundNum]) {
+            mergedRounds[roundNum] = {
+              roundNumber: roundNum,
+              roundId: match.roundId,
+              simulatedMatches: [],
+              realMatches: [],
+            };
+          }
+          mergedRounds[roundNum].realMatches.push(match);
         }
-        mergedRounds[roundNum].realMatches.push(match);
       }
     }
   }
+
 
   return Object.values(mergedRounds).sort(
     (a, b) => a.roundNumber - b.roundNumber
   );
 });
+
 
 
 const ensureData = async () => {
@@ -93,9 +114,11 @@ const ensureData = async () => {
   await store.loadMatchRounds(firstRound.leagueId);
 };
 
+
 onMounted(async () => {
   await ensureData();
 });
+
 
 watch(
   () => props.leagueRounds,

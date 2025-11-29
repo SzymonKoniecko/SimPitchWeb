@@ -102,8 +102,6 @@ watch(() => props.variant, ensureData);
     <button v-if="props.toSortOption !== SortingOption.DynamicValue" class="button-third" selenium-id="button-order"
       v-on:click="changeOrder">Toggle {{ orderValue }}</button>
   </div>
-  <hr>
-  </hr>
 </template>
 <style scoped>
 .filter {

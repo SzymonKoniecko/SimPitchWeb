@@ -23,6 +23,7 @@
           :class="{ played: matchRound.isPlayed, draw: matchRound.isDraw }"
         >
           {{ matchRound.isDraw ? "Draw" : "" }}
+          {{ matchRound.isPlayed ? "" : "Upcoming"}}
         </td>
         <td
           rowspan="5"
@@ -43,7 +44,7 @@
         </td>
       </tr>
       <tr>
-        <td class="result-type-cell">
+        <td class="result-type-cell" v-if="matchRound.isPlayed">
           <span v-if="isReal" class="real-result-label" selenium-id="official">
             <i class="icon-check"></i> Official Result
           </span>
