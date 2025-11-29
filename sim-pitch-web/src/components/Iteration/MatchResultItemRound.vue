@@ -1,7 +1,7 @@
 <template>
   <details
     class="match-details"
-    open
+    close
     :id="`round:${roundData.roundNumber}`"
   >
     <summary class="match-summary">

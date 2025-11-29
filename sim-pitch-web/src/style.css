@@ -1,121 +1,140 @@
 @import url("https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css");
 
 :root {
-  --color-bg: #0a0f1c;
-  --color-surface: #141b2d;
-  --color-surface-sections: #151822;
-  --color-grid: #2b3558;
-  --color-pastel-green: #66ffa6;
-  --color-pastel-darkgreen: #1e4e1d;
-  --color-accent-blue: #2979ff;
-  --color-accent-yellow: #ffd54f;
-  --color-accent-orange: #cb9a2e;
-  --color-text-main: #e8edf5;
-  --color-text-secondary: #a0aec0;
-  --color-text-third: #56b9bd;
-  --color-button: #920c0c;
-  --color-hover: #d99f34;
-  --color-home-team: #42a5f5;
-  --color-away-team: #ff7043;
-  --color-goals: #81c784;
-  --color-randomness: #ffb300;
-  --color-border: #d7e9f8;
-  --color-shadow-app: rgba(255, 255, 255, 0.25);
-  --color-shadow-button: rgba(146, 153, 152, 0.4);
-  --color-shadow-button_second: rgba(0, 191, 166, 0.6);
-  --color-shadow-button-third: rgba(0, 0, 0, 0.2);
-  --color-surface-contrast: #1d2436;
-  --color-focus-outline: #66ffe0;
-  --color-error-bg: #2a1b1b;
-  --color-error-border: #e57373;
-  --color-error-text: #ffb4b4;
-  --color-heatmap-max: #ff0048;
+  --color-bg: #050508;
+  --color-surface: #0f1219;
+  --color-surface-sections: #181b24;
+  --color-grid: #2d3446;
+  --color-pastel-green: #00ff9d;
+  --color-pastel-darkgreen: #005c3e;
+  --color-accent-green: #a9f1d6;
+  --color-accent-blue: #3b82f6;
+  --color-accent-yellow: #fbbf24;
+  --color-accent-orange: #f59e0b;
+  --color-text-main: #f3f4f6;
+  --color-text-secondary: #9ca3af;
+  --color-text-third: #67e8f9;
+  --color-button: #ec4899;
+  --color-hover: #db2777;
+  --color-home-team: #60a5fa;
+  --color-away-team: #f87171;
+  --color-goals: #34d399;
+  --color-randomness: #fbbf24;
+  --color-border: #374151;
+  --color-shadow-app: rgba(0, 0, 0, 0.6);
+  --color-shadow-button: rgba(236, 72, 153, 0.3);
+  --color-shadow-button_second: rgba(236, 72, 153, 0.5);
+  --color-shadow-button-third: rgba(0, 0, 0, 0.4);
+  --color-surface-contrast: #1f2937;
+  --color-focus-outline: #d946ef;
+  --color-error-bg: #450a0a;
+  --color-error-border: #991b1b;
+  --color-error-text: #fca5a5;
+  --color-heatmap-max: #ef4444;
   --color-button-primary: var(--color-button);
   --color-button-primary-hover: var(--color-hover);
   --color-button-secondary-bg: var(--color-surface-sections);
   --color-button-secondary-border: var(--color-grid);
   --color-button-secondary-hover-bg: var(--color-surface-contrast);
-  --color-button-tertiary-bg: var(--color-accent-orange);
-  --color-button-tertiary-hover-bg: var(--color-pastel-green);
-  --color-button-quaternary-bg: var(--color-accent-blue);
-  --color-button-quaternary-hover-bg: var(--color-pastel-darkgreen);
+  --color-button-third-bg: var(--color-accent-orange);
+  --color-button-third-hover-bg: #d97706;
+  --color-button-fourth-bg: var(--color-accent-blue);
+  --color-button-fourth-hover-bg: #2563eb;
   --color-button-text: #ffffff;
-  --color-button-disabled: rgba(255, 255, 255, 0.4);
-  --teamcard-overlay: rgba(0, 0, 0, 0.55);
+  --color-button-disabled: rgba(255, 255, 255, 0.2);
+  --teamcard-overlay: rgba(0, 0, 0, 0.7);
   --teamcard-text: #fff;
   --teamcard-outline: #000;
-  --chart-bg: #141b2d;
-  --chart-border: #2b3558;
-  --chart-header-bg: #1a2035;
-  --chart-header-hover: #20263a;
-  --match-bg: #0a0f1c;
-  --match-border: #2b3558;
-  --match-header-bg: #111625;
-  --match-header-hover: #1a2035;
-  --match-accent: #2979ff;
-  --default-border: #2b3558;
-  --default-hover: rgba(255, 255, 255, 0.05);
+  --chart-bg: #0f1219;
+  --chart-border: #2d3446;
+  --chart-header-bg: #181b24;
+  --chart-header-hover: #1f2937;
+  --match-bg: #050508;
+  --match-border: #2d3446;
+  --match-header-bg: #11141d;
+  --match-header-hover: #181b24;
+  --match-accent: #ec4899;
+  --default-border: #2d3446;
+  --default-hover: rgba(255, 255, 255, 0.03);
 }
-
 @media (prefers-color-scheme: light) {
   :root {
-    --color-bg: #f4f7fb;
+    --color-bg: #f0f9ff;
     --color-surface: #ffffff;
-    --color-surface-sections: #f0f3f9;
-    --color-grid: #d6deeb;
-    --color-accent-orange: #00c853;
-    --color-pastel-green: #80e27e;
-    --color-pastel-darkgreen: #1e4e1d;
-    --color-accent-blue: #2962ff;
-    --color-accent-yellow: #ffb300;
-    --color-accent-orange: #e38e25;
-    --color-text-main: #1a1f2c;
-    --color-text-secondary: #5a6b87;
-    --color-text-third: #07b8c5;
-    --color-button: #121414;
-    --color-hover: #00796b;
-    --color-home-team: #1976d2;
-    --color-away-team: #e64a19;
-    --color-goals: #43a047;
-    --color-randomness: #fbc02d;
-    --color-border: #b0bec5;
-    --color-shadow-app: rgba(0, 0, 0, 0.25);
-    --color-shadow-button: rgba(0, 191, 166, 0.3);
-    --color-shadow-button_second: rgba(0, 191, 166, 0.45);
-    --color-shadow-button-third: rgba(0, 0, 0, 0.15);
+    --color-surface-sections: #e0f2fe;
+    --color-grid: #bae6fd;
+
+    --color-pastel-green: #6ee7b7;
+    --color-pastel-darkgreen: #065f46;
+    --color-accent-green: #10b981;
+    --color-accent-blue: #0ea5e9;
+    --color-accent-yellow: #fde047;
+    --color-accent-orange: #f97316;
+
+    --color-text-main: #0c4a6e;
+    --color-text-secondary: #475569;
+    --color-text-third: #0284c7;
+
+    --color-button: #0284c7;
+    --color-hover: #0369a1;
+
+    --color-home-team: #2563eb;
+    --color-away-team: #ea580c;
+    --color-goals: #16a34a;
+    --color-randomness: #eab308;
+
+    --color-border: #bae6fd;
+    --color-shadow-app: rgba(2, 132, 199, 0.08);
+    --color-shadow-button: rgba(2, 132, 199, 0.25);
+    --color-shadow-button_second: rgba(2, 132, 199, 0.4);
+    --color-shadow-button-third: rgba(0, 0, 0, 0.1);
     --color-surface-contrast: #ffffff;
-    --color-focus-outline: #00bfa6;
-    --color-error-bg: #fff1f1;
-    --color-error-border: #e57373;
-    --color-error-text: #b71c1c;
-    --color-heatmap-max: #e64a19;
+    --color-focus-outline: #38bdf8;
+
+    --color-error-bg: #fef2f2;
+    --color-error-border: #fca5a5;
+    --color-error-text: #b91c1c;
+
+    --color-heatmap-max: #dc2626;
+
     --color-button-primary: var(--color-button);
     --color-button-primary-hover: var(--color-hover);
-    --color-button-secondary-bg: var(--color-surface-sections);
+
+    --color-button-secondary-bg: #ffffff;
     --color-button-secondary-border: var(--color-grid);
-    --color-button-secondary-hover-bg: #e3e8f1;
-    --color-button-tertiary-bg: var(--color-accent-orange);
-    --color-button-tertiary-hover-bg: var(--color-pastel-green);
-    --color-button-quaternary-bg: var(--color-accent-blue);
-    --color-button-quaternary-hover-bg: #5c8aff;
+    --color-button-secondary-hover-bg: #f0f9ff;
+
+    --color-button-third-bg: #f97316;
+    --color-button-third-hover-bg: #c2410c;
+
+    --color-button-fourth-bg: #0d9488;
+    --color-button-fourth-hover-bg: #0f766e;
+
     --color-button-text: #ffffff;
-    --color-button-disabled: rgba(0, 0, 0, 0.3);
-    --teamcard-overlay: rgba(255, 255, 255, 0.55);
-    --teamcard-text: #000;
-    --teamcard-outline: #fff;
+    --color-button-disabled: rgba(12, 74, 110, 0.3);
+
+    --teamcard-overlay: rgba(255, 255, 255, 0.85);
+    --teamcard-text: #0c4a6e;
+    --teamcard-outline: #ffffff;
+
     --chart-bg: #ffffff;
-    --chart-border: #d6deeb;
-    --chart-header-bg: #f0f3f9;
-    --chart-header-hover: #e3e8f1;
+    --chart-border: #bae6fd;
+    --chart-header-bg: #f0f9ff;
+    --chart-header-hover: #e0f2fe;
+
     --match-bg: #ffffff;
-    --match-border: #d6deeb;
-    --match-header-bg: #f8fafc;
-    --match-header-hover: #f1f5f9;
-    --match-accent: #2962ff;
-    --default-border: #d6deeb;
-    --default-hover: rgba(0, 0, 0, 0.05);
+    --match-border: #bae6fd;
+    --match-header-bg: #f0f9ff;
+    --match-header-hover: #e0f2fe;
+    --match-accent: #0284c7;
+
+    --default-border: #bae6fd;
+    --default-hover: rgba(2, 132, 199, 0.05);
   }
 }
+
+
+
 
 html,
 body {
@@ -198,7 +217,7 @@ a:hover {
   background: linear-gradient(135deg,
       var(--color-accent-orange) 0%,
       var(--color-button-primary-hover) 100%);
-  box-shadow: 0 6px 16px var(--color-shadow-button_second);
+  box-shadow: 0 6px 16px var(--color-shadow-button-second);
   transform: translateY(-2px);
 }
 
@@ -215,14 +234,14 @@ a:hover {
 .button-primary {
   background: linear-gradient(135deg,
       var(--color-button-primary),
-      var(--color-accent-orange));
+      var(--color-accent-primary));
   color: var(--color-button-text);
   border-color: var(--color-accent-orange);
 }
 
 .button-primary:hover {
   background: linear-gradient(135deg,
-      var(--color-accent-orange),
+      var(--color-button-primary-bg),
       var(--color-button-primary-hover));
 }
 
@@ -230,30 +249,29 @@ a:hover {
   background: var(--color-button-secondary-bg);
   color: var(--color-text-secondary);
   border: 1px solid var(--color-button-secondary-border);
-  box-shadow: 0 2px 6px var(--color-shadow-button-third);
+  box-shadow: 0 2px 6px var(--color-shadow-button-second);
 }
 
 .button-secondary:hover {
   background: var(--color-button-secondary-hover-bg);
   color: var(--color-text-main);
 }
-
-.button-tertiary {
-  background-color: var(--color-button-tertiary-bg);
+.button-third {
+  background-color: var(--color-button-third-bg);
   color: var(--color-button-text);
 }
 
-.button-tertiary:hover {
-  background-color: var(--color-button-tertiary-hover-bg);
+.button-third:hover {
+  background-color: var(--color-button-third-hover-bg);
 }
 
-.button-quaternary {
-  background-color: var(--color-button-quaternary-bg);
+.button-fourth {
+  background-color: var(--color-button-fourth-bg);
   color: var(--color-button-text);
 }
 
-.button-quaternary:hover {
-  background-color: var(--color-button-quaternary-hover-bg);
+.button-fourth:hover {
+  background-color: var(--color-button-fourth-hover-bg);
 }
 
 .button::after {
