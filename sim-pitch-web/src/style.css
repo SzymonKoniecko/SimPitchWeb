@@ -23,7 +23,7 @@
   --color-border: #374151;
   --color-shadow-app: rgba(0, 0, 0, 0.6);
   --color-shadow-button: rgba(236, 72, 153, 0.3);
-  --color-shadow-button_second: rgba(236, 72, 153, 0.5);
+  --color-shadow-button-second: rgba(236, 72, 153, 0.5);
   --color-shadow-button-third: rgba(0, 0, 0, 0.4);
   --color-surface-contrast: #1f2937;
   --color-focus-outline: #d946ef;
@@ -57,84 +57,66 @@
   --default-border: #2d3446;
   --default-hover: rgba(255, 255, 255, 0.03);
 }
+
 @media (prefers-color-scheme: light) {
   :root {
     --color-bg: #f0f9ff;
     --color-surface: #ffffff;
     --color-surface-sections: #e0f2fe;
     --color-grid: #bae6fd;
-
     --color-pastel-green: #6ee7b7;
     --color-pastel-darkgreen: #065f46;
     --color-accent-green: #10b981;
     --color-accent-blue: #0ea5e9;
     --color-accent-yellow: #fde047;
     --color-accent-orange: #f97316;
-
     --color-text-main: #0c4a6e;
     --color-text-secondary: #475569;
     --color-text-third: #0284c7;
-
     --color-button: #0284c7;
     --color-hover: #0369a1;
-
     --color-home-team: #2563eb;
     --color-away-team: #ea580c;
     --color-goals: #16a34a;
     --color-randomness: #eab308;
-
     --color-border: #bae6fd;
     --color-shadow-app: rgba(2, 132, 199, 0.08);
     --color-shadow-button: rgba(2, 132, 199, 0.25);
-    --color-shadow-button_second: rgba(2, 132, 199, 0.4);
+    --color-shadow-button-second: rgba(2, 132, 199, 0.4);
     --color-shadow-button-third: rgba(0, 0, 0, 0.1);
     --color-surface-contrast: #ffffff;
     --color-focus-outline: #38bdf8;
-
     --color-error-bg: #fef2f2;
     --color-error-border: #fca5a5;
     --color-error-text: #b91c1c;
-
     --color-heatmap-max: #dc2626;
-
     --color-button-primary: var(--color-button);
     --color-button-primary-hover: var(--color-hover);
-
     --color-button-secondary-bg: #ffffff;
     --color-button-secondary-border: var(--color-grid);
     --color-button-secondary-hover-bg: #f0f9ff;
-
     --color-button-third-bg: #f97316;
     --color-button-third-hover-bg: #c2410c;
-
     --color-button-fourth-bg: #0d9488;
     --color-button-fourth-hover-bg: #0f766e;
-
     --color-button-text: #ffffff;
     --color-button-disabled: rgba(12, 74, 110, 0.3);
-
     --teamcard-overlay: rgba(255, 255, 255, 0.85);
     --teamcard-text: #0c4a6e;
     --teamcard-outline: #ffffff;
-
     --chart-bg: #ffffff;
     --chart-border: #bae6fd;
     --chart-header-bg: #f0f9ff;
     --chart-header-hover: #e0f2fe;
-
     --match-bg: #ffffff;
     --match-border: #bae6fd;
     --match-header-bg: #f0f9ff;
     --match-header-hover: #e0f2fe;
     --match-accent: #0284c7;
-
     --default-border: #bae6fd;
     --default-hover: rgba(2, 132, 199, 0.05);
   }
 }
-
-
-
 
 html,
 body {
@@ -234,44 +216,43 @@ a:hover {
 .button-primary {
   background: linear-gradient(135deg,
       var(--color-button-primary),
-      var(--color-accent-primary));
-  color: var(--color-button-text);
+      var(--color-accent-orange));
   border-color: var(--color-accent-orange);
-}
-
-.button-primary:hover {
-  background: linear-gradient(135deg,
-      var(--color-button-primary-bg),
-      var(--color-button-primary-hover));
 }
 
 .button-secondary {
   background: var(--color-button-secondary-bg);
   color: var(--color-text-secondary);
   border: 1px solid var(--color-button-secondary-border);
-  box-shadow: 0 2px 6px var(--color-shadow-button-second);
+  box-shadow: 0 2px 6px var(--color-shadow-button-third);
 }
 
 .button-secondary:hover {
   background: var(--color-button-secondary-hover-bg);
   color: var(--color-text-main);
+  box-shadow: 0 4px 8px var(--color-shadow-button-third);
 }
+
 .button-third {
-  background-color: var(--color-button-third-bg);
+  background: var(--color-button-third-bg);
   color: var(--color-button-text);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .button-third:hover {
-  background-color: var(--color-button-third-hover-bg);
+  background: var(--color-button-third-hover-bg);
+  transform: translateY(-2px);
 }
 
 .button-fourth {
-  background-color: var(--color-button-fourth-bg);
+  background: var(--color-button-fourth-bg);
   color: var(--color-button-text);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .button-fourth:hover {
-  background-color: var(--color-button-fourth-hover-bg);
+  background: var(--color-button-fourth-hover-bg);
+  transform: translateY(-2px);
 }
 
 .button::after {
@@ -330,6 +311,7 @@ button:disabled,
 }
 
 .endpoint-error,
+.validation-error,
 [role="alert"] {
   background-color: var(--color-error-bg);
   border: 1px solid var(--color-error-border);
@@ -344,16 +326,6 @@ button:disabled,
 [role="alert"]::before {
   content: "⚠️";
   margin-right: 0.5rem;
-}
-
-.validation-error {
-  background-color: var(--color-error-bg);
-  border: 1px solid var(--color-error-border);
-  color: var(--color-error-text);
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  margin-block: 0.75rem;
-  box-shadow: 0 2px 6px rgba(229, 115, 115, 0.25);
 }
 
 .validation-error ul {
@@ -403,7 +375,8 @@ details {
   width: 100%;
 }
 
-summary {
+details>summary {
+  list-style: none !important;
   text-align: center;
   font-size: 1rem;
   font-weight: 600;
@@ -411,15 +384,11 @@ summary {
   margin-bottom: 0.001%;
 }
 
-details > summary {
-  list-style: none !important;
-}
-
-details > summary::-webkit-details-marker {
+details>summary::-webkit-details-marker {
   display: none !important;
 }
 
-details > summary::after {
+details>summary::after {
   display: none !important;
   background: none !important;
   content: none !important;
@@ -484,11 +453,18 @@ td:hover {
   cursor: pointer;
   padding: 1rem;
   background-color: var(--chart-header-bg);
-  border-bottom: 1px solid var(--chart-border);
+  border-bottom: 1px solid transparent;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: background-color 0.2s ease;
+  list-style: none;
+}
+
+.chart-details[open] .chart-summary {
+  border-bottom: 1px solid var(--chart-border);
 }
 
 .chart-summary:hover {
@@ -534,6 +510,9 @@ td:hover {
 .chart-wrapper {
   padding: 1rem;
   min-height: 350px;
+  background-color: var(--chart-bg);
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 }
 
 .match-details {
@@ -556,13 +535,11 @@ td:hover {
   position: sticky !important;
   top: 0 !important;
   z-index: 100;
-
   background-color: var(--match-header-bg);
   padding: 1rem 1.5rem;
   cursor: pointer;
   border-bottom: 1px solid transparent;
   transition: background-color 0.2s, border-color 0.2s;
-
   border-top-left-radius: 7px;
   border-top-right-radius: 7px;
   border-bottom-left-radius: 7px;
@@ -676,4 +653,10 @@ td:hover {
 
 .default-details[open] .default-summary-content::before {
   transform: rotate(45deg);
+}
+
+@media (max-width: 768px) {
+  .chart-wrapper {
+    padding: 1rem;
+  }
 }
