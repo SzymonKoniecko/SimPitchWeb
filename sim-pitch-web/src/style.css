@@ -483,12 +483,16 @@ td:hover {
   font-weight: bold;
   font-size: 1.125rem;
   color: var(--color-text-main);
+  flex: 0 0 auto;
 }
 
 .chart-summary-subtitle {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
   font-weight: normal;
+  margin-left: auto;
+  margin-right: 1rem;
+  text-align: right;
 }
 
 .chart-summary-content::after {
@@ -558,7 +562,6 @@ td:hover {
 .match-summary:hover {
   background-color: var(--match-header-hover);
 }
-
 .match-summary-content {
   display: flex;
   justify-content: space-between;
@@ -570,12 +573,15 @@ td:hover {
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--color-text-main);
+  flex: 0 0 auto;
 }
 
 .match-summary-subtitle {
   font-size: 0.9rem;
   color: var(--color-text-secondary);
-  margin-right: 0.5rem;
+  margin-left: auto;
+  margin-right: 1rem;
+  text-align: right;
 }
 
 .match-summary-content::after {
@@ -587,8 +593,10 @@ td:hover {
   border-bottom: 2px solid var(--color-text-secondary);
   transform: rotate(45deg);
   transition: transform 0.3s ease;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
 }
+
 
 .match-details[open] .match-summary-content::after {
   transform: rotate(225deg);
@@ -632,12 +640,16 @@ td:hover {
   font-weight: 600;
   font-size: 1rem;
   color: var(--color-text-main);
+  flex: 0 0 auto;
 }
 
 .default-summary-subtitle {
   font-size: 0.8rem;
   color: var(--color-text-secondary);
   font-style: italic;
+  margin-left: auto;
+  margin-right: 1rem;
+  text-align: right;
 }
 
 .default-summary-content::before {

@@ -98,6 +98,7 @@
       :teams="teams"
       :team-strengths="iterationResultState.data?.teamStrengths"
       :league-rounds="leagueRounds"
+      :onlyPlayedMatches="true"
     />
   </section>
 </template>

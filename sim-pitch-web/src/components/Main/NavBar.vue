@@ -1,21 +1,56 @@
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <header class="navbar">
     <router-link to="/" exact-active-class="active">
       <div class="logo">⚽ SimPitch</div>
     </router-link>
-    
 
     <nav class="nav-links">
-      <div class="link"><router-link to="/" exact-active-class="active" selenium-id="home-nav">Home</router-link></div> <hr/>
-      <div class="link"><router-link to="/prepareSimulation" exact-active-class="active" selenium-id="prepareSimulation-nav">
-        Prepare a new simulation
-      </router-link></div> <hr/>
-      <div class="link"><router-link to="/simulation" exact-active-class="active" selenium-id="simulations-nav">All simulations</router-link></div> <hr/>
-      <div class="link"><router-link to="/about" exact-active-class="active" selenium-id="about-nav">About</router-link> </div><hr/>
+      <div class="link">
+        <router-link to="/" exact-active-class="active" selenium-id="home-nav"
+          >Home</router-link
+        >
+      </div>
+      <hr />
+      <div class="link">
+        <router-link
+          to="/prepareSimulation"
+          exact-active-class="active"
+          selenium-id="prepareSimulation-nav"
+        >
+          Prepare a new simulation
+        </router-link>
+      </div>
+      <hr />
+      <div class="link">
+        <router-link
+          to="/simulation"
+          exact-active-class="active"
+          selenium-id="simulations-nav"
+          >All simulations</router-link
+        >
+      </div>
+      <hr />
+      <div class="link">
+        <router-link
+          to="/league"
+          exact-active-class="active"
+          selenium-id="all-matches-nav"
+          >Matches and results</router-link
+        >
+      </div>
+      <hr />
+
+      <div class="link">
+        <router-link
+          to="/about"
+          exact-active-class="active"
+          selenium-id="about-nav"
+          >About</router-link
+        >
+      </div>
+      <hr />
     </nav>
   </header>
 </template>
@@ -75,7 +110,11 @@
 }
 
 .nav-links .btn-primary {
-  background: linear-gradient(135deg, var(--color-button), var(--color-accent-blue));
+  background: linear-gradient(
+    135deg,
+    var(--color-button),
+    var(--color-accent-blue)
+  );
   color: #fff !important;
   padding: 0.6rem 1.2rem;
   border-radius: 30px;
@@ -85,7 +124,11 @@
   border: none;
 }
 .nav-links .btn-primary:hover {
-  background: linear-gradient(135deg, var(--color-accent-blue), var(--color-button));
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-blue),
+    var(--color-button)
+  );
   box-shadow: 0 6px 16px rgba(0, 191, 166, 0.6);
   transform: translateY(-2px);
 }
