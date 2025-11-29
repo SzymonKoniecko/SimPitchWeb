@@ -61,14 +61,17 @@
         :error="scoreboardState.error"
       />
       <ScoreboardItem
+        v-if="scoreboardState.data && !scoreboardState.loading"
         variant="complete_details"
         :teams="teams"
         :scoreboard="scoreboardState.data"
         :simulation-team-stats="null"
       />
     </div>
-    <div v-if="leagueRounds[0]?.leagueId === selectedleague && selectedSeason">
+    <div v-if="selectedSeason === CURRENT_SEASON && selectedleague">
+      <div v-if="store.loading" class="info">Loading rounds...</div>
       <MatchResultItemList
+        v-else
         :simulated-match-rounds="[]"
         :teams="teams"
         :team-strengths="[]"
@@ -91,6 +94,7 @@ import MatchResultItemList from "./MatchResultItemList.vue";
 import { fetchData, type ApiState } from "../../api/fetchData";
 import type { Scoreboard } from "../../models/Scoreboards/scoreboard";
 import { engineAPI } from "../../api/engine.api";
+import ScoreboardItem from "../Iteration/ScoreboardItem.vue";
 
 const store = useSportsDataStore();
 const loading = computed(() => store.loading);
@@ -104,11 +108,14 @@ const leagueRounds = computed(() =>
   store.leagueRounds.filter((x) => x.leagueId === selectedleague.value)
 );
 const scoreboardState = ref<ApiState<Scoreboard>>({
-  loading: true,
+  loading: false,
   error: null,
   data: null,
 });
 const loadScoreboard = async () => {
+  if (!selectedleague.value || !selectedSeason.value) return;
+
+  scoreboardState.value.loading = true;
   scoreboardState.value = await fetchData<Scoreboard>(() =>
     engineAPI.ScoreboardController.getScoreboardByLeagueIdAndSeasonYear(
       selectedleague.value,
@@ -117,26 +124,27 @@ const loadScoreboard = async () => {
   );
 };
 
-const ensureData = async () => {
+onMounted(async () => {
   if (!leagues.value || leagues.value.length === 0) {
     await store.loadLeagues();
   }
   if (!teams.value || teams.value.length === 0) {
     await store.loadTeams();
   }
-  if (selectedleague.value && selectedSeason.value !== CURRENT_SEASON) {
-    await loadScoreboard();
-  } else {
-    await store.loadLeagueRounds(selectedSeason.value, selectedleague.value);
-  }
-};
-
-onMounted(async () => {
-  await ensureData();
+  // Usunięto automatyczne ustawianie selectedleague[0]
 });
 
-watch([selectedleague, selectedSeason], async () => {
-  await ensureData();
+watch([selectedleague, selectedSeason], async ([newLeague, newSeason]) => {
+  scoreboardState.value.data = null;
+  scoreboardState.value.error = null;
+
+  if (!newLeague || !newSeason) return;
+
+  if (newSeason !== CURRENT_SEASON) {
+    await loadScoreboard();
+  } else {
+    await store.loadLeagueRounds(newSeason, newLeague);
+  }
 });
 </script>
 
@@ -203,8 +211,7 @@ watch([selectedleague, selectedSeason], async () => {
   border-radius: 6px;
   margin: 1rem 0;
   font-size: 0.95rem;
-  display: flex;
-  align-items: center;
+  display: block;
   gap: 0.75rem;
   transition: all 0.2s ease;
 }
