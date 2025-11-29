@@ -9,7 +9,7 @@
       </summary>
 
       <div class="chart-wrapper">
-        <div class="legend-tabs">
+        <div class="button-list">
           <button
             v-for="tab in tabs"
             :key="tab.id"
@@ -330,15 +330,15 @@
                   Best teams
                 </li>
                 <li>
-                  <strong>Top-Left (Murarze):</strong> Low attack + Low conceded =
+                  <strong>Top-Left (Like a wall):</strong> Low attack + Low conceded =
                   Defensive specialists
                 </li>
                 <li>
-                  <strong>Bottom-Right (Szaleńcy):</strong> High attack + High conceded =
+                  <strong>Bottom-Right (Mad team):</strong> High attack + High conceded =
                   Attacking chaos
                 </li>
                 <li>
-                  <strong>Bottom-Left (Słabeusze):</strong> Low attack + High conceded =
+                  <strong>Bottom-Left (Very low):</strong> Low attack + High conceded =
                   Struggling teams
                 </li>
               </ul>
@@ -485,28 +485,25 @@ const tabs = [
 <style scoped>
 .legend-section {
   width: 100%;
-  /* Używa zmiennych globalnych */
   background-color: transparent;
   padding: 0;
   color: var(--color-text-main);
   margin-bottom: 1rem;
 }
 
-/* Stylizacja dziedzicząca z globalnego .chart-details */
 .chart-details {
   background-color: var(--chart-bg);
   border: 1px solid var(--chart-border);
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px var(--color-shadow-app);
-  margin-bottom: 0; /* W sekcji legendy nie chcemy marginesu */
+  margin-bottom: 0;
 }
 
-/* Stylizacja nagłówka */
 .chart-summary {
   cursor: pointer;
   padding: 1rem;
   background-color: var(--chart-header-bg);
-  border-bottom: 1px solid transparent; /* Domyślnie przezroczysty */
+  border-bottom: 1px solid transparent;
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
   display: flex;
@@ -542,7 +539,6 @@ const tabs = [
   font-weight: normal;
 }
 
-/* Customowa strzałka (zgodna z CSS globalnym) */
 .chart-summary-content::after {
   content: "";
   display: block;
@@ -598,12 +594,11 @@ const tabs = [
 
 .tab-button.active {
   background-color: var(--color-button-primary);
-  color: #ffffff; /* Zawsze biały na aktywnym przycisku */
+  color: #ffffff;
   border-color: var(--color-button-primary);
   box-shadow: 0 2px 6px var(--color-shadow-button);
 }
 
-/* Tab Content Animation */
 .tab-content {
   animation: fadeIn 0.3s ease-in;
 }
@@ -620,7 +615,7 @@ const tabs = [
 }
 
 .tab-content h3 {
-  color: var(--color-accent-blue); /* Zgodne z motywem Summer Sky/Deep Cyber */
+  color: var(--color-accent-blue);
   margin-bottom: 1.5rem;
   font-size: 1.4rem;
 }
@@ -643,7 +638,7 @@ const tabs = [
 .param-card:hover {
   background-color: var(--color-surface);
   border-color: var(--color-accent-blue);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); /* Accent blue shadow */
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
   transform: translateY(-2px);
 }
 
@@ -666,7 +661,7 @@ const tabs = [
 
 .param-card code {
   background-color: var(--color-grid);
-  color: var(--color-accent-green); /* Kontrastowy kolor dla kodu */
+  color: var(--color-accent-green);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-family: "Courier New", monospace;
@@ -692,8 +687,7 @@ const tabs = [
 .chart-quadrants li {
   padding: 0.5rem 0.8rem;
   margin: 0.6rem 0;
-  background-color: var(--color-bg); /* Tło aplikacji dla kontrastu */
-  border-radius: 4px;
+  background-color: var(--color-bg);
   border-left: 3px solid var(--color-accent-blue);
   color: var(--color-text-secondary);
 }
@@ -712,7 +706,7 @@ const tabs = [
   padding: 1rem;
   transition: transform 0.2s ease;
   border: 1px solid var(--color-grid);
-  border-left-width: 4px; /* Zachowujemy grubszy lewy border */
+  border-left-width: 4px;
 }
 
 .glossary-item:hover {
