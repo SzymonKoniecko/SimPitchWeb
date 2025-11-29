@@ -50,12 +50,12 @@
         <li selenium-id="league-round">
           <p>
             <strong
-              >Simulation started by round of
-              {{
+              >Simulation started by <i>{{
                 getLeagueRoundNameById(
                   simulationOverviewState.data?.simulationParams.leagueRoundId
                 )
-              }}</strong
+              }}</i>
+              </strong
             >
           </p>
         </li>
@@ -135,7 +135,7 @@ import { useSportsDataStore } from "../../stores/SportsDataStore";
 import { engineAPI } from "../../api/engine.api";
 import ScoreboardItem from "./ScoreboardItem.vue";
 import type { IterationResult } from "../../models/Iterations/iterationResult";
-import MatchResultItemList from "./MatchResultItemList.vue";
+import MatchResultItemList from "../LeagueOverview/MatchResultItemList.vue";
 import { useRoute } from "vue-router";
 import type { SimulationTeamStats } from "../../models/Simulations/simulationTeamStats";
 import CustomScatterPlot from "../Diagrams/CustomScatterPlot.vue";
@@ -143,6 +143,7 @@ import TeamFormChart from "../Diagrams/TeamFormChart.vue";
 import LegendInfo from "../Other/LegendInfo.vue";
 import { CURRENT_SEASON } from "../../models/Consts/seasonYear";
 import type { SimulationOverview } from "../../models/Simulations/simulationOverview";
+import { MapNumberToText } from "../../models/Consts/textHelper";
 defineOptions({ name: "IterationItem" });
 type Props = {
   id: string; // iteration_id
@@ -205,8 +206,13 @@ const leagueId = computed(
   () => simulationOverviewState.value.data?.simulationParams.leagueId
 );
 const getLeagueRoundNameById = (id?: string) => {
-  if (id === undefined || id === null) return `last not played matches`;
-  return store.leagueRounds.find((x) => x.id === id)?.round;
+  if (id === undefined || id === null) return `UNKNOWN`;
+  if (id === "00000000-0000-0000-0000-000000000000")
+    return "last not played matches";
+  const foundRound = store.leagueRounds.find((x) => x.id === id)?.round;
+  if (foundRound === undefined || foundRound === null)
+    return `last not played matches`;
+  return MapNumberToText(foundRound) + " round.";
 };
 const ensureData = async () => {
   if (!props.simulation_id || !props.id) return;
