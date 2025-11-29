@@ -57,9 +57,7 @@ class EngineAPI {
       );
       return data;
     }
-    async getSimulationOverview(
-      id: string
-    ) {
+    async getSimulationOverview(id: string) {
       const { data } = await apiClient.get(
         `${SimulationController.PrefixUrl}/overview/${id}`
       );
@@ -112,6 +110,18 @@ class EngineAPI {
       if (iterationResultId != null) {
         url += `&iterationResultId=${iterationResultId}`;
       }
+      const { data } = await apiClient.get(url);
+      return data;
+    }
+    async getScoreboardByLeagueIdAndSeasonYear(
+      leagueId: string,
+      seasonYear: string
+    ) {
+      const url = `${
+        ScoreboardController.PrefixUrl
+      }/seasons/${encodeURIComponent(
+        seasonYear.replace("/", "_")
+      )}/leagues/${encodeURIComponent(leagueId)}/scoreboard`;
       const { data } = await apiClient.get(url);
       return data;
     }

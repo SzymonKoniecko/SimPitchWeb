@@ -47,8 +47,25 @@
         </option>
       </select>
     </div>
-    <div v-if="selectedSeason && selectedSeason !== CURRENT_SEASON" class="info-notice">
-      ℹ️ These matches have already been played. Only final season stats are available.
+    <div
+      v-if="selectedSeason && selectedSeason !== CURRENT_SEASON"
+      class="info-notice"
+    >
+      ℹ️ These matches have already been played. Only final season stats are
+      available.
+      <div v-if="scoreboardState.loading" class="info">
+        Loading scoreboard..., please wait…
+      </div>
+      <ErrorEndpoint
+        v-else-if="scoreboardState.error"
+        :error="scoreboardState.error"
+      />
+      <ScoreboardItem
+        variant="complete_details"
+        :teams="teams"
+        :scoreboard="scoreboardState.data"
+        :simulation-team-stats="null"
+      />
     </div>
     <div v-if="leagueRounds[0]?.leagueId === selectedleague && selectedSeason">
       <MatchResultItemList
@@ -71,12 +88,13 @@ import {
 } from "../../models/Consts/seasonYear";
 import ErrorEndpoint from "../Other/ErrorEndpoint.vue";
 import MatchResultItemList from "./MatchResultItemList.vue";
-
+import { fetchData, type ApiState } from "../../api/fetchData";
+import type { Scoreboard } from "../../models/Scoreboards/scoreboard";
+import { engineAPI } from "../../api/engine.api";
 
 const store = useSportsDataStore();
 const loading = computed(() => store.loading);
 const error = computed(() => store.error);
-
 
 const teams = computed(() => store.teams);
 const leagues = computed(() => store.leagues);
@@ -85,7 +103,19 @@ const selectedSeason = ref<string>(CURRENT_SEASON);
 const leagueRounds = computed(() =>
   store.leagueRounds.filter((x) => x.leagueId === selectedleague.value)
 );
-
+const scoreboardState = ref<ApiState<Scoreboard>>({
+  loading: true,
+  error: null,
+  data: null,
+});
+const loadScoreboard = async () => {
+  scoreboardState.value = await fetchData<Scoreboard>(() =>
+    engineAPI.ScoreboardController.getScoreboardByLeagueIdAndSeasonYear(
+      selectedleague.value,
+      selectedSeason.value
+    )
+  );
+};
 
 const ensureData = async () => {
   if (!leagues.value || leagues.value.length === 0) {
@@ -95,18 +125,15 @@ const ensureData = async () => {
     await store.loadTeams();
   }
   if (selectedleague.value && selectedSeason.value !== CURRENT_SEASON) {
-    await store.loadLeagueRounds(selectedSeason.value, selectedleague.value);
-  }
-  else {
+    await loadScoreboard();
+  } else {
     await store.loadLeagueRounds(selectedSeason.value, selectedleague.value);
   }
 };
 
-
 onMounted(async () => {
   await ensureData();
 });
-
 
 watch([selectedleague, selectedSeason], async () => {
   await ensureData();
@@ -164,9 +191,11 @@ watch([selectedleague, selectedSeason], async () => {
 }
 
 .info-notice {
-  background: linear-gradient(135deg, 
-    var(--color-surface-sections) 0%, 
-    var(--color-surface) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-surface-sections) 0%,
+    var(--color-surface) 100%
+  );
   border: 1px solid var(--color-grid);
   border-left: 4px solid var(--color-accent-yellow);
   color: var(--color-text-secondary);
@@ -182,9 +211,11 @@ watch([selectedleague, selectedSeason], async () => {
 
 .info-notice:hover {
   border-color: var(--color-accent-yellow);
-  background: linear-gradient(135deg, 
-    var(--color-surface) 0%, 
-    var(--color-surface-sections) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-surface) 0%,
+    var(--color-surface-sections) 100%
+  );
   box-shadow: 0 2px 8px rgba(251, 191, 36, 0.1);
 }
 
