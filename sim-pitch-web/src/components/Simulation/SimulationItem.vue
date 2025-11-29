@@ -17,9 +17,11 @@ import HeatMap from "../Diagrams/HeatMap.vue";
 import { CURRENT_SEASON } from "../../models/Consts/seasonYear";
 import { MapNumberToText } from "../../models/Consts/textHelper";
 
+
 defineOptions({ name: "SimulationItem" });
 type Props = { id: string };
 const props = defineProps<Props>();
+
 
 const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
@@ -27,6 +29,7 @@ const teams = computed(() => store.teams);
 const leagueRounds = computed(() => store.leagueRounds);
 const presentedTeams = ref<Team[]>([]);
 const filterValue = ref("Any");
+
 
 const simulationState = ref<ApiState<Simulation>>({
   loading: true,
@@ -39,12 +42,14 @@ const simulationTeamStatsState = ref<ApiState<SimulationTeamStats[]>>({
   data: null,
 });
 
+
 const sortOption = ref("CreatedDate");
 const order = ref<"Descending" | "Ascending">("Descending");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const scroll = ref<HTMLElement | null>(null)
 const winnersData = ref("Not loaded");
+
 
 const totalCount = computed(
   () => simulationState.value.data?.iterationPreviews?.totalCount ?? 0
@@ -53,15 +58,18 @@ const totalPages = computed(
   () => simulationState.value.data?.iterationPreviews?.totalPages ?? 1
 );
 
+
 const ensureSportsData = async () => {
   if (!leagues.value.length) await store.loadLeagues();
   if (!teams.value.length) await store.loadTeams();
   if (!leagueRounds.value.length && simulationState.value.data?.simulationParams.leagueId !== undefined) await store.loadLeagueRounds(CURRENT_SEASON, simulationState.value.data?.simulationParams.leagueId);
 };
 
+
 function scrollToSection() {
   scroll?.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
+
 
 const loadSimulation = async () => {
   simulationState.value.loading = true;
@@ -82,6 +90,7 @@ const loadSimulation = async () => {
   simulationState.value.loading = false;
 };
 
+
 const loadIterationPage = async (newPage: number) => {
   currentPage.value = newPage;
   simulationState.value.loading = true;
@@ -95,9 +104,11 @@ const changePageSize = async (newSize: number) => {
   scrollToSection();
 };
 
+
 const setFilteringByTeam = (teamId: string) => {
   filterValue.value = teamId;
 };
+
 
 const stopSimulation = async (id?: string) => {
   if (id != null && id != undefined && id !== "") {
@@ -108,6 +119,7 @@ const stopSimulation = async (id?: string) => {
   }
 };
 
+
 const changeSortingOption = async (newSortingOption: string) => {
   sortOption.value = newSortingOption;
   if (sortOption.value !== SortingOption.DynamicValue) {
@@ -117,15 +129,18 @@ const changeSortingOption = async (newSortingOption: string) => {
   scrollToSection();
 };
 
+
 const changeOrder = async (newOrder: "Descending" | "Ascending") => {
   order.value = newOrder;
   await loadSimulation();
   scrollToSection();
 };
 
+
 const mapOrder = (newOrder: "Descending" | "Ascending"): "DESC" | "ASC" => {
   return newOrder === "Descending" ? "DESC" : "ASC";
 };
+
 
 const getLeagueName = (id: string) =>
   leagues.value.find((l) => l.id === id)?.name ?? id;
@@ -144,6 +159,7 @@ function addTeamIfNotPresented(teamId: string) {
     }
   }
 }
+
 
 const groupedPreviews = computed(() => {
   const previews = simulationState.value.data?.iterationPreviews.items ?? [];
@@ -165,6 +181,7 @@ const groupedPreviews = computed(() => {
     }
   }
 
+
   for (const key in groups) {
     const group = groups[key];
     if (group) {
@@ -174,13 +191,16 @@ const groupedPreviews = computed(() => {
   return groups;
 });
 
+
 const groupedPreviewEntries = computed(() =>
   Object.entries(groupedPreviews.value)
 );
 
+
 const setWinnersData = (data: string) => {
   winnersData.value = data;
 }
+
 
 
 onMounted(async () => {
@@ -202,6 +222,7 @@ watch(
 );
 </script>
 
+
 <template>
   <main>
     <div class="button-list">
@@ -221,8 +242,6 @@ watch(
     <ErrorEndpoint v-else-if="simulationTeamStatsState.error" :error="simulationTeamStatsState.error" />
     <section v-else-if="simulationState.data">
       <h2 style="text-align: center" selenium-id="title-simulation-item">Summary of simulation</h2>
-      <hr>
-      </hr>
       <h3><strong> {{ simulationState.data.simulationParams.title }}</strong> </h3>
       <p v-if="simulationTeamStatsState?.data"><strong>Winners:</strong> {{ winnersData }}</p>
       <p selenium-id="iterations">
@@ -260,7 +279,7 @@ watch(
               <span class="default-summary-subtitle"> Details</span>
             </div>
           </summary>
-          <ul selenium-id="sim-params-details-list">
+          <ul class="params-ul" selenium-id="sim-params-details-list">
             <li>
               <strong>League:</strong>
               {{
@@ -336,7 +355,7 @@ watch(
             <div v-for="([scoreboardId, items], index) in groupedPreviewEntries" :key="scoreboardId"
               class="scoreboard-block">
               <h3 style="float: right">#{{ items[0]?.iterationIndex }}</h3>
-              <small>Scoreboard: {{ scoreboardId }}</small>
+
 
               <ScoreboardItem :scoreboard_id="scoreboardId" variant="preview" :teams="teams"
                 :iteration_preview="items" />
@@ -369,6 +388,7 @@ watch(
   </main>
 </template>
 
+
 <style scoped>
 main {
   display: flex;
@@ -379,28 +399,30 @@ main {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
+
 div {
   margin-top: 1rem;
 }
+
 
 .error {
   color: var(--del-color);
 }
 
+
 button {
   float: right;
 }
 
+
 .scoreboards-list {
   display: flex;
   flex-wrap: wrap;
-  /* Allow wrapping to next line */
   gap: 1rem;
-  /* Optional spacing between items */
 }
+
 
 .scoreboards-list>* {
   flex: 1 1 calc(50% - 1rem);
-  /* 2 items per row */
 }
 </style>

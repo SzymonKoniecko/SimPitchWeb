@@ -25,7 +25,6 @@ const changePageSize = (event: Event) => {
 </script>
 
 <template>
-    <hr />
     <div class="pagination">
       <button
         class="button-fourth"
@@ -59,6 +58,7 @@ const changePageSize = (event: Event) => {
         </select>
       </label>
     </div>
+    <hr />
 </template>
 
 <style scoped>
