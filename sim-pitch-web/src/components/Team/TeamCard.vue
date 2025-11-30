@@ -18,7 +18,7 @@
 
     <section v-else class="team-card__large">
       <div class="team-card__large-logo-wrapper">
-        <img :src="getLogo(team?.shortName)" class="team-img_large" />
+        <img :src="getLogo(team?.shortName)" :alt="team?.shortName" class="team-img_large" />
       </div>
       
       <div class="team-card__large-content">

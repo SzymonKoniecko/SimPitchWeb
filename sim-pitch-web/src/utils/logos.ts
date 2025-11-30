@@ -3,6 +3,9 @@ const logos = import.meta.glob('/src/assets/logos/*.png', {
 }) as Record<string, { default: string }>;
 
 export const getLogo = (name: string | undefined): string | undefined => {
-  if (!name) return undefined;
-  return logos[`/src/assets/logos/${name}.cc.png`]?.default;
+  const fallback = logos['/src/assets/logos/any.png']?.default;
+
+  if (!name) return fallback;
+
+  return logos[`/src/assets/logos/${name}.cc.png`]?.default ?? fallback;
 };
