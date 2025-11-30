@@ -31,18 +31,6 @@ const filterValue = ref("Any");
 const order = ref<"Descending" | "Ascending">("Descending");
 
 const simulationOverviews = computed(() => {
-  if (
-    sortOption.value === SortingOption.DynamicValue &&
-    filterValue.value !== "Any"
-  ) {
-    return state.value.data?.items.filter(
-      (x) => x.simulationParams.leagueId === filterValue.value
-    );
-  }
-  if (sortOption.value === SortingOption.Title || sortOption.value === SortingOption.State) {
-    loadSimulations();
-  }
-  filterValue.value = ""
   return state.value.data?.items;
 });
 
@@ -50,58 +38,67 @@ onMounted(async () => {
   await ensureSportsData();
   await loadSimulations();
 });
+
 const ensureSportsData = async () => {
   if (!leagues.value.length) await store.loadLeagues();
   if (!teams.value.length) await store.loadTeams();
 };
 
 const loadSimulations = async () => {
-  if (sortOption.value === "dynamic") {
-    return;
-  }
+
   state.value = await fetchData<SimulationOverviewList>(() =>
     engineAPI.SimulationController.getSimulations(
       currentPage.value,
       pageSize.value,
-      sortOption.value,
+      sortOption.value === "dynamic" ? "League" : sortOption.value,
       mapOrder(order.value),
-      filterValue.value
+      filterValue.value === "Any" ? "" : filterValue.value
     )
   );
 };
 
 const loadIterationPage = async (newPage: number) => {
   currentPage.value = newPage;
-  state.value.loading = true;
-  loadSimulations();
-  state.value.loading = false;
+  // state.value.loading = true; // fetchData -> loading state
+  await loadSimulations();
 };
+
 const changePageSize = async (newSize: number) => {
   pageSize.value = newSize;
   currentPage.value = 1;
   await loadSimulations();
 };
-const setFilteringByLeague = (leagueId: string) => {
-  filterValue.value = leagueId;
+
+const updateFilterValue = async (newValue: string) => {
+  filterValue.value = newValue;
+  currentPage.value = 1;
+  await loadSimulations();
 };
 
 const stopSimulation = async (id: string) => {
   await fetchData<SimulationState>(() =>
     engineAPI.SimulationController.stopSimulation(id)
   );
-  loadSimulations();
+  await loadSimulations();
 };
+
 const checkStatus = (state: string): boolean => {
-  if (state === "Pending" || state === "Running") return true;
-  return false;
+  return state === "Pending" || state === "Running";
 };
 
 const changeSortingOption = async (newSortingOption: string) => {
   sortOption.value = newSortingOption;
-  if (sortOption.value !== SortingOption.DynamicValue) {
-    await loadSimulations();
+
+  if (newSortingOption === SortingOption.Title) {
+    filterValue.value = "";
+  } else if (newSortingOption === SortingOption.State) {
+    filterValue.value = "Any";
+  } else if (newSortingOption === SortingOption.CreatedDate) {
     filterValue.value = "Any";
   }
+
+  currentPage.value = 1;
+  await loadSimulations();
 };
 
 const changeOrder = async (newOrder: "Descending" | "Ascending") => {
@@ -113,7 +110,6 @@ const mapOrder = (newOrder: "Descending" | "Ascending"): "DESC" | "ASC" => {
   return newOrder === "Descending" ? "DESC" : "ASC";
 };
 
-//const getTeamName = (id: string) => teams.value.find(t => t.id === id)?.name ?? id
 const getLeagueName = (id: string) =>
   leagues.value.find((t) => t.id === id)?.name ?? id;
 </script>
@@ -121,9 +117,6 @@ const getLeagueName = (id: string) =>
 <template>
   <h2 style="text-align: center" selenium-id="title-all-simulations">All simulations</h2>
   <main class="container">
-    <header
-      style="display: flex; justify-content: space-between; align-items: center"
-    ></header>
     <div class="button-list">
       <button @click="loadSimulations" :aria-busy="state.loading" class="button-primary">
         Reload
@@ -137,13 +130,14 @@ const getLeagueName = (id: string) =>
         :filterDynamicValue="leagues"
         @update:sorting-option="changeSortingOption"
         @update:order="changeOrder"
-        @update:filter-by="setFilteringByLeague"
+        @update:filter-by="updateFilterValue"
       />
     </section>
+
     <div v-if="state.loading" class="info">Loading simulations..., please wait…</div>
     <ErrorEndpoint v-else-if="state.error" :error="state.error" />
-
     <section v-else-if="state.error" class="error">Error: {{ state.error }}</section>
+
     <ul
       v-else-if="state.data && simulationOverviews && simulationOverviews.length > 0"
       class="simulation-list"
@@ -228,7 +222,6 @@ const getLeagueName = (id: string) =>
             >
               Check the results
             </router-link>
-            <->
             <button
               @click="stopSimulation(sim.state.simulationId)"
               :aria-busy="state.loading"

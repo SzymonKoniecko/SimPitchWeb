@@ -6,6 +6,7 @@ export const SortingOption = {
   LeaderPoints: "LeaderPoints",
   State: "State",
   Title: "Title",
+  // League: "League" as dynamicValue
 } as const;
 
 export type SortingOption = (typeof SortingOption)[keyof typeof SortingOption];
