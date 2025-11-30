@@ -3,7 +3,7 @@ export interface League {
   name: string;
   countryId: string;
   maxRound: number;
-  leagueStrengths: LeagueStrength[];
+  strengths: LeagueStrength[];
 }
 export interface LeagueStrength {
   id: string;
