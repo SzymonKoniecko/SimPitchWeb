@@ -7,6 +7,7 @@ import {
 } from "../../models/Consts/sortingOption";
 import type { Team } from "../../models/SportsDataModels/team";
 import type { League } from "../../models/SportsDataModels/league";
+import { SimulationStatus, simulationStatusOptions } from "../../models/Consts/simulationStatus";
 
 defineOptions({ name: "Filter" });
 
@@ -17,7 +18,7 @@ const props = defineProps<{
   filterDynamicValue: Team[] | League[];
 }>();
 
-const filterObjValue = computed(() => {
+const dynamicFilterObjValue = computed(() => {
   const array = [...props.filterDynamicValue];
 
   if (props.variant === "SimulationItem") {
@@ -34,6 +35,7 @@ const sortingList = computed(() => {
   return setSortingOptions(variant.value);
 });
 const orderValue = ref(props.order || "Descending");
+const selectedDynamicOption = ref<string>();
 
 const emit = defineEmits<{
   (e: "update:sortingOption", value: string): void;
@@ -43,6 +45,15 @@ const emit = defineEmits<{
 
 const changeSortingOption = (event: Event) => {
   const newSortingOption = String((event.target as HTMLSelectElement).value);
+  if (newSortingOption == SortingOption.State) {
+    selectedDynamicOption.value = SimulationStatus.Completed;
+  }
+  else if (newSortingOption == SortingOption.Title) {
+    selectedDynamicOption.value = ""
+  }
+  else if (newSortingOption == SortingOption.DynamicValue) {
+    selectedDynamicOption.value = ""
+  }
   emit("update:sortingOption", newSortingOption);
 };
 
@@ -52,15 +63,16 @@ const changeOrder = () => {
 };
 
 const filterBy = (event: Event) => {
-  const newFilterTeamId = String((event.target as HTMLSelectElement).value);
-  emit("update:filterBy", newFilterTeamId);
+  const newFilter = String((event.target as HTMLSelectElement).value);
+  console.log(newFilter)
+  emit("update:filterBy", newFilter);
 };
 
 const setSortingOptions = (variant: string) => {
   let list = [...SortingOptions];
 
   if (variant === "SimulationItem") {
-    list = list.filter((opt) => opt !== SortingOption.Name);
+    list = list.filter((opt) => opt !== SortingOption.Title && opt !== SortingOption.State);
   } else if (variant === "SimulationList") {
     list = list.filter(
       (opt) => opt !== SortingOption.LeaderPoints
@@ -90,14 +102,26 @@ watch(() => props.variant, ensureData);
       </select>
     </label>
     <div v-if="props.toSortOption === SortingOption.DynamicValue" class="sort-option">
-      <label>Select dynamic value:</label>
-      <select :value="filterObjValue" @change="filterBy" selenium-id="dynamic-select">
-        <option v-for="dynamicValue in filterObjValue" :key="dynamicValue.id" :value="dynamicValue.id" :selenium-id="`${dynamicValue.name
+      <label>Select</label>
+      <select :v-model="selectedDynamicOption" :value="selectedDynamicOption" @change="filterBy" selenium-id="condition-select">
+        <option v-for="dynamicValue in dynamicFilterObjValue" :key="dynamicValue.id" :value="dynamicValue.id" :selenium-id="`${dynamicValue.name
           .replace(/\s+/g, '-')
           .toLowerCase()}`">
           {{ dynamicValue.name }}
         </option>
       </select>
+    </div>
+    <div v-else-if="props.toSortOption === SortingOption.State" class="sort-option">
+      <label>Select</label>
+      <select :v-model="selectedDynamicOption" :value="selectedDynamicOption" @change="filterBy" selenium-id="condition-select">
+        <option v-for="status in simulationStatusOptions" :key="status" :value="status" :selenium-id="`${status}`">
+          {{ status }}
+        </option>
+      </select>
+    </div>
+    <div v-else-if="props.toSortOption === SortingOption.Title" class="sort-option">
+      <label>Select</label>
+      <input  :v-model="selectedDynamicOption" :value="selectedDynamicOption" @change="filterBy" selenium-id="condition-select" />
     </div>
     <button v-if="props.toSortOption !== SortingOption.DynamicValue" class="button-third" selenium-id="button-order"
       v-on:click="changeOrder">Toggle {{ orderValue }}</button>

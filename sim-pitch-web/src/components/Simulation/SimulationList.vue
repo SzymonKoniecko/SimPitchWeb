@@ -39,6 +39,10 @@ const simulationOverviews = computed(() => {
       (x) => x.simulationParams.leagueId === filterValue.value
     );
   }
+  if (sortOption.value === SortingOption.Title || sortOption.value === SortingOption.State) {
+    loadSimulations();
+  }
+  filterValue.value = ""
   return state.value.data?.items;
 });
 
@@ -52,12 +56,16 @@ const ensureSportsData = async () => {
 };
 
 const loadSimulations = async () => {
+  if (sortOption.value === "dynamic") {
+    return;
+  }
   state.value = await fetchData<SimulationOverviewList>(() =>
     engineAPI.SimulationController.getSimulations(
       currentPage.value,
       pageSize.value,
       sortOption.value,
-      mapOrder(order.value)
+      mapOrder(order.value),
+      filterValue.value
     )
   );
 };
@@ -242,7 +250,6 @@ const getLeagueName = (id: string) =>
       />
     </ul>
 
-    <!-- EMPTY -->
     <article v-else>
       <h2>No simulations found.</h2>
     </article>
