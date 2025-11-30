@@ -50,11 +50,14 @@ class EngineAPI {
       pageNumber: number,
       pageSize: number,
       sortingOption: string,
-      order: string
+      order: string,
+      condition: string
     ) {
-      const { data } = await apiClient.get(
-        `${SimulationController.PrefixUrl}/overviews?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}&order=${order}`
-      );
+      let url = `${SimulationController.PrefixUrl}/overviews?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}&order=${order}`;
+      if (condition && condition !== "") {
+        url += `&condition=${condition}`
+      }
+      const { data } = await apiClient.get(url);
       return data;
     }
     async getSimulationOverview(id: string) {

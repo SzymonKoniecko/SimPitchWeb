@@ -1,10 +1,12 @@
 export const SortingOption = {
   CreatedDate: "CreatedDate",
   ExecutionTime: "ExecutionTime",
-  Name: "Name",
   IterationResultNumber: "IterationResultNumber",
   DynamicValue: "dynamic",
   LeaderPoints: "LeaderPoints",
+  State: "State",
+  Title: "Title",
+  // League: "League" as dynamicValue
 } as const;
 
 export type SortingOption = (typeof SortingOption)[keyof typeof SortingOption];
@@ -18,15 +20,18 @@ export function getLabel(option: SortingOption, component: string): string {
 
     case "ExecutionTime":
       return "Execution time";
-
-    case "Name":
-      return "Name";
-
+      
     case "IterationResultNumber":
       return "Order by iteration";
 
     case "LeaderPoints":
       return "Leader points";
+
+    case "State":
+      return "Simulation state";
+
+    case "Title":
+      return "Title";
 
     case "dynamic":
       if (component === "SimulationItem") {
