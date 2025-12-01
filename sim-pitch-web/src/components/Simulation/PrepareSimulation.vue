@@ -283,8 +283,8 @@ function resetForm() {
 
         <div class="field" v-if="form.league_id !== ''">
           <label for="leagueRoundId"
-            >Optional: All matches will be simulated from -> </label
-          >
+            >Optional: All matches will be simulated from ->
+          </label>
           <select id="leagueRoundId" v-model="form.league_round_id">
             <option
               v-for="leagueRounds in leagueRounds.sort(
@@ -300,8 +300,8 @@ function resetForm() {
         </div>
         <div class="field" v-if="form.league_id !== ''">
           <label for="targetLeagueRoundId"
-            >Optional: All matches will be simulated to -> </label
-          >
+            >Optional: All matches will be simulated to ->
+          </label>
           <select
             id="targetLeagueRoundId"
             v-model="form.target_league_round_id"

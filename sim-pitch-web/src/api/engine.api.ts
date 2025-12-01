@@ -1,4 +1,5 @@
 import axios from "axios";
+import { SortingOption } from "../models/Consts/sortingOption";
 const apiClient = axios.create({
   baseURL: "", // Relatywne ścieżki
   timeout: 30000,
@@ -73,6 +74,7 @@ class EngineAPI {
       sortingOption: string,
       order: string
     ) {
+      sortingOption = sortingOption === "dynamic" ? SortingOption.CreatedDate : sortingOption;
       const { data } = await apiClient.get(
         `${SimulationController.PrefixUrl}/${id}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortingOption=${sortingOption}&order=${order}`
       );

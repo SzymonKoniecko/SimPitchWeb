@@ -73,6 +73,7 @@ function scrollToSection() {
 
 const loadSimulation = async () => {
   simulationState.value.loading = true;
+  sortOption.value === "dynamic" ? "CreatedDate" : sortOption.value,
   simulationState.value = await fetchData<Simulation>(() =>
     engineAPI.SimulationController.getSimulationOverviews(
       props.id,
@@ -149,7 +150,6 @@ const getLeagueRoundNameById = (id?: string) => {
   return "Started simulation by " + MapNumberToText(leagueRounds.value.find((x) => x.id === id)?.round ?? 0) + " round"
 };
 const getTargetLeagueRoundNameById = (id?: string) => {
-  console.log(id)
   if (id === undefined || id === null || id === "00000000-0000-0000-0000-000000000000") return `Simulated all league rounds (to the end of the season)`;
   return "Finished simulation to " + MapNumberToText(leagueRounds.value.find((x) => x.id === id)?.round ?? 0) + " round"
 };

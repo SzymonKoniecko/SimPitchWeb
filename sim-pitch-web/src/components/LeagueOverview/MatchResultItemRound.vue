@@ -72,7 +72,6 @@ function getTitle(id?: string): string {
 }
 
 function getSubTitle(lengthSimulated: number, lengthReal: number): string {
-  console.log(props.onlyPlayedMatches)
   if (!props.onlyPlayedMatches) {
     return `${lengthReal + lengthSimulated} matches`;
   }
