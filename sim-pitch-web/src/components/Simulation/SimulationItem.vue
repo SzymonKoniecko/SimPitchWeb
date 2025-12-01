@@ -145,8 +145,13 @@ const mapOrder = (newOrder: "Descending" | "Ascending"): "DESC" | "ASC" => {
 const getLeagueName = (id: string) =>
   leagues.value.find((l) => l.id === id)?.name ?? id;
 const getLeagueRoundNameById = (id?: string) => {
-  if (id === undefined || id === null) return `last not played matches`;
-  return MapNumberToText(leagueRounds.value.find((x) => x.id === id)?.round ?? 0) + " round"
+  if (id === undefined || id === null || id === "00000000-0000-0000-0000-000000000000") return `Simulation is made for Unplayed matches only`;
+  return "Started simulation by " + MapNumberToText(leagueRounds.value.find((x) => x.id === id)?.round ?? 0) + " round"
+};
+const getTargetLeagueRoundNameById = (id?: string) => {
+  console.log(id)
+  if (id === undefined || id === null || id === "00000000-0000-0000-0000-000000000000") return `Simulated all league rounds (to the end of the season)`;
+  return "Finished simulation to " + MapNumberToText(leagueRounds.value.find((x) => x.id === id)?.round ?? 0) + " round"
 };
 function getTeamById(id: string): boolean {
   return presentedTeams.value.some((team) => team.id === id);
@@ -243,6 +248,16 @@ watch(
     <section v-else-if="simulationState.data">
       <h2 style="text-align: center" selenium-id="title-simulation-item">Summary of simulation</h2>
       <h3><strong> {{ simulationState.data.simulationParams.title }}</strong> </h3>
+      <section>
+        <p selenium-id="league-round">
+          <strong><i>{{ getLeagueRoundNameById(simulationState.data.simulationParams.leagueRoundId)
+            }}</i></strong>
+        </p>
+        <p selenium-id="target-league-round">
+          <strong><i>{{ getTargetLeagueRoundNameById(simulationState.data.simulationParams.targetLeagueRoundId)
+            }}</i></strong>
+        </p>
+      </section>
       <p v-if="simulationTeamStatsState?.data"><strong>Winners:</strong> {{ winnersData }}</p>
       <p selenium-id="iterations">
         <strong>Completed iterations:</strong>
@@ -254,10 +269,6 @@ watch(
       <p selenium-id="state">
         <strong>State:</strong> {{ simulationState.data.state.state }} ---
         {{ new Date(simulationState.data.state.updatedAt).toLocaleString() }}
-      </p>
-      <p selenium-id="league-round">
-        <strong>Started simulation by {{ getLeagueRoundNameById(simulationState.data.simulationParams.leagueRoundId)
-          }}</strong>
       </p>
       <p>
         <strong>Simulated matches:</strong>

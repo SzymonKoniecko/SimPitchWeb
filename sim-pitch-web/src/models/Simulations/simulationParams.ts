@@ -6,6 +6,7 @@ export interface SimulationParams{
     leagueId: string;
     iterations: number;
     leagueRoundId?: string;
+    targetLeagueRoundId?: string;
     createScoreboardOnCompleteIteration?: Boolean;
     seed: number;
     gamesToReachTrust: number;
