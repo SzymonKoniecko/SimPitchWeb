@@ -36,6 +36,7 @@ const form = reactive({
   league_id: "",
   iterations: 1,
   league_round_id: null,
+  target_league_round_id: null,
   createScoreboardOnCompleteIteration: true,
 
   seed: randomInt(0, 999999),
@@ -140,6 +141,7 @@ async function submitForm() {
     leagueId: form.league_id,
     iterations: form.iterations,
     leagueRoundId: form.league_round_id ?? undefined,
+    targetLeagueRoundId: form.target_league_round_id ?? undefined,
     createScoreboardOnCompleteIteration:
       form.createScoreboardOnCompleteIteration ?? false,
     seed: form.seed,
@@ -281,19 +283,38 @@ function resetForm() {
 
         <div class="field" v-if="form.league_id !== ''">
           <label for="leagueRoundId"
-            >Optional: Start from specified round of league</label
+            >Optional: All matches will be simulated from -> </label
           >
-          <select
-            id="leagueRoundId"
-            v-model="form.league_round_id"
-          >
+          <select id="leagueRoundId" v-model="form.league_round_id">
             <option
-              v-for="leagueRounds in leagueRounds.sort((a,b) => a.round - b.round)"
+              v-for="leagueRounds in leagueRounds.sort(
+                (a, b) => a.round - b.round
+              )"
               :key="leagueRounds.round"
               :value="leagueRounds.id"
               :selenium-id="`round:${leagueRounds.round}`"
             >
-             Round of {{ leagueRounds.round }}
+              Round of {{ leagueRounds.round }}
+            </option>
+          </select>
+        </div>
+        <div class="field" v-if="form.league_id !== ''">
+          <label for="targetLeagueRoundId"
+            >Optional: All matches will be simulated to -> </label
+          >
+          <select
+            id="targetLeagueRoundId"
+            v-model="form.target_league_round_id"
+          >
+            <option
+              v-for="leagueRounds in leagueRounds.sort(
+                (a, b) => a.round - b.round
+              )"
+              :key="leagueRounds.round"
+              :value="leagueRounds.id"
+              :selenium-id="`round:${leagueRounds.round}`"
+            >
+              Round of {{ leagueRounds.round }}
             </option>
           </select>
         </div>
