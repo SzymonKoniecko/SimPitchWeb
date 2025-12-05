@@ -146,7 +146,7 @@ const mapOrder = (newOrder: "Descending" | "Ascending"): "DESC" | "ASC" => {
 const getLeagueName = (id: string) =>
   leagues.value.find((l) => l.id === id)?.name ?? id;
 const getLeagueRoundNameById = (id?: string) => {
-  if (id === undefined || id === null || id === "00000000-0000-0000-0000-000000000000") return `Simulation is made for Unplayed matches only`;
+  if (id === undefined || id === null || id === "00000000-0000-0000-0000-000000000000") return `Simulation is made for unplayed matches only`;
   return "Started simulation by " + MapNumberToText(leagueRounds.value.find((x) => x.id === id)?.round ?? 0) + " round"
 };
 const getTargetLeagueRoundNameById = (id?: string) => {
