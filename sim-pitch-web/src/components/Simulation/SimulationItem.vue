@@ -280,7 +280,7 @@ watch(
       </ul>
       </p>
       <p>
-        <strong>League strength:</strong>
+        <strong>Simulated league strength:</strong>
         {{ simulationState.data.priorLeagueStrength }} (based on averange goals calculations)
       </p>
       <section>
