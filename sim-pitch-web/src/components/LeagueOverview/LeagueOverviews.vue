@@ -5,25 +5,6 @@
   </div>
   <section>
     <div class="field">
-      <label for="leagueId">Choose league</label>
-      <select
-        id="leagueId"
-        v-model="selectedleague"
-        selenium-id="league-select"
-        name="league"
-      >
-        <option value="" disabled>Select a league</option>
-        <option
-          v-for="league in leagues"
-          :key="league.id"
-          :value="league.id"
-          :selenium-id="`${league.name.replace(/\s+/g, '-').toLowerCase()}`"
-        >
-          {{ league.name }}
-        </option>
-      </select>
-    </div>
-    <div class="field">
       <label for="season">Choose season</label>
       <select
         id="season"
@@ -47,6 +28,26 @@
         </option>
       </select>
     </div>
+    <div class="field">
+      <label for="leagueId">Choose league</label>
+      <select
+        id="leagueId"
+        v-model="selectedleague"
+        selenium-id="league-select"
+        name="league"
+      >
+        <option value="" disabled>Select a league</option>
+        <option
+          v-for="league in leagues"
+          :key="league.id"
+          :value="league.id"
+          :selenium-id="`${league.name.replace(/\s+/g, '-').toLowerCase()}`"
+        >
+          {{ league.name }}
+        </option>
+      </select>
+    </div>
+    <hr/>
     <div
       v-if="selectedSeason && selectedSeason !== CURRENT_SEASON"
       class="info-notice"

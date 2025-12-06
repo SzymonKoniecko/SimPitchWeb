@@ -30,7 +30,6 @@
         
         <div class="team-card__details-grid">
           <p class="team-name_large">{{ team?.shortName ?? "N/A" }}</p>
-          <p><strong>League:</strong> {{ team?.league?.name ?? "N/A" }}</p>
         </div>
         
         <div class="team-card__slot-wrapper">

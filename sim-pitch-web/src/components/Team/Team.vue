@@ -24,7 +24,7 @@
           <span class="short-code">[{{ team.shortName }}]</span>
         </h1>
         <div class="league-badge">
-          {{ team.league?.name ?? "Unknown League" }}
+          {{ GetLeagueNameByMembershipSeasonYear()}}
         </div>
       </div>
     </div>
@@ -44,19 +44,23 @@
         </p>
       </div>
 
-      <div class="info-card">
+      <div class="info-card" v-if="uniqueMemberships.length">
         <h4>🏆 League Details</h4>
-        <p class="info-value">{{ team.league?.name }}</p>
-        <p class="info-sub" v-if="team.league?.maxRound">
-          Max Rounds: {{ team.league.maxRound }}
-        </p>
+        <div class="info-card" v-for="membership in uniqueMemberships">
+          <p class="info-value">{{ GetLeagueName(membership.leagueId) }}</p>
+          <p class="info-sub">
+            Max Rounds: {{ GetLeagueMaxRound(membership.leagueId)}}
+          </p>
+          <i class="info-sub-season">({{membership.seasonYear}})</i>
+        </div>
       </div>
-      <div class="info-card" v-if="team.league?.strengths?.length">
-        <h4>📊 Part of league Strength</h4>
-        <div class="info-card" v-for="obj in team.league?.strengths">
-          <p class="info-value">{{ GetLeagueName(obj.leagueId) }}</p>
-          <p class="info-value">{{ obj.strength.toFixed(2) }}</p>
+      <div class="info-card" v-if="team.memberships.length">
+        <h4>📊 Part of league Strengths</h4>
+        <div class="info-card" v-for="membership in filteredMemberships">
+          <p class="info-value">{{ GetLeagueName(membership.leagueId) }}</p>
+          <p class="info-value">{{ GetLeagueStrength(membership.leagueId, membership.seasonYear).toFixed(3) }}</p>
           <p class="info-sub">Avg goals per match</p>
+          <i class="info-sub-season">({{membership.seasonYear}})</i>
         </div>
       </div>
     </div>
@@ -78,6 +82,7 @@ import { onMounted, watch, computed } from "vue";
 import { useSportsDataStore } from "../../stores/SportsDataStore";
 import ErrorEndpoint from "../Other/ErrorEndpoint.vue";
 import { getLogo } from "../../utils/logos";
+import { CURRENT_SEASON, seasonYearsOptions } from "../../models/Consts/seasonYear";
 
 type Props = {
   id: string; // /team/:id (via props: true)
@@ -91,7 +96,22 @@ const error = computed(() => store.error);
 const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
 const team = computed(() => teams.value?.find((t) => t.id === props.id));
-
+const filteredMemberships = computed(() => {
+  if (!team.value || !team.value.memberships) return [];
+  return team.value.memberships.filter(
+    (x) => x.seasonYear !== CURRENT_SEASON
+  );
+});
+const uniqueMemberships = computed(() => {
+  const memberships = team?.value?.memberships || []; // lub team.value.memberships zależnie jak masz zdefiniowane 'team'
+  
+  // Filtrujemy tablicę zostawiając tylko pierwsze wystąpienie danego leagueId
+  return memberships.filter((item, index, self) =>
+    index === self.findIndex((t) => (
+      t.leagueId === item.leagueId 
+    ))
+  );
+});
 const ensureData = async () => {
   if (!leagues.value || leagues.value.length === 0) {
     await store.loadLeagues();
@@ -102,6 +122,15 @@ const ensureData = async () => {
 };
 function GetLeagueName(id?: string): string {
   return leagues.value.find((x) => x.id === id)?.name ?? "Unknown league";
+}
+function GetLeagueNameByMembershipSeasonYear(): string {
+  return leagues.value.find((x) => team.value?.memberships.find(m => m.seasonYear === CURRENT_SEASON)?.leagueId === x.id)?.name ?? "Unknown league";
+}
+function GetLeagueMaxRound(id?: string): number {
+  return leagues.value.find((x) => x.id === id)?.maxRound ?? 0;
+}
+function GetLeagueStrength(id: string, seasonYear: string): number {
+  return leagues.value.find((x) => x.id === id)?.strengths.find(y => seasonYearsOptions[y.seasonYear as keyof typeof seasonYearsOptions] == seasonYear)?.strength ?? 2.5;
 }
 onMounted(async () => {
   await ensureData();
@@ -193,7 +222,6 @@ watch(
   box-shadow: 0 2px 4px var(--color-shadow-button);
 }
 
-/* Info Grid Styling (reusing global .info-grid concepts) */
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -235,6 +263,19 @@ watch(
   margin-top: 0.25rem;
 }
 
+.info-sub-season {
+  margin-left: auto;
+  margin-top: auto;
+  
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  
+  color: var(--color-accent-blue);
+  border: 1px solid var(--color-grid);
+  background-color: var(--color-shadow-app);
+}
 /* Loader */
 .loader-container {
   display: flex;
