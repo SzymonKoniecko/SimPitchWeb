@@ -47,7 +47,7 @@
         </option>
       </select>
     </div>
-    <hr/>
+    <hr />
     <div
       v-if="selectedSeason && selectedSeason !== CURRENT_SEASON"
       class="info-notice"
@@ -61,6 +61,13 @@
         v-else-if="scoreboardState.error"
         :error="scoreboardState.error"
       />
+    </div>
+    <details close class="chart-details" v-if="scoreboardState.data">
+    <summary class="chart-summary">
+      <div class="chart-summary-content">
+        <span class="chart-summary-title">Scoreboard</span>
+      </div>
+    </summary>
       <ScoreboardItem
         v-if="scoreboardState.data && !scoreboardState.loading"
         variant="complete_details"
@@ -68,7 +75,7 @@
         :scoreboard="scoreboardState.data"
         :simulation-team-stats="null"
       />
-    </div>
+    </details>
     <div v-if="selectedSeason === CURRENT_SEASON && selectedleague">
       <div v-if="store.loading" class="info">Loading rounds...</div>
       <MatchResultItemList
@@ -145,6 +152,7 @@ watch([selectedleague, selectedSeason], async ([newLeague, newSeason]) => {
     await loadScoreboard();
   } else {
     await store.loadLeagueRounds(newSeason, newLeague);
+    await loadScoreboard();
   }
 });
 </script>
