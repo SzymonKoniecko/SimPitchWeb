@@ -203,18 +203,6 @@ function resetForm() {
       <h5 selenium-id="simulation-id-text">
         Simulation ID: {{ simulationId }}
       </h5>
-      <router-link
-        :to="{ name: 'SimulationItem', params: { id: simulationId } }"
-        class="button-link"
-      >
-        <button
-          type="submit"
-          class="button-primary"
-          selenium-id="simulation-result"
-        >
-          Check the simulation results
-        </button>
-      </router-link>
     </section>
 
     <section>
@@ -460,6 +448,23 @@ function resetForm() {
             Reset
           </button>
         </div>
+        <span v-if="simulationId" class="simulation-result">
+          <h5>
+            Simulation has been started!
+          </h5>
+          <router-link
+            :to="{ name: 'SimulationItem', params: { id: simulationId } }"
+            class="button-link"
+          >
+            <button
+              type="submit"
+              class="button-primary"
+              selenium-id="simulation-result"
+            >
+              Check the simulation results
+            </button>
+          </router-link>
+        </span>
       </form>
     </section>
   </main>

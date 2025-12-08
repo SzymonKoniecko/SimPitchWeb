@@ -121,7 +121,7 @@ section {
 .hero,
 .models-grid {
   flex: 1 1 calc(50% - 2rem);
-  min-width: 800px;
+  min-width: 90%;
 }
 
 .visualizations-grid {

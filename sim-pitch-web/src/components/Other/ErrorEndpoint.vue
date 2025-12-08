@@ -1,10 +1,7 @@
 <template>
   <div v-if="error" :id="`error-${errorType}`" role="alert" :class="['error-alert', `error-${errorType}`]" aria-live="assertive">
     <div class="error-icon">
-      <svg v-if="errorType === '404'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      </svg>
-      <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      </svg>
+      {{ errorIcon }}
     </div>
 
     <div class="error-content">
@@ -32,6 +29,9 @@ const errorType = computed(() => {
   if (props.error.includes('404') || props.error.includes('Not Found')) {
     return '404'
   }
+  if (props.error.includes('412') || props.error.includes('Precondition Failed')) {
+    return '412'
+  }
   if (props.error.includes('500') || props.error.includes('Internal Server Error')) {
     return '500'
   }
@@ -39,10 +39,25 @@ const errorType = computed(() => {
   return 'unknown'
 })
 
+const errorIcon = computed(() => {
+  switch (errorType.value) {
+    case '404':
+      return '⊘'
+    case '412':
+      return '⚠'
+    case '500':
+      return '✕'
+    default:
+      return '!'
+  }
+})
+
 const errorTitle = computed(() => {
   switch (errorType.value) {
     case '404':
       return 'Resource Not Found'
+    case '412':
+      return 'Precondition Failed'
     case '500':
       return 'Server Error'
     default:
@@ -54,6 +69,8 @@ const errorMessage = computed(() => {
   switch (errorType.value) {
     case '404':
       return 'The requested resource could not be found.'
+    case '412':
+      return 'The request does not meet required conditions. Please verify the simulation state.'
     case '500':
       return 'An unexpected server error occurred. Please try again later.'
     default:
@@ -66,7 +83,6 @@ const errorDetails = computed(() => {
   
   return props.error.replace(/^Request failed with status code \d+: ?/, '').trim()
 })
-
 </script>
 
 <style scoped>
@@ -86,6 +102,11 @@ const errorDetails = computed(() => {
   border-color: rgba(255, 84, 89, 0.25);
 }
 
+.error-alert.error-412 {
+  background-color: rgba(230, 129, 97, 0.08);
+  border-color: rgba(230, 129, 97, 0.25);
+}
+
 .error-alert.error-500 {
   background-color: rgba(192, 21, 47, 0.12);
   border-color: rgba(192, 21, 47, 0.3);
@@ -94,9 +115,21 @@ const errorDetails = computed(() => {
 .error-icon {
   flex-shrink: 0;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  line-height: 1;
   color: var(--color-error);
-  margin-top: 2px;
+  font-weight: bold;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(var(--color-error-rgb), 0.1);
+}
+
+.error-alert.error-412 .error-icon {
+  color: var(--color-warning);
+  background-color: rgba(230, 129, 97, 0.15);
 }
 
 .error-content {
@@ -109,6 +142,10 @@ const errorDetails = computed(() => {
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   color: var(--color-error);
+}
+
+.error-alert.error-412 .error-title {
+  color: var(--color-warning);
 }
 
 .error-message {

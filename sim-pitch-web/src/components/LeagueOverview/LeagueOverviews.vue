@@ -169,8 +169,6 @@ watch(
     scoreboardState.value.data = null;
     scoreboardState.value.error = null;
     
-    console.log(`Loading: Season=${season}, League=${league}`);
-    
     if (season === CURRENT_SEASON) {
       await store.loadLeagueRounds(season, league);
     }
