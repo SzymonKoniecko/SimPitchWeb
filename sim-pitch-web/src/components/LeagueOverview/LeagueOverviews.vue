@@ -48,44 +48,49 @@
       </select>
     </div>
     <hr />
-    <div
-      v-if="selectedSeason && selectedSeason !== CURRENT_SEASON"
-      class="info-notice"
-    >
-      ℹ️ These matches have already been played. Only final season stats are
-      available.
-      <div v-if="scoreboardState.loading" class="info">
-        Loading scoreboard..., please wait…
-      </div>
-      <ErrorEndpoint
-        v-else-if="scoreboardState.error"
-        :error="scoreboardState.error"
-      />
+    <div v-if="oldSeasonsForConferenceLeague" class="info-notice">
+      <span>Conference league has data since 2024/2025</span>
     </div>
-    <details close class="chart-details" v-if="scoreboardState.data">
-    <summary class="chart-summary">
-      <div class="chart-summary-content">
-        <span class="chart-summary-title">Scoreboard</span>
+    <div v-else>
+      <div
+        v-if="selectedSeason && selectedSeason !== CURRENT_SEASON"
+        class="info-notice"
+      >
+        ℹ️ These matches have already been played. Only final season stats are
+        available.
+        <div v-if="scoreboardState.loading" class="info">
+          Loading scoreboard..., please wait…
+        </div>
+        <ErrorEndpoint
+          v-else-if="scoreboardState.error"
+          :error="scoreboardState.error"
+        />
       </div>
-    </summary>
-      <ScoreboardItem
-        v-if="scoreboardState.data && !scoreboardState.loading"
-        variant="complete_details"
-        :teams="teams"
-        :scoreboard="scoreboardState.data"
-        :simulation-team-stats="null"
-      />
-    </details>
-    <div v-if="selectedSeason === CURRENT_SEASON && selectedleague">
-      <div v-if="store.loading" class="info">Loading rounds...</div>
-      <MatchResultItemList
-        v-else
-        :simulated-match-rounds="[]"
-        :teams="teams"
-        :team-strengths="[]"
-        :league-rounds="leagueRounds"
-        :only-played-matches="false"
-      />
+      <details close class="chart-details" v-if="scoreboardState.data">
+        <summary class="chart-summary">
+          <div class="chart-summary-content">
+            <span class="chart-summary-title">Scoreboard</span>
+          </div>
+        </summary>
+        <ScoreboardItem
+          v-if="scoreboardState.data && !scoreboardState.loading"
+          variant="complete_details"
+          :teams="teams"
+          :scoreboard="scoreboardState.data"
+          :simulation-team-stats="null"
+        />
+      </details>
+      <div v-if="selectedSeason === CURRENT_SEASON && selectedleague">
+        <div v-if="store.loading" class="info">Loading rounds...</div>
+        <MatchResultItemList
+          v-else
+          :simulated-match-rounds="[]"
+          :teams="teams"
+          :team-strengths="[]"
+          :league-rounds="leagueRounds"
+          :only-played-matches="false"
+        />
+      </div>
     </div>
   </section>
 </template>
@@ -115,6 +120,16 @@ const selectedSeason = ref<string>(CURRENT_SEASON);
 const leagueRounds = computed(() =>
   store.leagueRounds.filter((x) => x.leagueId === selectedleague.value)
 );
+const oldSeasonsForConferenceLeague = computed(() => {
+  if (
+    GetLeagueNameById(selectedleague.value) === "UEFA Conference League" &&
+    (selectedSeason.value === "2023/2024" ||
+      selectedSeason.value === "2022/2023")
+  ) {
+    return true;
+  }
+  return false;
+});
 const scoreboardState = ref<ApiState<Scoreboard>>({
   loading: false,
   error: null,
@@ -131,7 +146,12 @@ const loadScoreboard = async () => {
     )
   );
 };
-
+const GetLeagueNameById = (Id?: string) => {
+  if (Id === undefined) {
+    return "";
+  }
+  return leagues.value.find((x) => x.id === Id)?.name;
+};
 onMounted(async () => {
   if (!leagues.value || leagues.value.length === 0) {
     await store.loadLeagues();
@@ -139,22 +159,26 @@ onMounted(async () => {
   if (!teams.value || teams.value.length === 0) {
     await store.loadTeams();
   }
-  // Usunięto automatyczne ustawianie selectedleague[0]
 });
 
-watch([selectedleague, selectedSeason], async ([newLeague, newSeason]) => {
-  scoreboardState.value.data = null;
-  scoreboardState.value.error = null;
-
-  if (!newLeague || !newSeason) return;
-
-  if (newSeason !== CURRENT_SEASON) {
+watch(
+  () => ({ season: selectedSeason.value, league: selectedleague.value }),
+  async ({ season, league }) => {
+    if (!season || !league) return;
+    
+    scoreboardState.value.data = null;
+    scoreboardState.value.error = null;
+    
+    console.log(`Loading: Season=${season}, League=${league}`);
+    
+    if (season === CURRENT_SEASON) {
+      await store.loadLeagueRounds(season, league);
+    }
+    
     await loadScoreboard();
-  } else {
-    await store.loadLeagueRounds(newSeason, newLeague);
-    await loadScoreboard();
-  }
-});
+  },
+  { deep: true } 
+);
 </script>
 
 <style scoped>
