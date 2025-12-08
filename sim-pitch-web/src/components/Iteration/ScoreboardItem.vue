@@ -35,8 +35,8 @@
           <th>Team</th>
           <th>Match Played</th>
           <th>Wins</th>
-          <th>Losses</th>
           <th>Draws</th>
+          <th>Losses</th>
           <th>Goals for</th>
           <th>Goals against</th>
           <th>Goals difference</th>
@@ -61,15 +61,15 @@
             </p>
           </td>
           <td>
-            {{ s.losses }}
-            <p class="avg-value" v-if="teamStats && teamStats.length > 0">
-              ({{ GetTeamStatsById(s.teamId)?.averangeLosses.toFixed(2) }})
-            </p>
-          </td>
-          <td>
             {{ s.draws }}
             <p class="avg-value" v-if="teamStats && teamStats.length > 0">
               ({{ GetTeamStatsById(s.teamId)?.averangeDraws.toFixed(2) }})
+            </p>
+          </td>
+          <td>
+            {{ s.losses }}
+            <p class="avg-value" v-if="teamStats && teamStats.length > 0">
+              ({{ GetTeamStatsById(s.teamId)?.averangeLosses.toFixed(2) }})
             </p>
           </td>
           <td>
