@@ -49,20 +49,33 @@ const form = reactive({
   model: SimulationModelsOptions[1],
 });
 
-const ensureData = async () => {
+onMounted(async () => {
   if (!leagues.value || leagues.value.length === 0) {
     await sportsDataStore.loadLeagues();
   }
-  if (!leagueRounds.value || leagueRounds.value.length === 0) {
-    if (form.league_id !== null && form.league_id !== "") {
-      await sportsDataStore.loadLeagueRounds(CURRENT_SEASON, form.league_id);
+});
+
+watch(
+  () => form.league_id,
+  async (newLeagueId) => {
+    sportsDataStore.leagueRounds = [];
+
+    form.league_round_id = null;
+    form.target_league_round_id = null;
+
+    if (!newLeagueId || newLeagueId === "") {
+      return;
+    }
+
+    await sportsDataStore.loadLeagueRounds(CURRENT_SEASON, newLeagueId);
+
+    await nextTick();
+    if (!form.seasonYears.includes(CURRENT_SEASON)) {
+      form.seasonYears.push(CURRENT_SEASON);
     }
   }
-};
+);
 
-onMounted(async () => {
-  await ensureData();
-});
 watch(
   () => form.seasonYears,
   async (val) => {
@@ -76,17 +89,6 @@ watch(
   { deep: true }
 );
 
-watch(
-  () => form.league_id,
-  async () => {
-    ensureData();
-
-    await nextTick();
-    if (!form.seasonYears.includes(CURRENT_SEASON)) {
-      form.seasonYears.push(CURRENT_SEASON);
-    }
-  }
-);
 const status = ref("");
 const validationErrors = ref<string[]>([]);
 
@@ -176,6 +178,7 @@ function resetForm() {
   form.league_id = "";
   form.iterations = 1;
   form.league_round_id = null;
+  form.target_league_round_id = null;
 
   // reset new fields
   form.seed = randomInt(0, 999999);
@@ -192,11 +195,7 @@ function resetForm() {
 
 <template>
   <main>
-    <h2
-      style="text-align: center"
-      selenium-id="title-prepare-simulation"
-      ref="scrollStartedSim"
-    >
+    <h2 style="text-align: center" selenium-id="title-prepare-simulation">
       Prepare a new simulation
     </h2>
     <section v-if="simulationId" class="simulation-result">
@@ -258,6 +257,7 @@ function resetForm() {
             selenium-id="league-select"
             name="league"
           >
+            <option value="" disabled>Select a league</option>
             <option
               v-for="league in leagues"
               :key="league.id"
@@ -274,15 +274,16 @@ function resetForm() {
             >Optional: All matches will be simulated from ->
           </label>
           <select id="leagueRoundId" v-model="form.league_round_id">
+            <option value="">Select starting round</option>
             <option
-              v-for="leagueRounds in leagueRounds.sort(
+              v-for="leagueRound in leagueRounds.sort(
                 (a, b) => a.round - b.round
               )"
-              :key="leagueRounds.round"
-              :value="leagueRounds.id"
-              :selenium-id="`round:${leagueRounds.round}`"
+              :key="leagueRound.round"
+              :value="leagueRound.id"
+              :selenium-id="`round:${leagueRound.round}`"
             >
-              Round of {{ leagueRounds.round }}
+              Round of {{ leagueRound.round }}
             </option>
           </select>
         </div>
@@ -294,15 +295,16 @@ function resetForm() {
             id="targetLeagueRoundId"
             v-model="form.target_league_round_id"
           >
+            <option value="">Select ending round</option>
             <option
-              v-for="leagueRounds in leagueRounds.sort(
+              v-for="leagueRound in leagueRounds.sort(
                 (a, b) => a.round - b.round
               )"
-              :key="leagueRounds.round"
-              :value="leagueRounds.id"
-              :selenium-id="`round:${leagueRounds.round}`"
+              :key="leagueRound.round"
+              :value="leagueRound.id"
+              :selenium-id="`round:${leagueRound.round}`"
             >
-              Round of {{ leagueRounds.round }}
+              Round of {{ leagueRound.round }}
             </option>
           </select>
         </div>
@@ -431,13 +433,13 @@ function resetForm() {
           />
         </div>
         <div class="field">
-          <label for="leagueRoundId"
+          <label for="createScoreboards"
             >Optional: Simulation should create scoreboards during the
             simulation?</label
           >
           <input
+            id="createScoreboards"
             type="checkbox"
-            :value="form.createScoreboardOnCompleteIteration"
             v-model="form.createScoreboardOnCompleteIteration"
             selenium-id="input-create-scoreboards"
           />
@@ -448,10 +450,9 @@ function resetForm() {
             Reset
           </button>
         </div>
-        <span v-if="simulationId" class="simulation-result">
-          <h5>
-            Simulation has been started!
-          </h5>
+        <div v-if="simulationId" ref="scrollStartedSim">
+          <hr />
+          <h5>Simulation has been started!</h5>
           <router-link
             :to="{ name: 'SimulationItem', params: { id: simulationId } }"
             class="button-link"
@@ -464,7 +465,7 @@ function resetForm() {
               Check the simulation results
             </button>
           </router-link>
-        </span>
+        </div>
       </form>
     </section>
   </main>
@@ -488,21 +489,6 @@ section {
   flex-direction: row;
   align-items: center;
   gap: 1.5rem;
-}
-
-.simulation-result {
-  background-color: var(--color-surface-sections);
-  border: 1px solid var(--color-grid);
-  border-radius: 16px;
-  padding: 1.75rem 2rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  text-align: left;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  float: center;
-}
-.simulation-result:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4);
 }
 
 .form {
@@ -593,5 +579,11 @@ button {
 .error {
   color: var(--color-accent-yellow);
   font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 </style>
