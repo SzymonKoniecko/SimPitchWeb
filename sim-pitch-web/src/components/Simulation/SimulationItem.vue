@@ -74,15 +74,15 @@ function scrollToSection() {
 const loadSimulation = async () => {
   simulationState.value.loading = true;
   sortOption.value === "dynamic" ? "CreatedDate" : sortOption.value,
-  simulationState.value = await fetchData<Simulation>(() =>
-    engineAPI.SimulationController.getSimulationOverviews(
-      props.id,
-      currentPage.value,
-      pageSize.value,
-      sortOption.value,
-      mapOrder(order.value)
-    )
-  );
+    simulationState.value = await fetchData<Simulation>(() =>
+      engineAPI.SimulationController.getSimulationOverviews(
+        props.id,
+        currentPage.value,
+        pageSize.value,
+        sortOption.value,
+        mapOrder(order.value)
+      )
+    );
   if (simulationTeamStatsState.value.data === null && simulationState.value.data?.state.state !== 'Running') {
     simulationTeamStatsState.value = await fetchData<SimulationTeamStats[]>(() =>
       engineAPI.SimulationStatsController.getSimulationTeamStats(props.id)
@@ -251,11 +251,11 @@ watch(
       <section>
         <p selenium-id="league-round">
           <strong><i>{{ getLeagueRoundNameById(simulationState.data.simulationParams.leagueRoundId)
-            }}</i></strong>
+              }}</i></strong>
         </p>
         <p selenium-id="target-league-round">
           <strong><i>{{ getTargetLeagueRoundNameById(simulationState.data.simulationParams.targetLeagueRoundId)
-            }}</i></strong>
+              }}</i></strong>
         </p>
       </section>
       <p v-if="simulationTeamStatsState?.data"><strong>Winners:</strong> {{ winnersData }}</p>
@@ -274,14 +274,12 @@ watch(
         <strong>Simulated matches:</strong>
         {{ simulationState.data.simulatedMatches }}
       </p>
-      <p><strong>Strengths per each season:</strong>
-      <ul v-for="strength in simulationState.data.leagueStrengths">
-        <li>{{ strength.seasonYear }} with strength {{ strength.strength }} (avg goals in season)</li>
-      </ul>
-      </p>
       <p>
-        <strong>Simulated league strength:</strong>
-        {{ simulationState.data.priorLeagueStrength }} (based on averange goals calculations)
+        <strong>Strengths per each season: </strong>
+        <span>(based on averange goals calculations)</span>
+      <ul v-for="strength in simulationState.data.leagueStrengths">
+        <li>{{ strength.seasonYear }} with strength {{ strength.strength }} </li>
+      </ul>
       </p>
       <section>
         <details close class="default-details" selenium-id="sim-params-details">
