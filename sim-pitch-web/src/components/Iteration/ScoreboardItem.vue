@@ -53,7 +53,7 @@
             </div>
           </td>
           <td>
-            <div class="team-card-container">
+            <div>
               <TeamCard
                 :id="s.teamId"
                 :variant="'mini'"
@@ -353,13 +353,6 @@
   font-weight: 600;
   font-size: 0.95rem;
   color: var(--color-text-main);
-}
-
-.team-card-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.25rem;
 }
 
 .initial-value {
