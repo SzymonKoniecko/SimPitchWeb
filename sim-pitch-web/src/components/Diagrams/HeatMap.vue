@@ -1,54 +1,70 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import {
   sortTeamStats,
   type SimulationTeamStats,
 } from "../../models/Simulations/simulationTeamStats";
 import TeamCard from "../Team/TeamCard.vue";
 import type { Team } from "../../models/SportsDataModels/team";
+
 defineOptions({ name: "HeatMap" });
 
 const props = defineProps<{
   simulationTeamStats: SimulationTeamStats[];
   teams: Team[];
 }>();
+
+export interface WinnerInfo {
+  position: number;
+  teamName: string;
+  probability: number;
+}
+
 const emit = defineEmits<{
-  (e: "update:winnersData", value: string): void;
+  (e: "update:winnersData", value: WinnerInfo[]): void;
 }>();
+
 const teamStats = computed(() => {
-  let sorted = sortTeamStats(props.simulationTeamStats);
-  changedWinnersData(sorted);
-  return sorted;
+  return sortTeamStats(props.simulationTeamStats);
 });
+
 const maxPositions = computed(() =>
   Math.max(
-    ...(props.simulationTeamStats?.map((t) => t.positionProbbility.length) ?? [
-      0,
-    ])
+    ...(props.simulationTeamStats?.map((t) => t.positionProbbility.length) ?? [0])
   )
 );
-
-const changedWinnersData = (sortedTeamStats: SimulationTeamStats[]) => {
-  if (!sortedTeamStats || sortedTeamStats.length < 3) return;
-
-  const winnersString = [
-    `1st: ${getTeamNameById(sortedTeamStats[0]?.teamId)} ${(
-      100 * (sortedTeamStats[0]?.positionProbbility?.[0] ?? 0)
-    ).toFixed(2)}% - `,
-    `2nd: ${getTeamNameById(sortedTeamStats[1]?.teamId)} ${(
-      100 * (sortedTeamStats[1]?.positionProbbility?.[0] ?? 0)
-    ).toFixed(2)}% - `,
-    `3rd: ${getTeamNameById(sortedTeamStats[2]?.teamId)} ${(
-      100 * (sortedTeamStats[2]?.positionProbbility?.[0] ?? 0)
-    ).toFixed(2)}%`,
-  ];
-
-  emit("update:winnersData", winnersString.join(" "));
-};
 
 function getTeamNameById(id?: string): string {
   return props.teams.find((team) => team.id === id)?.name || "UNKNOWN";
 }
+
+watch(
+  teamStats,
+  (sorted) => {
+    if (!sorted || sorted.length < 3) return;
+
+    const winners: WinnerInfo[] = [
+      {
+        position: 1,
+        teamName: getTeamNameById(sorted[0]?.teamId),
+        probability: sorted[0]?.positionProbbility?.[0] ?? 0
+      },
+      {
+        position: 2,
+        teamName: getTeamNameById(sorted[1]?.teamId),
+        probability: sorted[1]?.positionProbbility?.[1] ?? 0
+      },
+      {
+        position: 3,
+        teamName: getTeamNameById(sorted[2]?.teamId),
+        probability: sorted[2]?.positionProbbility?.[2] ?? 0
+      }
+    ];
+
+    emit("update:winnersData", winners);
+  },
+  { immediate: true }
+);
 
 const getColor = (prob: number) => {
   const baseColor = getComputedStyle(document.documentElement)
@@ -56,6 +72,7 @@ const getColor = (prob: number) => {
     .trim();
 
   const hexToRgb = (hex: string) => {
+    if (!hex.startsWith("#")) return { r: 239, g: 68, b: 68 };
     const value = hex.replace("#", "");
     const bigint = parseInt(value, 16);
     const r = (bigint >> 16) & 255;
@@ -64,14 +81,9 @@ const getColor = (prob: number) => {
     return { r, g, b };
   };
 
-  const { r, g, b } = hexToRgb(baseColor);
-
-  // Gwarantujemy, że alpha nigdy nie spadnie poniżej 0.15
+  const { r, g, b } = hexToRgb(baseColor || "#ef4444");
   const alpha = Math.max(prob * 0.9 + 0.1, 0.15);
-
-  // Podbijamy jasność przy niskich wartościach
   const lightnessAdjust = 0.5 + prob * 0.9;
-
   const adjustedR = Math.min(Math.round(r * lightnessAdjust) + 10, 255);
   const adjustedG = Math.min(Math.round(g * lightnessAdjust) + 10, 255);
   const adjustedB = Math.min(Math.round(b * lightnessAdjust) + 10, 255);
@@ -82,11 +94,12 @@ const getColor = (prob: number) => {
 
 <template>
   <section>
-    <details close class="default-details" selenium-id="heatmap-details">
+    <details open class="default-details" selenium-id="heatmap-details">
       <summary class="default-summary">
        <div class="default-summary-content">
-        <span class="default-summary-title">Team Position Probbility. </span>
-        <span class="default-summary-subtitle"> HeatMap</span></div>
+        <span class="default-summary-title">Team Position Probability</span>
+        <span class="default-summary-subtitle"> HeatMap</span>
+       </div>
       </summary>
       <figure>
         <table role="grid" class="heatmap-table">
@@ -100,7 +113,7 @@ const getColor = (prob: number) => {
           </thead>
 
           <tbody>
-            <tr v-for="(teamstat, index) in teamStats">
+            <tr v-for="(teamstat, index) in teamStats" :key="teamstat.teamId">
               <th scope="row">
                 <TeamCard :id="teamstat.teamId" :variant="'mini'" />
               </th>
@@ -114,7 +127,7 @@ const getColor = (prob: number) => {
                 }"
                 :selenium-id="`cell-${index}-${idx}`"
               >
-                {{ (prob * 100).toFixed(3) }}%
+                {{ (prob * 100).toFixed(1) }}%
               </td>
             </tr>
           </tbody>
@@ -128,6 +141,7 @@ const getColor = (prob: number) => {
 figure {
   overflow-x: auto;
   margin: 0;
+  border-radius: 8px;
 }
 
 .heatmap-table {
@@ -136,5 +150,19 @@ figure {
   background-color: var(--color-surface-sections);
   color: var(--color-text-main);
   font-size: 0.735rem;
+}
+
+.heatmap-table th, 
+.heatmap-table td {
+  padding: 0.4rem;
+  text-align: center;
+  border: 1px solid var(--color-grid);
+}
+
+.heatmap-table thead th {
+  background-color: var(--color-surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 </style>

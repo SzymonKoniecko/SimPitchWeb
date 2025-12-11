@@ -13,15 +13,13 @@ import Filter from "../Other/Filter.vue";
 import type { Team } from "../../models/SportsDataModels/team";
 import { SortingOption } from "../../models/Consts/sortingOption";
 import type { SimulationTeamStats } from "../../models/Simulations/simulationTeamStats";
-import HeatMap from "../Diagrams/HeatMap.vue";
+import HeatMap, { type WinnerInfo } from "../Diagrams/HeatMap.vue"; // Importujemy typ z HeatMap
 import { CURRENT_SEASON } from "../../models/Consts/seasonYear";
 import { MapNumberToText } from "../../models/Consts/textHelper";
-
 
 defineOptions({ name: "SimulationItem" });
 type Props = { id: string };
 const props = defineProps<Props>();
-
 
 const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
@@ -29,7 +27,6 @@ const teams = computed(() => store.teams);
 const leagueRounds = computed(() => store.leagueRounds);
 const presentedTeams = ref<Team[]>([]);
 const filterValue = ref("Any");
-
 
 const simulationState = ref<ApiState<Simulation>>({
   loading: true,
@@ -42,14 +39,13 @@ const simulationTeamStatsState = ref<ApiState<SimulationTeamStats[]>>({
   data: null,
 });
 
-
 const sortOption = ref("CreatedDate");
 const order = ref<"Descending" | "Ascending">("Descending");
 const currentPage = ref(1);
 const pageSize = ref(10);
-const scroll = ref<HTMLElement | null>(null)
-const winnersData = ref("Not loaded");
+const scroll = ref<HTMLElement | null>(null);
 
+const winnersData = ref<WinnerInfo[] | null>(null);
 
 const totalCount = computed(
   () => simulationState.value.data?.iterationPreviews?.totalCount ?? 0
@@ -58,23 +54,27 @@ const totalPages = computed(
   () => simulationState.value.data?.iterationPreviews?.totalPages ?? 1
 );
 
-
 const ensureSportsData = async () => {
   if (!leagues.value.length) await store.loadLeagues();
   if (!teams.value.length) await store.loadTeams();
-  if (!leagueRounds.value.length && simulationState.value.data?.simulationParams.leagueId !== undefined) await store.loadLeagueRounds(CURRENT_SEASON, simulationState.value.data?.simulationParams.leagueId);
+  if (
+    !leagueRounds.value.length &&
+    simulationState.value.data?.simulationParams.leagueId !== undefined
+  )
+    await store.loadLeagueRounds(
+      CURRENT_SEASON,
+      simulationState.value.data?.simulationParams.leagueId
+    );
 };
 
-
 function scrollToSection() {
-  scroll?.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  scroll?.value?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
-
 
 const loadSimulation = async () => {
   simulationState.value.loading = true;
   sortOption.value === "dynamic" ? "CreatedDate" : sortOption.value,
-    simulationState.value = await fetchData<Simulation>(() =>
+    (simulationState.value = await fetchData<Simulation>(() =>
       engineAPI.SimulationController.getSimulationOverviews(
         props.id,
         currentPage.value,
@@ -82,15 +82,17 @@ const loadSimulation = async () => {
         sortOption.value,
         mapOrder(order.value)
       )
-    );
-  if (simulationTeamStatsState.value.data === null && simulationState.value.data?.state.state !== 'Running') {
-    simulationTeamStatsState.value = await fetchData<SimulationTeamStats[]>(() =>
-      engineAPI.SimulationStatsController.getSimulationTeamStats(props.id)
+    ));
+  if (
+    simulationTeamStatsState.value.data === null &&
+    simulationState.value.data?.state.state !== "Running"
+  ) {
+    simulationTeamStatsState.value = await fetchData<SimulationTeamStats[]>(
+      () => engineAPI.SimulationStatsController.getSimulationTeamStats(props.id)
     );
   }
   simulationState.value.loading = false;
 };
-
 
 const loadIterationPage = async (newPage: number) => {
   currentPage.value = newPage;
@@ -105,11 +107,9 @@ const changePageSize = async (newSize: number) => {
   scrollToSection();
 };
 
-
 const setFilteringByTeam = (teamId: string) => {
   filterValue.value = teamId;
 };
-
 
 const stopSimulation = async (id?: string) => {
   if (id != null && id != undefined && id !== "") {
@@ -120,7 +120,6 @@ const stopSimulation = async (id?: string) => {
   }
 };
 
-
 const changeSortingOption = async (newSortingOption: string) => {
   sortOption.value = newSortingOption;
   if (sortOption.value !== SortingOption.DynamicValue) {
@@ -130,28 +129,43 @@ const changeSortingOption = async (newSortingOption: string) => {
   scrollToSection();
 };
 
-
 const changeOrder = async (newOrder: "Descending" | "Ascending") => {
   order.value = newOrder;
   await loadSimulation();
   scrollToSection();
 };
 
-
 const mapOrder = (newOrder: "Descending" | "Ascending"): "DESC" | "ASC" => {
   return newOrder === "Descending" ? "DESC" : "ASC";
 };
 
-
 const getLeagueName = (id: string) =>
   leagues.value.find((l) => l.id === id)?.name ?? id;
 const getLeagueRoundNameById = (id?: string) => {
-  if (id === undefined || id === null || id === "00000000-0000-0000-0000-000000000000") return `Simulation is made for unplayed matches only`;
-  return "Started simulation by " + MapNumberToText(leagueRounds.value.find((x) => x.id === id)?.round ?? 0) + " round"
+  if (
+    id === undefined ||
+    id === null ||
+    id === "00000000-0000-0000-0000-000000000000"
+  )
+    return `Simulation is made for unplayed matches only`;
+  return (
+    "Started simulation by " +
+    MapNumberToText(leagueRounds.value.find((x) => x.id === id)?.round ?? 0) +
+    " round"
+  );
 };
 const getTargetLeagueRoundNameById = (id?: string) => {
-  if (id === undefined || id === null || id === "00000000-0000-0000-0000-000000000000") return `Simulated all league rounds (to the end of the season)`;
-  return "Finished simulation to " + MapNumberToText(leagueRounds.value.find((x) => x.id === id)?.round ?? 0) + " round"
+  if (
+    id === undefined ||
+    id === null ||
+    id === "00000000-0000-0000-0000-000000000000"
+  )
+    return `Simulated all league rounds (to the end of the season)`;
+  return (
+    "Finished simulation to " +
+    MapNumberToText(leagueRounds.value.find((x) => x.id === id)?.round ?? 0) +
+    " round"
+  );
 };
 function getTeamById(id: string): boolean {
   return presentedTeams.value.some((team) => team.id === id);
@@ -164,7 +178,6 @@ function addTeamIfNotPresented(teamId: string) {
     }
   }
 }
-
 
 const groupedPreviews = computed(() => {
   const previews = simulationState.value.data?.iterationPreviews.items ?? [];
@@ -181,11 +194,10 @@ const groupedPreviews = computed(() => {
     for (const key in groups) {
       const hasTeam = groups[key]?.some((item) => item.teamId === teamId);
       if (!hasTeam) {
-        delete groups[key]; // usuń całą grupę, jeśli nie zawiera danego teamId
+        delete groups[key];
       }
     }
   }
-
 
   for (const key in groups) {
     const group = groups[key];
@@ -196,17 +208,13 @@ const groupedPreviews = computed(() => {
   return groups;
 });
 
-
 const groupedPreviewEntries = computed(() =>
   Object.entries(groupedPreviews.value)
 );
 
-
-const setWinnersData = (data: string) => {
+const setWinnersData = (data: WinnerInfo[]) => {
   winnersData.value = data;
-}
-
-
+};
 
 onMounted(async () => {
   await ensureSportsData();
@@ -227,64 +235,170 @@ watch(
 );
 </script>
 
-
 <template>
   <main>
     <div class="button-list">
-      <button @click="() => loadSimulation()" :aria-busy="simulationState.loading" role="button" class="button-primary">
+      <button
+        @click="() => loadSimulation()"
+        :aria-busy="simulationState.loading"
+        role="button"
+        class="button-primary"
+      >
         Reload
       </button>
       <br />
-      <button @click="stopSimulation(simulationState.data?.state.simulationId)" :aria-busy="simulationState.loading"
-        role="button" class="button-secondary">
+      <button
+        @click="stopSimulation(simulationState.data?.state.simulationId)"
+        :aria-busy="simulationState.loading"
+        role="button"
+        class="button-secondary"
+      >
         Stop simulation
       </button>
     </div>
     <article v-if="simulationState.loading" aria-busy="true">
       Loading simulation data...
     </article>
-    <ErrorEndpoint v-else-if="simulationState.error" :error="simulationState.error" />
-    <ErrorEndpoint v-else-if="simulationTeamStatsState.error" :error="simulationTeamStatsState.error" />
+    <ErrorEndpoint
+      v-else-if="simulationState.error"
+      :error="simulationState.error"
+    />
+    <ErrorEndpoint
+      v-else-if="simulationTeamStatsState.error"
+      :error="simulationTeamStatsState.error"
+    />
     <section v-else-if="simulationState.data">
-      <h2 style="text-align: center" selenium-id="title-simulation-item">Summary of simulation</h2>
-      <h3><strong> {{ simulationState.data.simulationParams.title }}</strong> </h3>
+      <h2 style="text-align: center" selenium-id="title-simulation-item">
+        Summary of simulation
+      </h2>
+      <h3>
+        <strong> {{ simulationState.data.simulationParams.title }}</strong>
+      </h3>
+
+      <section
+        v-if="winnersData && winnersData.length >= 3"
+        class="winners-podium"
+      >
+        <div class="podium-card rank-2">
+          <div class="medal">🥈</div>
+          <div class="team-name">{{ winnersData[1]?.teamName }}</div>
+          <div class="probability">
+            {{ (winnersData[1]?.probability! * 100).toFixed(1) }}%
+            <span class="label">win prob</span>
+          </div>
+        </div>
+
+        <div class="podium-card rank-1">
+          <div class="crown">👑</div>
+          <div class="medal">🥇</div>
+          <div class="team-name">{{ winnersData[0]?.teamName }}</div>
+          <div class="probability">
+            {{ (winnersData[0]?.probability! * 100).toFixed(1) }}%
+            <span class="label">win prob</span>
+          </div>
+        </div>
+
+        <div class="podium-card rank-3">
+          <div class="medal">🥉</div>
+          <div class="team-name">{{ winnersData[2]?.teamName }}</div>
+          <div class="probability">
+            {{ (winnersData[2]?.probability! * 100).toFixed(1) }}%
+            <span class="label">win prob</span>
+          </div>
+        </div>
+      </section>
+
+      <ul class="stats-grid">
+        <li class="stat-card" selenium-id="iterations">
+          <div class="stat-content">
+            <strong>Completed iterations:</strong>
+            <span class="stat-value">
+              {{ simulationState.data.state.lastCompletedIteration }} /
+              {{ simulationState.data?.simulationParams.iterations }}
+              <span class="stat-sub"
+                >({{ simulationState.data?.state.progressPercent }}%)</span
+              >
+            </span>
+          </div>
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              :style="{
+                width: simulationState.data?.state.progressPercent + '%',
+              }"
+            ></div>
+          </div>
+        </li>
+
+        <li class="stat-card" selenium-id="state">
+          <div class="stat-content">
+            <strong>State:</strong>
+            <span class="stat-value">
+              {{ simulationState.data.state.state }}
+            </span>
+          </div>
+          <div class="stat-footer">
+            {{
+              new Date(simulationState.data.state.updatedAt).toLocaleString()
+            }}
+          </div>
+        </li>
+
+        <li class="stat-card">
+          <div class="stat-content">
+            <strong>Simulated matches:</strong>
+            <span class="stat-value">{{
+              simulationState.data.simulatedMatches
+            }}</span>
+          </div>
+        </li>
+      </ul>
+
+      <div>
+        <div class="strengths-header">
+          <strong>Strengths per each season:</strong>
+          <span class="subtitle">(based on average goals calculations)</span>
+        </div>
+
+        <ul>
+          <li
+            v-for="strength in simulationState.data.leagueStrengths"
+            :key="strength.seasonYear"
+          >
+            <span>{{ strength.seasonYear }}</span>
+            <span> → </span>
+            <span>strength {{ strength.strength }}</span>
+          </li>
+        </ul>
+      </div>
+
       <section>
         <p selenium-id="league-round">
-          <strong><i>{{ getLeagueRoundNameById(simulationState.data.simulationParams.leagueRoundId)
-              }}</i></strong>
+          <strong
+            ><i>{{
+              getLeagueRoundNameById(
+                simulationState.data.simulationParams.leagueRoundId
+              )
+            }}</i></strong
+          >
         </p>
         <p selenium-id="target-league-round">
-          <strong><i>{{ getTargetLeagueRoundNameById(simulationState.data.simulationParams.targetLeagueRoundId)
-              }}</i></strong>
+          <strong
+            ><i>{{
+              getTargetLeagueRoundNameById(
+                simulationState.data.simulationParams.targetLeagueRoundId
+              )
+            }}</i></strong
+          >
         </p>
       </section>
-      <p v-if="simulationTeamStatsState?.data"><strong>Winners:</strong> {{ winnersData }}</p>
-      <p selenium-id="iterations">
-        <strong>Completed iterations:</strong>
-        {{ simulationState.data.state.lastCompletedIteration }} /
-        {{ simulationState.data?.simulationParams.iterations }} ({{
-          simulationState.data?.state.progressPercent
-        }}%)
-      </p>
-      <p selenium-id="state">
-        <strong>State:</strong> {{ simulationState.data.state.state }} ---
-        {{ new Date(simulationState.data.state.updatedAt).toLocaleString() }}
-      </p>
-      <p>
-        <strong>Simulated matches:</strong>
-        {{ simulationState.data.simulatedMatches }}
-      </p>
-      <p>
-        <strong>Strengths per each season: </strong>
-        <span>(based on averange goals calculations)</span>
-      <ul v-for="strength in simulationState.data.leagueStrengths">
-        <li>{{ strength.seasonYear }} with strength {{ strength.strength }} </li>
-      </ul>
-      </p>
       <section>
         <details close class="default-details" selenium-id="sim-params-details">
           <summary class="default-summary">
-            <div class="default-summary-content"><strong class="default-summary-title">Simulation Parameters.</strong>
+            <div class="default-summary-content">
+              <strong class="default-summary-title"
+                >Simulation Parameters.</strong
+              >
               <span class="default-summary-subtitle"> Details</span>
             </div>
           </summary>
@@ -337,55 +451,105 @@ watch(
           </ul>
         </details>
       </section>
-      <summary v-if="simulationTeamStatsState?.data == null" class="default-summary-subtitle">Wait for completed
-        simulation for heatmap</summary>
-      <HeatMap v-else="simulationTeamStatsState?.data && teams?.length"
-        :simulation-team-stats="simulationTeamStatsState.data" :teams="teams" @update:winners-data="setWinnersData" />
-      <summary v-if="simulationTeamStatsState?.data == null" class="default-summary-subtitle">Wait for completed
-        simulation for averange stats</summary>
-      <ScoreboardItem v-else="simulationTeamStatsState?.data && teams?.length" variant="simulation_averange"
-        :teams="teams" :simulation-team-stats="simulationTeamStatsState?.data ?? undefined" />
+
+      <summary
+        v-if="simulationTeamStatsState?.data == null"
+        class="default-summary-subtitle"
+      >
+        Wait for completed simulation for heatmap
+      </summary>
+
+      <HeatMap
+        v-else-if="simulationTeamStatsState?.data && teams?.length"
+        :simulation-team-stats="simulationTeamStatsState.data"
+        :teams="teams"
+        @update:winners-data="setWinnersData"
+      />
+
+      <summary
+        v-if="simulationTeamStatsState?.data == null"
+        class="default-summary-subtitle"
+      >
+        Wait for completed simulation for averange stats
+      </summary>
+      <ScoreboardItem
+        v-else-if="simulationTeamStatsState?.data && teams?.length"
+        variant="simulation_averange"
+        :teams="teams"
+        :simulation-team-stats="simulationTeamStatsState?.data ?? undefined"
+      />
+
       <section>
         <details class="default-details" open ref="scroll">
-          <hr>
-          </hr>
+          <hr />
           <summary class="default-summary">
             <div class="default-summary-content">
               <span class="default-summary-title">Iteration Previews</span>
-              <span class="default-summary-subtitle"> (grouped by scoreboard)</span>
+              <span class="default-summary-subtitle">
+                (grouped by scoreboard)</span
+              >
             </div>
           </summary>
-          <Pagination :total-items="totalCount" :page-size="pageSize" :current-page="currentPage"
-            :total-pages="totalPages" @update:page="loadIterationPage" @update:pageSize="changePageSize" />
-          <Filter :variant="`SimulationItem`" :to-sort-option="sortOption" :order="order"
-            :filterDynamicValue="presentedTeams" @update:sorting-option="changeSortingOption"
-            @update:order="changeOrder" @update:filter-by="setFilteringByTeam" />
+          <Pagination
+            :total-items="totalCount"
+            :page-size="pageSize"
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            @update:page="loadIterationPage"
+            @update:pageSize="changePageSize"
+          />
+          <Filter
+            :variant="`SimulationItem`"
+            :to-sort-option="sortOption"
+            :order="order"
+            :filterDynamicValue="presentedTeams"
+            @update:sorting-option="changeSortingOption"
+            @update:order="changeOrder"
+            @update:filter-by="setFilteringByTeam"
+          />
           <div class="scoreboards-list">
-            <div v-for="([scoreboardId, items], index) in groupedPreviewEntries" :key="scoreboardId"
-              class="scoreboard-block">
+            <div
+              v-for="([scoreboardId, items], index) in groupedPreviewEntries"
+              :key="scoreboardId"
+              class="scoreboard-block"
+            >
               <h3 style="float: right">#{{ items[0]?.iterationIndex }}</h3>
 
-
-              <ScoreboardItem :scoreboard_id="scoreboardId" variant="preview" :teams="teams"
-                :iteration_preview="items" />
+              <ScoreboardItem
+                :scoreboard_id="scoreboardId"
+                variant="preview"
+                :teams="teams"
+                :iteration_preview="items"
+              />
               <div class="button-list">
-                <router-link :to="{
-                  name: 'IterationItem',
-                  params: {
-                    simulation_id: props.id,
-                    id: items[0]?.iterationId,
-                  },
-                  query: {
-                    simulationState: simulationState.data?.state.state
-                  },
-                }" role="button" class="button-secondary" :selenium-id="`iteration-${index}`">
+                <router-link
+                  :to="{
+                    name: 'IterationItem',
+                    params: {
+                      simulation_id: props.id,
+                      id: items[0]?.iterationId,
+                    },
+                    query: {
+                      simulationState: simulationState.data?.state.state,
+                    },
+                  }"
+                  role="button"
+                  class="button-secondary"
+                  :selenium-id="`iteration-${index}`"
+                >
                   → Check complete iteration details
                 </router-link>
               </div>
             </div>
           </div>
-          <Pagination :total-items="totalCount" :page-size="pageSize" :current-page="currentPage"
-            :total-pages="totalPages" @update:page="loadIterationPage" @update:pageSize="changePageSize" />
+          <Pagination
+            :total-items="totalCount"
+            :page-size="pageSize"
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            @update:page="loadIterationPage"
+            @update:pageSize="changePageSize"
+          />
         </details>
       </section>
       <footer>
@@ -397,7 +561,6 @@ watch(
   </main>
 </template>
 
-
 <style scoped>
 main {
   display: flex;
@@ -408,21 +571,17 @@ main {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
-
 div {
   margin-top: 1rem;
 }
-
 
 .error {
   color: var(--del-color);
 }
 
-
 button {
   float: right;
 }
-
 
 .scoreboards-list {
   display: flex;
@@ -430,8 +589,200 @@ button {
   gap: 1rem;
 }
 
-
-.scoreboards-list>* {
+.scoreboards-list > * {
   flex: 1 1 calc(50% - 1rem);
+}
+
+.winners-podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 1rem;
+}
+
+.podium-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 12px;
+  background-color: var(--color-surface-sections);
+  border: 1px solid var(--color-grid);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 140px;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.podium-card:hover {
+  transform: translateY(-5px);
+}
+
+.rank-1 {
+  order: 2;
+  width: 160px;
+  padding-bottom: 2.5rem;
+  background: linear-gradient(
+    to bottom,
+    var(--color-surface-sections),
+    rgba(255, 215, 0, 0.1)
+  );
+  border-color: rgba(255, 215, 0, 0.5);
+  z-index: 2;
+}
+
+.rank-2 {
+  order: 1;
+  padding-bottom: 1.5rem;
+}
+
+.rank-3 {
+  order: 3;
+  padding-bottom: 1rem;
+}
+
+.medal {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.rank-1 .medal {
+  font-size: 3.5rem;
+}
+
+.crown {
+  position: absolute;
+  top: -25px;
+  font-size: 2rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.team-name {
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.probability {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-accent-blue);
+  display: flex;
+  flex-direction: column;
+}
+
+.rank-1 .probability {
+  color: var(--color-accent-yellow);
+  font-size: 1.4rem;
+}
+
+.label {
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+}
+
+.stat-card {
+  background-color: var(--color-surface-sections);
+  border: 1px solid var(--color-grid);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--color-accent-blue);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.stat-card strong {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  color: var(--color-text-main);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.stat-sub {
+  font-size: 0.85rem;
+  color: var(--color-text-third);
+  font-weight: normal;
+}
+
+.stat-footer {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  text-align: right;
+}
+
+.progress-bar {
+  margin-top: 0.75rem;
+  height: 4px;
+  background-color: var(--color-grid);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--color-accent-green);
+  transition: width 0.5s ease;
+}
+
+.strengths-header {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.strengths-header strong {
+  color: var(--color-text-main);
+  font-size: 1.05rem;
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  font-style: italic;
 }
 </style>
