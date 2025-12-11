@@ -20,7 +20,7 @@ import { SimulationModelsOptions } from "../../models/Consts/simulationModel";
 
 defineOptions({ name: "PrepareSimulation" });
 
-const router = useRouter(); // Inicjalizacja routera
+const router = useRouter();
 const sportsDataStore = useSportsDataStore();
 const loadingSimulation = ref(false);
 const errorSimulation = ref<string | null>(null);
@@ -29,6 +29,7 @@ const error = computed(() => sportsDataStore.error);
 const leagues = computed(() => sportsDataStore.leagues);
 const leagueRounds = computed(() => sportsDataStore.leagueRounds);
 const simulationId = ref("");
+
 const scrollValErrors = ref<HTMLElement | null>(null);
 const scrollStartedSim = ref<HTMLElement | null>(null);
 
@@ -117,18 +118,25 @@ function validateForm(): boolean {
   return newErrors.length === 0;
 }
 
-function scrollToValidationSection() {
-  scrollValErrors?.value?.scrollIntoView({
-    behavior: "smooth",
-    block: "start",
-  });
+async function scrollToValidationSection() {
+  // Wait for DOM update to ensure validation error list is rendered
+  await nextTick();
+  if (scrollValErrors.value) {
+    scrollValErrors.value.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }
 }
 
-function scrollToStartedSimulation() {
-  scrollStartedSim?.value?.scrollIntoView({
-    behavior: "smooth",
-    block: "start",
-  });
+async function scrollToStartedSimulation() {
+  await nextTick();
+  if (scrollStartedSim.value) {
+    scrollStartedSim.value.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }
 }
 
 async function submitForm() {
@@ -141,7 +149,6 @@ async function submitForm() {
   errorSimulation.value = null;
   status.value = "";
   simulationId.value = "";
-
   isRedirecting.value = false;
   redirectCountdown.value = 2;
 
@@ -181,7 +188,6 @@ async function submitForm() {
   }
 }
 
-// Nowa funkcja obsługująca timer i przekierowanie
 function handleCheckResultsWithDelay() {
   if (isRedirecting.value) return;
 
@@ -207,7 +213,6 @@ function resetForm() {
   form.league_round_id = null;
   form.target_league_round_id = null;
 
-  // reset new fields
   form.seed = randomInt(0, 999999);
   form.gamesToReachTrust = 15;
   form.confidenceLevel = 1.05;
@@ -218,6 +223,7 @@ function resetForm() {
   errorSimulation.value = null;
   validationErrors.value = [];
   isRedirecting.value = false;
+  simulationId.value = ""; // Reset simulation ID to show form buttons again
 }
 </script>
 
@@ -235,9 +241,8 @@ function resetForm() {
     <section>
       <div v-if="loading" class="info">⏳ Loading...</div>
       <ErrorEndpoint v-else-if="error" :error="error" />
-      <div v-if="loadingSimulation" class="info">
-        Working simulation, please wait…
-      </div>
+
+      <!-- Moved loading indicator inside the button for smoother UX, removing separate text div -->
       <ErrorEndpoint v-else-if="errorSimulation" :error="errorSimulation" />
 
       <form class="form" @submit.prevent="submitForm">
@@ -264,15 +269,20 @@ function resetForm() {
             </label>
           </div>
         </div>
+
+        <!-- Scroll anchor for validation errors -->
+        <div ref="scrollValErrors" class="scroll-anchor"></div>
+
         <div
           v-if="validationErrors && validationErrors.length > 0"
           class="validation-error"
         >
-          <label ref="scrollValErrors"> Validation errors:</label>
-          <ul v-for="valError in validationErrors">
+          <label>Validation errors:</label>
+          <ul v-for="valError in validationErrors" :key="valError">
             <li>{{ valError }}</li>
           </ul>
         </div>
+
         <div class="field">
           <label for="title">Set Title</label>
           <input v-model="form.title" selenium-id="input-title" />
@@ -297,44 +307,46 @@ function resetForm() {
           </select>
         </div>
 
-        <div class="field" v-if="form.league_id !== ''">
-          <label for="leagueRoundId"
-            >Optional: All matches will be simulated from ->
-          </label>
-          <select id="leagueRoundId" v-model="form.league_round_id">
-            <option value="">Select starting round</option>
-            <option
-              v-for="leagueRound in leagueRounds.sort(
-                (a, b) => a.round - b.round
-              )"
-              :key="leagueRound.round"
-              :value="leagueRound.id"
-              :selenium-id="`round:${leagueRound.round}`"
+        <div class="rounds-container">
+          <div class="field" v-if="form.league_id !== ''">
+            <label for="leagueRoundId"
+              >Optional: All matches will be simulated from ->
+            </label>
+            <select id="leagueRoundId" v-model="form.league_round_id">
+              <option value="">Select starting round</option>
+              <option
+                v-for="leagueRound in leagueRounds.sort(
+                  (a, b) => a.round - b.round
+                )"
+                :key="leagueRound.round"
+                :value="leagueRound.id"
+                :selenium-id="`round:${leagueRound.round}`"
+              >
+                Round of {{ leagueRound.round }}
+              </option>
+            </select>
+          </div>
+          <div class="field" v-if="form.league_id !== ''">
+            <label for="targetLeagueRoundId"
+              >Optional: All matches will be simulated to ->
+            </label>
+            <select
+              id="targetLeagueRoundId"
+              v-model="form.target_league_round_id"
             >
-              Round of {{ leagueRound.round }}
-            </option>
-          </select>
-        </div>
-        <div class="field" v-if="form.league_id !== ''">
-          <label for="targetLeagueRoundId"
-            >Optional: All matches will be simulated to ->
-          </label>
-          <select
-            id="targetLeagueRoundId"
-            v-model="form.target_league_round_id"
-          >
-            <option value="">Select ending round</option>
-            <option
-              v-for="leagueRound in leagueRounds.sort(
-                (a, b) => a.round - b.round
-              )"
-              :key="leagueRound.round"
-              :value="leagueRound.id"
-              :selenium-id="`round:${leagueRound.round}`"
-            >
-              Round of {{ leagueRound.round }}
-            </option>
-          </select>
+              <option value="">Select ending round</option>
+              <option
+                v-for="leagueRound in leagueRounds.sort(
+                  (a, b) => a.round - b.round
+                )"
+                :key="leagueRound.round"
+                :value="leagueRound.id"
+                :selenium-id="`round:${leagueRound.round}`"
+              >
+                Round of {{ leagueRound.round }}
+              </option>
+            </select>
+          </div>
         </div>
 
         <div class="field">
@@ -472,17 +484,30 @@ function resetForm() {
             selenium-id="input-create-scoreboards"
           />
         </div>
-        <div class="actions">
-          <button type="submit" class="button-primary">Simulate</button>
-          <button type="button" class="button-secondary" @click="resetForm">
+
+        <div class="actions" v-if="!simulationId">
+          <button
+            type="submit"
+            class="button-primary"
+            :disabled="loadingSimulation"
+          >
+            <span v-if="loadingSimulation">Processing...</span>
+            <span v-else>Simulate</span>
+          </button>
+          <button
+            type="button"
+            class="button-secondary"
+            @click="resetForm"
+            :disabled="loadingSimulation"
+          >
             Reset
           </button>
         </div>
-        
+
         <div v-if="simulationId" ref="scrollStartedSim">
           <hr />
           <h5>Simulation has been started!</h5>
-          
+
           <button
             type="button"
             class="button-primary button-timer"
@@ -495,6 +520,14 @@ function resetForm() {
             <span v-else>Opening in {{ redirectCountdown }}s...</span>
           </button>
 
+          <button
+            type="button"
+            class="button-secondary"
+            style="margin-top: 1rem; width: 100%"
+            @click="resetForm"
+          >
+            Start New Simulation
+          </button>
         </div>
       </form>
     </section>
@@ -539,6 +572,18 @@ section {
   flex-direction: column;
   gap: 0.5rem;
 }
+
+/* 2. LAYOUT STABILITY FOR ROUNDS */
+.rounds-container {
+  min-height: 0;
+  transition: min-height 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Ensures space is reserved or animated smoothly if needed, 
+   but primarily groups inputs to avoid large jumps */
 
 label {
   font-weight: 600;
@@ -597,6 +642,11 @@ button {
   border: none;
 }
 
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .button-timer {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 260px;
@@ -607,8 +657,12 @@ button {
 .button-timer.timer-active {
   background-color: var(--color-accent-green, #4caf50);
   transform: scale(0.98);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: wait;
+}
+
+.scroll-anchor {
+  scroll-margin-top: 2rem; /* Buffer for scrolling */
 }
 
 .status {
