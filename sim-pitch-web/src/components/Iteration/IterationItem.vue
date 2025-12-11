@@ -32,12 +32,21 @@
     <article v-if="iterationResultState.data" class="iteration-info-article">
       <LegendInfo />
       <div>
-        <CustomScatterPlot
-          v-if="teamStrengths && teams"
-          :team-strengths="teamStrengths.filter((t) => t.roundId !== null)"
-          :teams="teams"
-          :league-rounds="leagueRounds"
-        />
+        <template v-if="teamStrengths && teams">
+          <CustomScatterPlot
+            v-if="currentMatchFilter === 'all'"
+            :team-strengths="teamStrengths.filter((t) => t.roundId !== null)"
+            :teams="teams"
+            :league-rounds="leagueRounds"
+          />
+          <div v-else class="chart-placeholder">
+            <p>ℹ️ The Scatter Plot is hidden in this view.</p>
+            <p>
+              Please switch the filter below to <strong>'All'</strong> to see
+              Team Strengths.
+            </p>
+          </div>
+        </template>
         <TeamFormChart
           v-if="teamStrengths && teams"
           :team-strengths="teamStrengths"
@@ -50,13 +59,13 @@
         <li selenium-id="league-round">
           <p>
             <strong
-              >Simulation started by <i>{{
+              >Simulation started by
+              <i>{{
                 getLeagueRoundNameById(
                   simulationOverviewState.data?.simulationParams.leagueRoundId
                 )
               }}</i>
-              </strong
-            >
+            </strong>
           </p>
         </li>
         <li selenium-id="number-simulated-matches">
@@ -99,9 +108,11 @@
       :team-strengths="iterationResultState.data?.teamStrengths"
       :league-rounds="leagueRounds"
       :onlyPlayedMatches="true"
+      @filter-change="handleMatchFilterChange"
     />
   </section>
 </template>
+
 <style scoped>
 .iteration-info-article {
   background-color: var(--color-bg);
@@ -125,6 +136,20 @@
   font-size: 1rem;
   color: var(--color-text-secondary);
 }
+
+.chart-placeholder {
+  padding: 2rem;
+  margin: 1rem 0;
+  background-color: var(--color-surface-sections);
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.chart-placeholder strong {
+  color: var(--color-accent-blue);
+}
 </style>
 
 <script setup lang="ts">
@@ -145,14 +170,24 @@ import LegendInfo from "../Other/LegendInfo.vue";
 import { CURRENT_SEASON } from "../../models/Consts/seasonYear";
 import type { SimulationOverview } from "../../models/Simulations/simulationOverview";
 import { MapNumberToText } from "../../models/Consts/textHelper";
+
 defineOptions({ name: "IterationItem" });
+
 type Props = {
   id: string; // iteration_id
   simulation_id: string;
 };
+
 const props = defineProps<Props>();
 const route = useRoute();
 const state = computed(() => route.query.simulationState);
+
+const currentMatchFilter = ref<string>("all");
+
+const handleMatchFilterChange = (mode: string) => {
+  currentMatchFilter.value = mode;
+};
+
 const simulationOverviewState = ref<ApiState<SimulationOverview>>({
   loading: true,
   error: null,
@@ -173,6 +208,7 @@ const simulationTeamStatsState = ref<ApiState<SimulationTeamStats[]>>({
   error: null,
   data: null,
 });
+
 const store = useSportsDataStore();
 const leagues = computed(() => store.leagues);
 const teams = computed(() => store.teams);
@@ -180,6 +216,7 @@ const leagueRounds = computed(() => store.leagueRounds);
 const teamStrengths = computed(
   () => iterationResultState.value.data?.teamStrengths
 );
+
 const loadSimulationOverview = async () => {
   simulationOverviewState.value = await fetchData<SimulationOverview>(() =>
     engineAPI.SimulationController.getSimulationOverview(props.simulation_id)
@@ -203,9 +240,11 @@ const loadIterationResult = async () => {
     );
   }
 };
+
 const leagueId = computed(
   () => simulationOverviewState.value.data?.simulationParams.leagueId
 );
+
 const getLeagueRoundNameById = (id?: string) => {
   if (id === undefined || id === null) return `UNKNOWN`;
   if (id === "00000000-0000-0000-0000-000000000000")
@@ -215,6 +254,7 @@ const getLeagueRoundNameById = (id?: string) => {
     return `last not played matches`;
   return MapNumberToText(foundRound) + " round.";
 };
+
 const ensureData = async () => {
   if (!props.simulation_id || !props.id) return;
 
@@ -240,10 +280,8 @@ onMounted(async () => {
 });
 
 watch([() => props.id, () => props.simulation_id], async (newIds, oldIds) => {
-  // only if the ID is reaaly changed
   if (oldIds && (newIds[0] !== oldIds[0] || newIds[1] !== oldIds[1])) {
     console.log("🔄 Props changed - reloading");
-    // clearing cache simulation-specific data
     simulationOverviewState.value = { loading: true, error: null, data: null };
     scoreboardState.value = { loading: true, error: null, data: null };
     iterationResultState.value = { loading: true, error: null, data: null };
