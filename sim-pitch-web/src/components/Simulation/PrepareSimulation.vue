@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch, nextTick } from "vue";
+import { useRouter } from "vue-router";
 import {
   CURRENT_SEASON,
   SeasonYear,
@@ -19,6 +20,7 @@ import { SimulationModelsOptions } from "../../models/Consts/simulationModel";
 
 defineOptions({ name: "PrepareSimulation" });
 
+const router = useRouter(); // Inicjalizacja routera
 const sportsDataStore = useSportsDataStore();
 const loadingSimulation = ref(false);
 const errorSimulation = ref<string | null>(null);
@@ -29,6 +31,9 @@ const leagueRounds = computed(() => sportsDataStore.leagueRounds);
 const simulationId = ref("");
 const scrollValErrors = ref<HTMLElement | null>(null);
 const scrollStartedSim = ref<HTMLElement | null>(null);
+
+const isRedirecting = ref(false);
+const redirectCountdown = ref(2);
 
 const form = reactive({
   title: `Simulation - ${new Date().toISOString()}`,
@@ -137,6 +142,9 @@ async function submitForm() {
   status.value = "";
   simulationId.value = "";
 
+  isRedirecting.value = false;
+  redirectCountdown.value = 2;
+
   const payload: SimulationParams = {
     title: form.title,
     seasonYears: form.seasonYears,
@@ -173,6 +181,25 @@ async function submitForm() {
   }
 }
 
+// Nowa funkcja obsługująca timer i przekierowanie
+function handleCheckResultsWithDelay() {
+  if (isRedirecting.value) return;
+
+  isRedirecting.value = true;
+  redirectCountdown.value = 2;
+
+  const interval = setInterval(() => {
+    redirectCountdown.value--;
+    if (redirectCountdown.value <= 0) {
+      clearInterval(interval);
+      router.push({
+        name: "SimulationItem",
+        params: { id: simulationId.value },
+      });
+    }
+  }, 1000);
+}
+
 function resetForm() {
   form.seasonYears = [CURRENT_SEASON];
   form.league_id = "";
@@ -190,6 +217,7 @@ function resetForm() {
   status.value = "";
   errorSimulation.value = null;
   validationErrors.value = [];
+  isRedirecting.value = false;
 }
 </script>
 
@@ -450,21 +478,23 @@ function resetForm() {
             Reset
           </button>
         </div>
+        
         <div v-if="simulationId" ref="scrollStartedSim">
           <hr />
           <h5>Simulation has been started!</h5>
-          <router-link
-            :to="{ name: 'SimulationItem', params: { id: simulationId } }"
-            class="button-link"
+          
+          <button
+            type="button"
+            class="button-primary button-timer"
+            :class="{ 'timer-active': isRedirecting }"
+            selenium-id="simulation-result"
+            @click="handleCheckResultsWithDelay"
+            :disabled="isRedirecting"
           >
-            <button
-              type="submit"
-              class="button-primary"
-              selenium-id="simulation-result"
-            >
-              Check the simulation results
-            </button>
-          </router-link>
+            <span v-if="!isRedirecting">Check the simulation results</span>
+            <span v-else>Opening in {{ redirectCountdown }}s...</span>
+          </button>
+
         </div>
       </form>
     </section>
@@ -565,6 +595,20 @@ button {
   transition: all 0.2s ease;
   padding: 0.75rem 1.5rem;
   border: none;
+}
+
+.button-timer {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 260px;
+  position: relative;
+  overflow: hidden;
+}
+
+.button-timer.timer-active {
+  background-color: var(--color-accent-green, #4caf50);
+  transform: scale(0.98);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  cursor: wait;
 }
 
 .status {
