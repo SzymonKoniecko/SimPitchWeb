@@ -3,7 +3,7 @@
 <template>
   <header class="navbar">
     <router-link to="/" exact-active-class="active">
-      <div class="logo">⚽ SimPitch</div>
+      <div class="logo">SimPitch ⚽</div>
     </router-link>
 
     <nav class="nav-links">
@@ -71,7 +71,7 @@
 .logo {
   font-weight: 800;
   font-size: 1.4rem;
-  color: var(--color-accent-green);
+  color: var(--color-accent-orange);
   letter-spacing: 0.5px;
   text-shadow: 0 0 8px rgba(0, 230, 118, 0.4);
   transition: transform 0.2s ease, text-shadow 0.2s ease;
@@ -98,7 +98,7 @@
 }
 
 .nav-links a.active {
-  color: var(--color-accent-green);
+  color: var(--color-accent-orange);
   font-weight: 600;
   background: rgba(0, 230, 118, 0.1);
   box-shadow: 0 0 6px rgba(0, 230, 118, 0.3);

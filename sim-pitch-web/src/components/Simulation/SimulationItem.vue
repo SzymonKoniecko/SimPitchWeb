@@ -268,10 +268,7 @@ watch(
       :error="simulationTeamStatsState.error"
     />
     <section v-else-if="simulationState.data">
-      <h2 style="text-align: center" selenium-id="title-simulation-item">
-        Summary of simulation
-      </h2>
-      <h3>
+      <h3 selenium-id="title-simulation-item">
         <strong> {{ simulationState.data.simulationParams.title }}</strong>
       </h3>
 
