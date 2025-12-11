@@ -5,5 +5,6 @@ export interface Scoreboard {
   simulationId: string;
   iterationResultId: string;
   scoreboardTeams: ScoreboardTeamStats[];
+  initialScoreboardTeams: ScoreboardTeamStats[];
   createdAt: string;       // DateTime -> string (ISO format)
 }
