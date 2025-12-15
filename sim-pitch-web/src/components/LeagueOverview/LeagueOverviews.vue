@@ -89,6 +89,7 @@
           :team-strengths="[]"
           :league-rounds="leagueRounds"
           :only-played-matches="false"
+          :is-league-overview="true"
         />
       </div>
     </div>

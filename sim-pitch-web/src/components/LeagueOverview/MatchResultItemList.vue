@@ -1,7 +1,6 @@
 <template>
   <div class="match-list-container">
-    <!-- Sekcja filtrów -->
-    <div class="filter-controls">
+    <div class="filter-controls" v-if="isLeagueOverview === false">
       <button 
         @click="changeFilter('simulated')" 
         class="filter-btn"
@@ -71,6 +70,7 @@ type Props = {
   teamStrengths: TeamStrength[];
   leagueRounds: LeagueRound[];
   onlyPlayedMatches: boolean;
+  isLeagueOverview: boolean
 };
 
 type FilterMode = 'all' | 'simulated' | 'official';
