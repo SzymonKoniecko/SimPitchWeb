@@ -1,3 +1,5 @@
+Its a part of project: https://github.com/SzymonKoniecko/SimPitch
+
 SimPitchWeb is the visualization and configuration frontend for the Football Match Simulator. 
 Built with Vue 3 and Vite, this application provides an interactive interface to control the C# .NET simulation engine, 
 allowing users to configure simulation strategies (Poisson, Dixon-Coles, Momentum), visualizae team strengths (Posterior vs. Likelihood), and analyze match outcomes.
