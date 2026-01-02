@@ -66,10 +66,10 @@
           :error="scoreboardState.error"
         />
       </div>
-      <details close class="chart-details" v-if="scoreboardState.data">
+      <details open class="chart-details" v-if="scoreboardState.data">
         <summary class="chart-summary">
           <div class="chart-summary-content">
-            <span class="chart-summary-title">Scoreboard</span>
+            <span class="chart-summary-title">-> Scoreboard</span>
           </div>
         </summary>
         <ScoreboardItem
@@ -80,6 +80,7 @@
           :simulation-team-stats="null"
         />
       </details>
+      <hr/>
       <div v-if="selectedSeason === CURRENT_SEASON && selectedleague">
         <div v-if="store.loading" class="info">Loading rounds...</div>
         <MatchResultItemList
