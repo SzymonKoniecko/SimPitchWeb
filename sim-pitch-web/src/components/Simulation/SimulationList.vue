@@ -45,15 +45,14 @@ const ensureSportsData = async () => {
 };
 
 const loadSimulations = async () => {
-
   state.value = await fetchData<SimulationOverviewList>(() =>
     engineAPI.SimulationController.getSimulations(
       currentPage.value,
       pageSize.value,
       sortOption.value === "dynamic" ? "League" : sortOption.value,
       mapOrder(order.value),
-      filterValue.value === "Any" ? "" : filterValue.value
-    )
+      filterValue.value === "Any" ? "" : filterValue.value,
+    ),
   );
 };
 
@@ -77,7 +76,7 @@ const updateFilterValue = async (newValue: string) => {
 
 const stopSimulation = async (id: string) => {
   await fetchData<SimulationState>(() =>
-    engineAPI.SimulationController.stopSimulation(id)
+    engineAPI.SimulationController.stopSimulation(id),
   );
   await loadSimulations();
 };
@@ -115,10 +114,16 @@ const getLeagueName = (id: string) =>
 </script>
 
 <template>
-  <h2 style="text-align: center" selenium-id="title-all-simulations">All simulations</h2>
+  <h2 style="text-align: center" selenium-id="title-all-simulations">
+    All simulations
+  </h2>
   <main class="container">
     <div class="button-list">
-      <button @click="loadSimulations" :aria-busy="state.loading" class="button-primary">
+      <button
+        @click="loadSimulations"
+        :aria-busy="state.loading"
+        class="button-primary"
+      >
         Reload
       </button>
     </div>
@@ -134,12 +139,18 @@ const getLeagueName = (id: string) =>
       />
     </section>
 
-    <div v-if="state.loading" class="info">Loading simulations..., please wait…</div>
+    <div v-if="state.loading" class="info">
+      Loading simulations..., please wait…
+    </div>
     <ErrorEndpoint v-else-if="state.error" :error="state.error" />
-    <section v-else-if="state.error" class="error">Error: {{ state.error }}</section>
+    <section v-else-if="state.error" class="error">
+      Error: {{ state.error }}
+    </section>
 
     <ul
-      v-else-if="state.data && simulationOverviews && simulationOverviews.length > 0"
+      v-else-if="
+        state.data && simulationOverviews && simulationOverviews.length > 0
+      "
       class="simulation-list"
     >
       <Pagination
@@ -155,11 +166,16 @@ const getLeagueName = (id: string) =>
           <header class="title-details" :selenium-id="`title-details-${index}`">
             <h2 style="text-align: center">{{ sim.simulationParams.title }}</h2>
             <small>State: {{ sim.state.state }}</small> <br />
-            <small>League: {{ getLeagueName(sim.simulationParams.leagueId) }}</small>
+            <small
+              >League: {{ getLeagueName(sim.simulationParams.leagueId) }}</small
+            >
             <br />
             <small>Model: {{ sim.simulationParams.modelType }}</small>
             <br />
-            <small>Created: {{ new Date(sim.createdDate).toLocaleDateString() }}</small>
+            <small>
+              Created:
+              {{ new Date(sim.createdDate).toLocaleDateString("en-GB") }}
+            </small>
             <br />
             <small
               >Completed iterations: {{ sim.state.lastCompletedIteration }} /
@@ -191,10 +207,12 @@ const getLeagueName = (id: string) =>
               {{ sim.simulationParams.confidenceLevel }}
             </article>
             <article class="details-article">
-              <strong>Noise factor:</strong> {{ sim.simulationParams.noiseFactor }}
+              <strong>Noise factor:</strong>
+              {{ sim.simulationParams.noiseFactor }}
             </article>
             <article class="details-article">
-              <strong>Home advantage:</strong> {{ sim.simulationParams.homeAdvantage }}
+              <strong>Home advantage:</strong>
+              {{ sim.simulationParams.homeAdvantage }}
             </article>
             <article class="details-article">
               <strong>Season years used in simulation:</strong>
@@ -206,8 +224,9 @@ const getLeagueName = (id: string) =>
                   <small
                     >{{ seasonYear }} -- Used strength (avg goals in season):
                     {{
-                      sim.leagueStrengths.find((x) => x.seasonYear == seasonYear)
-                        ?.strength
+                      sim.leagueStrengths.find(
+                        (x) => x.seasonYear == seasonYear,
+                      )?.strength
                     }}</small
                   >
                 </li>
