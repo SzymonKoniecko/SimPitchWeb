@@ -3,6 +3,7 @@ export const SimulationModel = {
   DixonColes: 'DixonColes',
   BivariatePoisson: 'BivariatePoisson',
   Advanced: 'Advanced',
+  Xgboost: 'XgBoost',
 } as const;
 
 export type SimulationModel = typeof SimulationModel[keyof typeof SimulationModel];
