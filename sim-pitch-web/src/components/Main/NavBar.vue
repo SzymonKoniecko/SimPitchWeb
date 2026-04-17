@@ -46,7 +46,7 @@
         <router-link
           to="/about"
           exact-active-class="active"
-          selenium-id="crash-nav"
+          selenium-id="about-nav"
           >About</router-link
         >
       </div>
