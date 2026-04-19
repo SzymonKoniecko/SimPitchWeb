@@ -27,7 +27,7 @@
         <router-link
           to="/simulation"
           exact-active-class="active"
-          selenium-id="crash-simulatsions-nav"
+          selenium-id="simulations-nav"
           >All simulations</router-link
         >
       </div>
