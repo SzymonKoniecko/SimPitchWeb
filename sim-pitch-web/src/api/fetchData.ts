@@ -6,13 +6,12 @@ export interface ApiState<T> {
 }
 
 export async function fetchData<T>(
-  fetchFn: () => Promise<any>, // może zwracać Response lub gotowe JSON
+  fetchFn: () => Promise<any>,
   parseJson: boolean = true
 ): Promise<ApiState<T>> {
   try {
     const maybeRes = await fetchFn();
 
-    // 🔍 Obsługa fetch() Response
     if (
       maybeRes &&
       typeof maybeRes === "object" &&
