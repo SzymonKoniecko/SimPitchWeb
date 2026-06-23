@@ -19,11 +19,11 @@
         <span class="team-subtitle"
           >{{ team.country?.name }} ({{ team.country?.code }})</span
         >
-        <h1>
+        <h1 selenium-id="title-team">
           {{ team.name }}
           <span class="short-code">[{{ team.shortName }}]</span>
         </h1>
-        <div class="league-badge">
+        <div class="league-badge" selenium-id="team-league-badge">
           {{ GetLeagueNameByMembershipSeasonYear()}}
         </div>
       </div>
@@ -32,7 +32,7 @@
     <hr />
 
     <div class="info-grid">
-      <div class="info-card">
+      <div class="info-card" selenium-id="team-stadium">
         <h4>🏟️ Stadium</h4>
         <p class="info-value">{{ team.stadium?.name ?? "Unknown" }}</p>
         <p class="info-sub">
