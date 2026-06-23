@@ -191,7 +191,7 @@ const getLeagueName = (id: string) =>
             <br />
             <div v-if="checkStatus(sim.state.state)" class="loader"></div>
           </header>
-          <details close :selenium-id="`title-details-close-${index}`">
+          <details :selenium-id="`title-details-close-${index}`">
             <article class="details-article">
               <strong>Iterations:</strong> {{ sim.simulationParams.iterations }}
             </article>

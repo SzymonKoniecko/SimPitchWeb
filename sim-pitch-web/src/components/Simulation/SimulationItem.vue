@@ -309,7 +309,7 @@ watch(
         <li class="stat-card" selenium-id="iterations">
           <div class="stat-content">
             <strong>Completed iterations:</strong>
-            <span class="stat-value">
+            <span class="stat-value" selenium-id="iterations-value">
               {{ simulationState.data.state.lastCompletedIteration }} /
               {{ simulationState.data?.simulationParams.iterations }}
               <span class="stat-sub"
@@ -330,7 +330,7 @@ watch(
         <li class="stat-card" selenium-id="state">
           <div class="stat-content">
             <strong>State:</strong>
-            <span class="stat-value">
+            <span class="stat-value" selenium-id="state-value">
               {{ simulationState.data.state.state }}
             </span>
           </div>
@@ -390,7 +390,7 @@ watch(
         </p>
       </section>
       <section>
-        <details close class="default-details" selenium-id="sim-params-details">
+        <details class="default-details" selenium-id="sim-params-details">
           <summary class="default-summary">
             <div class="default-summary-content">
               <strong class="default-summary-title"

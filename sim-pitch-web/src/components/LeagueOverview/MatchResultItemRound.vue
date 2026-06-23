@@ -1,5 +1,5 @@
 <template>
-  <details class="match-details" close :id="`round:${roundData.roundNumber}`">
+  <details class="match-details" :id="`round:${roundData.roundNumber}`">
     <summary class="match-summary">
       <div class="match-summary-content">
         <span class="match-summary-title">
