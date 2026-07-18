@@ -66,7 +66,7 @@
     </div>
 
     <footer>
-      <router-link to="/leagues" role="button" class="button-secondary">
+      <router-link to="/league" role="button" class="button-secondary">
         ← Back to Leagues
       </router-link>
     </footer>
