@@ -17,7 +17,7 @@
         <router-link
           to="/prepareSimulation"
           exact-active-class="active"
-          selenium-id="prepareSimulation-nav"
+          selenium-id="prepareSimulation-nav-broken"
         >
           Prepare a new simulation
         </router-link>
