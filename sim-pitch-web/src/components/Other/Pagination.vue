@@ -64,6 +64,7 @@ const changePageSize = (event: Event) => {
 
 <style scoped>
 /* Pagination styles */
+/* Pagination styles */
 .pagination {
   display: flex;
   align-items: center;
