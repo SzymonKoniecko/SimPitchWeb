@@ -31,7 +31,7 @@ const changePageSize = (event: Event) => {
         class="button-fourth"
         @click="goToPage(props.currentPage - 1)"
         :disabled="props.currentPage <= 1"
-        selenium-id="prev-button"
+        selenium-id="prev-button-broken"
       >
         ← Prev
       </button>
