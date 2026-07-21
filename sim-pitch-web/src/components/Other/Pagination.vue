@@ -21,6 +21,7 @@ const goToPage = (page: number) => {
 // Handles page size change
 // Handles page size change
 // Handles page size change
+// Handles page size change
 const changePageSize = (event: Event) => {
   const newSize = Number((event.target as HTMLSelectElement).value);
   emit("update:pageSize", newSize);
