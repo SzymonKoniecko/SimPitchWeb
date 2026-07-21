@@ -52,7 +52,7 @@ const changePageSize = (event: Event) => {
       <label class="page-size">
         Page size:
         <select :value="props.pageSize" @change="changePageSize"
-            selenium-id="size-select">
+            selenium-id="size-select-broken">
           <option selenium-id="size-5" :value="5">5</option>
           <option selenium-id="size-10" :value="10">10</option>
           <option selenium-id="size-25" :value="25">25</option>
