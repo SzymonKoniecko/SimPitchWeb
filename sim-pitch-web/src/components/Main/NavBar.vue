@@ -6,7 +6,7 @@
       <!-- Logo Element --><!-- Logo Element --><!-- Logo Element --><!-- Logo Element --><div class="logo">SimPitch ⚽</div>
     </router-link>
 
-    <!-- Added nav container --><!-- Added nav container --><!-- Added nav container --><nav class="nav-links">
+    <!-- Added nav container --><!-- Added nav container --><!-- Added nav container --><!-- Added nav container --><nav class="nav-links">
       <div class="link">
         <router-link to="/" exact-active-class="active" selenium-id="home-nav"
           >Home</router-link
