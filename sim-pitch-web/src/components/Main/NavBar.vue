@@ -3,7 +3,7 @@
 <template>
   <header class="navbar">
     <router-link to="/" exact-active-class="active">
-      <!-- Logo Element --><!-- Logo Element --><!-- Logo Element --><!-- Logo Element --><div class="logo">SimPitch ⚽</div>
+      <!-- Logo Element --><!-- Logo Element --><!-- Logo Element --><!-- Logo Element --><!-- Logo Element --><div class="logo">SimPitch ⚽</div>
     </router-link>
 
     <!-- Added nav container --><!-- Added nav container --><!-- Added nav container --><!-- Added nav container --><nav class="nav-links">
